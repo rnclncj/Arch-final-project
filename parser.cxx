@@ -77,7 +77,7 @@
             do {
             current += 1;
             } while(isalnum(*current));
-            return start.substr(0,size_t(current-start));
+            return ((string)start).substr(0,size_t(current-start));
         } else {
             return {};
         }
@@ -231,9 +231,7 @@
             // x = ...
             if (consume("=")) {
                 auto v = expression(effects);
-                if (effects) {
-                    symbol_table[id.value()] = v;
-                }
+                symbol_table[id.value()] = v;
                 return true;
             } else {
                 fail();

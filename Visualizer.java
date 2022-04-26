@@ -28,13 +28,14 @@ public class Visualizer extends JFrame {
     }
 
     private void initUI() {
-        add(new Surface());
+        // add(new Surface());
+        JScrollPane scrollPane = new JScrollPane(new Surface(), JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+        add(scrollPane);
 
         setTitle("Verilog Visualizer");
         setSize(3300, 3200);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        // add(new JScrollPane());
     }
 
     public static void main(String[] args) {
