@@ -1,0 +1,3 @@
+wire a = c
+wire b = c
+reg c + a b
