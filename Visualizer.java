@@ -1,13 +1,9 @@
 // https://zetcode.com/gfx/java2d/
 
-import java.awt.EventQueue;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-// import javax.swing.JFrame;
-// import javax.swing.JPanel;
+import java.awt.*;
 import javax.swing.*;
 
-class Surface extends JPanel {
+class Panel extends JPanel {
 
     private void doDrawing(Graphics g) {
         Graphics2D g2d = (Graphics2D) g;
@@ -28,13 +24,15 @@ public class Visualizer extends JFrame {
     }
 
     private void initUI() {
-        add(new Surface());
+        Panel panel = new Panel();
+        panel.setPreferredSize(new Dimension(1000, 1000));
+        JScrollPane scrollPane = new JScrollPane(panel);
+        add(scrollPane);
 
         setTitle("Verilog Visualizer");
-        setSize(3300, 3200);
+        setSize(300, 300);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        // add(new JScrollPane());
     }
 
     public static void main(String[] args) {
