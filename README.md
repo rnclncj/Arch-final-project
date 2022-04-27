@@ -8,11 +8,9 @@ https://docs.google.com/document/d/1V2MCwSHJi483bNEmYI0gwZn8zQcxFdl0dA9kNGC65PE/
 wire b = 1;
 wire a = b + c + d;
 
-wire b "1"
-wire .temp0 "+ 1 2"
-wire (b + c) + b c
-wire a ADD (b + c) d
-
+wire b = 1
+wire c = c
+wire d = d
 wire .temp0 + b c
 wire a + .temp0 d
 
