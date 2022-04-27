@@ -10,8 +10,10 @@
 
     // C++ stdlib includes (not available in C)
     #include <optional>
+    #include <iostream>
     #include <string>
     #include <unordered_map>
+    #include <cmath>
     using namespace std;
 
     // Implementation includes
@@ -19,27 +21,28 @@
     class Interpreter {
         char const * const program;
         char const * current;
-        unordered_map<string,string> symbol_table{};
+        unordered_map<string,pair<int64_t, string>> wire_table{};
+        unordered_map<string,string> reg_table{};
         int tempCounter;
 
     [[noreturn]]
     void fail() {
-    printf("failed at offset %ld\n",size_t(current-program));
-    printf("%s\n",current);
-    exit(1);
+        printf("failed at offset %ld\n",size_t(current-program));
+        printf("%s\n",current);
+        exit(1);
     }
 
     void end_or_fail() {
-    while (isspace(*current)) {
-        current += 1;
-    }
-    if (*current != 0) fail();
+        while (isspace(*current)) {
+            current += 1;
+        }
+        if (*current != 0) fail();
     }
 
     void consume_or_fail(const char* str) {
-    if (!consume(str)) {
-        fail();
-    }
+        if (!consume(str)) {
+            fail();
+        }
     }
 
     void skip() {
@@ -49,23 +52,23 @@
     }
 
     bool consume(const char* str) {
-    skip();
+        skip();
 
-    size_t i = 0;
-    while (true) {
-        char const expected = str[i];
-        char const found = current[i];
-        if (expected == 0) {
-        /* survived to the end of the expected string */
-        current += i;
-        return true;
+        size_t i = 0;
+        while (true) {
+            char const expected = str[i];
+            char const found = current[i];
+            if (expected == 0) {
+            /* survived to the end of the expected string */
+            current += i;
+            return true;
+            }
+            if (expected != found) {
+            return false;
+            }
+            // assertion: found != 0
+            i += 1;
         }
-        if (expected != found) {
-        return false;
-        }
-        // assertion: found != 0
-        i += 1;
-    }
 
     }
 
@@ -83,37 +86,38 @@
         }
     }
 
-    std::optional<uint64_t> consume_literal() {
-    skip();
+    optional<uint64_t> consume_literal() {
+        skip();
 
-    if (isdigit(*current)) {
-        uint64_t v = 0;
-        do {
-        v = 10*v + ((*current) - '0');
-        current += 1;
-        } while (isdigit(*current));
-        return v;
-    } else {
-        return {};
-    }
+        if (isdigit(*current)) {
+            uint64_t v = 0;
+            do {
+            v = 10*v + ((*current) - '0');
+            current += 1;
+            } while (isdigit(*current));
+            return v;
+        } else {
+            return {};
+        }
     }
 
     public:
     Interpreter(char const* prog): program(prog), current(prog) {}
 
-    // The plan is to honor as many C operators as possible with
-    // the same precedence and associativity
-    // e<n> implements operators with precedence 'n' (smaller is higher)
+    string e0() {
+        
+    }
 
     // () [] . -> ...
-    uint64_t e1(bool effects) {
+    string e1() {
         if (auto id = consume_identifier()) {
-            auto v = symbol_table[id.value()];
-            return v;
+            // TODO: write []
+            // read wire value
+            return id.value();
         } else if (auto v = consume_literal()) {
-            return v.value();
+            return to_string(v.value());
         } else if (consume("(")) {
-            auto v = expression(effects);
+            auto v = expression();
             consume(")");
             return v;
         } else {
@@ -122,22 +126,22 @@
     }
 
     // ++ -- unary+ unary- ... (Right)
-    uint64_t e2(bool effects) {
-        return e1(effects);
+    string e2() {
+        return e1();
     }
 
     // * / % (Left)
-    uint64_t e3(bool effects) {
-        auto v = e2(effects);
+    string e3() {
+        auto v = e2();
 
         while (true) {
             if (consume("*")) {
-                v = v * e2(effects);
+                v = v * e2();
             } else if (consume("/")) {
-                auto right = e2(effects);
+                auto right = e2();
                 v = (right == 0) ? 0 : v / right;
             } else if (consume("%")) {
-                auto right = e2(effects);
+                auto right = e2();
                 v = (right == 0) ? 0 : v % right;
             } else {
                 return v;
@@ -146,14 +150,14 @@
     }
 
     // (Left) + -
-    uint64_t e4(bool effects) {
-        auto v = e3(effects);
+    string e4() {
+        auto v = e3();
 
         while (true) {
             if (consume("+")) {
-                v = v + e3(effects);
+                v = v + e3();
             } else if (consume("-")) {
-                v = v - e3(effects);
+                v = v - e3();
             } else {
                 return v;
             }
@@ -161,91 +165,137 @@
     }
 
     // << >>
-    uint64_t e5(bool effects) {
-        return e4(effects);
+    string e5() {
+        return e4();
     }
 
     // < <= > >=
-    uint64_t e6(bool effects) {
-        return e5(effects);
+    string e6() {
+        return e5();
     }
 
     // == !=
-    uint64_t e7(bool effects) {
-        return e6(effects);
+    string e7() {
+        return e6();
     }
 
     // (left) &
-    uint64_t e8(bool effects) {
-        return e7(effects);
+    string e8() {
+        return e7();
     }
 
     // ^
-    uint64_t e9(bool effects) {
-        return e8(effects);
+    string e9() {
+        return e8();
     }
 
     // |
-    uint64_t e10(bool effects) {
-        return e9(effects);
+    string e10() {
+        return e9();
     }
 
     // &&
-    uint64_t e11(bool effects) {
-        return e10(effects);
+    string e11() {
+        return e10();
     }
 
     // ||
-    uint64_t e12(bool effects) {
-        return e11(effects);
+    string e12() {
+        return e11();
     }
 
     // (right with special treatment for middle expression) ?:
-    uint64_t e13(bool effects) {
-        return e12(effects);
+    string e13() {
+        return e12();
     }
 
     // = += -= ...
-    uint64_t e14(bool effects) {
-        return e13(effects);
+    string e14() {
+        return e13();
     }
 
     // ,
-    uint64_t e15(bool effects) {
-        return e14(effects);
+    string e15() {
+        return e14();
     }
 
-    uint64_t expression(bool effects) {
-        return e15(effects);
+    string expression() {
+        return e15();
     }
 
-    bool statement(bool effects) {
-        if (consume("print")) {
-            // print ...
-            auto v = expression(effects);
-            if (effects) {
-                printf("%ld\n",v);
-            }
-            return true;
-        } else if (auto id = consume_identifier()) {
-            // x = ...
-            if (consume("=")) {
-                auto v = expression(effects);
-                symbol_table[id.value()] = v;
-                return true;
-            } else {
-                fail();
-            }
+    int64_t get_size() {
+        int64_t size;
+        if (consume("[")) {
+            size = consume_literal().value();
+            consume(":");
+            size -= consume_literal().value();
+            size = abs(size);
+            consume("]");
+            return size;
         }
-        return false;
+        return 1;
     }
 
-    void statements(bool effects) {
-        while (statement(effects));
+    void statement() {
+        string wire_name;
+        string reg_name;
+        int64_t num_bits;
+        int64_t size;
+
+        if (consume("wire")) {
+            num_bits = get_size();
+            wire_name = consume_identifier().value();
+            if (consume("=")) {
+                printf("wire [%d]%s ", num_bits, wire_name);
+                // parse expression
+                string wire_inputs = expression();
+                wire_table[wire_name] = make_pair(num_bits, wire_inputs);
+                printf("%s", wire_inputs);
+            } else {
+                wire_table[wire_name] = make_pair(num_bits, "");
+            }
+            printf("\n");   
+
+        } else if (consume("assign")) {
+            wire_name = consume_identifier().value();
+            
+            consume("=");
+            num_bits = wire_table[wire_name].first;
+            printf("wire [%d]%s ", num_bits, wire_name);
+            // parse expression
+            string wire_inputs = expression();
+            wire_table[wire_name] = make_pair(num_bits, wire_inputs);
+            printf("%s\n", wire_inputs);       
+        } else if (consume("reg")) {
+            num_bits = get_size();
+            reg_name = consume_identifier().value();
+            // TODO: add to map, skip rest of the line
+        } else if (consume("always @(posedge clk)")) {
+            if (consume("initial")) {
+                // TODO: skip entire block
+            } else if (consume("$")) {
+                // TODO: skip line
+            } else if (consume("if")) {
+
+            } else if (consume("for")) {
+                // not doing for now
+            } else if (auto id = consume_identifier()) {
+                reg_name = id.value();
+                consume("<=");
+                string reg_inputs = expression();
+                reg_table[reg_name] = reg_inputs;
+            }
+        } else {
+            fail();
+        }
+
+
+    void statements() {
+        while (statement());
     }
 
     void run() {
-        statements(true);
+        statements();
         end_or_fail();
     }
     };

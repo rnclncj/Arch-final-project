@@ -2,12 +2,39 @@
 
 import java.awt.*;
 import javax.swing.*;
+import java.io.*;
+import java.util.*;
+
+class Element {
+    private String name;
+    private String type;
+    private String operation;
+    private ArrayList<String> operands;
+
+    public Element(String line) {
+        StringTokenizer tokenizer = new StringTokenizer(line);
+        type = tokenizer.nextToken();
+        name = tokenizer.nextToken();
+        operation = tokenizer.nextToken();
+        operands = new ArrayList<>();
+        while (tokenizer.hasMoreTokens()) {
+            operands.add(tokenizer.nextToken());
+        }
+    }
+
+    public String toString() {
+        String str = type + " " + name + " " + operation;
+        for (String operand : operands) {
+            str += " " + operand;
+        }
+        return str;
+    }
+}
 
 class Panel extends JPanel {
 
     private void doDrawing(Graphics g) {
         Graphics2D g2d = (Graphics2D) g;
-        g2d.drawString("Java 2D Java 2D Java 2D Java 2D Java 2D Java 2D Java 2D Java 2D Java 2D Java 2D Java 2D Java 2D Java 2D Java 2D Java 2D Java 2D Java 2D Java 2D Java 2D Java 2D Java 2D Java 2D Java 2D Java 2D Java 2D Java 2D Java 2D Java 2D Java 2D Java 2D Java 2D Java 2D Java 2D Java 2D Java 2D Java 2D Java 2D Java 2D Java 2D Java 2D Java 2D Java 2D Java 2D Java 2D Java 2D Java 2D Java 2D", 50, 50);
     }
 
     @Override
@@ -35,7 +62,16 @@ public class Visualizer extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
+        BufferedReader reader = new BufferedReader(new FileReader("example.txt"));
+        ArrayList<Element> elements = new ArrayList<>();
+        String line = "";
+        while ((line = reader.readLine()) != null) {
+            elements.add(new Element(line));
+        }
+        reader.close();
+        System.out.println(elements);
+
         EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
