@@ -120,6 +120,7 @@ class Panel extends JPanel {
 
         for (Element element : elementMap.values()) {
             g2d.drawRect(element.getXCoord(), element.getYCoord(), Visualizer.WIDTH, element.getHeight());
+            g2d.drawString(element.getOperation(), element.getXCoord() + Visualizer.WIDTH / 2 - 5, element.getYCoord() + element.getHeight()/2 + 5);
             // add input wires
         }
     }
