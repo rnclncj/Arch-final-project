@@ -10,6 +10,8 @@ class Element {
     private String type;
     private String operation;
     private ArrayList<String> operands;
+    private int colNum;
+    private int yCoord;
 
     public Element(String line) {
         StringTokenizer tokenizer = new StringTokenizer(line);
@@ -17,6 +19,8 @@ class Element {
         name = tokenizer.nextToken();
         operation = tokenizer.nextToken();
         operands = new ArrayList<>();
+        colNum = 0;
+        yCoord = 0;
         while (tokenizer.hasMoreTokens()) {
             operands.add(tokenizer.nextToken());
         }
@@ -29,12 +33,95 @@ class Element {
         }
         return str;
     }
+
+    public int getMaxColOfInputs(HashMap<String, Element> elementMap){
+        int max = 0;
+        for(String input : operands){
+            if(!elementMap.containsKey(input))
+                continue;
+            int currCol = elementMap.get(input).getColNum();
+            max = Math.max(currCol, max);
+        }
+        return max;
+    }
+
+    public int getXCoord() {
+        return Visualizer.HORIZ_DIST + getColNum() * (Visualizer.WIDTH + Visualizer.HORIZ_DIST);
+    }
+
+    //returns the height of the element
+    public int getHeight(){
+        return Visualizer.BASE_HEIGHT * getOperands().size();
+    }
+
+    public int getOutX() {
+        return getXCoord() + Visualizer.WIDTH;
+    }
+
+    public int getOutY() {
+        return yCoord + getHeight() / 2;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name){
+        this.name = name;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type){
+        this.type = type;
+    }
+
+    public String getOperation() {
+        return operation;
+    }
+
+    public void setOperation(String operation){
+        this.operation = operation;
+    }
+    
+    public ArrayList<String> getOperands() {
+        return operands;
+    }
+
+    public void setOutputPoint(int colNum, int yCoord){
+        this.colNum = colNum;
+        this.yCoord = yCoord;
+    }
+
+    public int getColNum(){
+        return colNum;
+    }
+
+    public void setColNum(int colNum){
+        this.colNum = colNum;
+    }
+
+    public int getYCoord() {
+        return yCoord;
+    }
 }
 
 class Panel extends JPanel {
+    private HashMap<String, Element> elementMap;
 
+    public Panel(HashMap<String, Element> em) {
+        elementMap = em;
+    }
+    
     private void doDrawing(Graphics g) {
         Graphics2D g2d = (Graphics2D) g;
+
+        for (Element element : elementMap.values()) {
+            g2d.drawRect(element.getXCoord(), element.getYCoord(), Visualizer.WIDTH, element.getHeight());
+            // add input wires
+        }
     }
 
     @Override
@@ -45,13 +132,17 @@ class Panel extends JPanel {
 }
 
 public class Visualizer extends JFrame {
+    public static final int BASE_HEIGHT = 30;
+    public static final int WIDTH = 50;
+    public static final int VERT_DIST = 30;
+    public static final int HORIZ_DIST = 30;
 
-    public Visualizer() {
-        initUI();
+    public Visualizer(HashMap<String, Element> em) {
+        initUI(em);
     }
 
-    private void initUI() {
-        Panel panel = new Panel();
+    private void initUI(HashMap<String, Element> em) {
+        Panel panel = new Panel(em);
         panel.setPreferredSize(new Dimension(1000, 1000));
         JScrollPane scrollPane = new JScrollPane(panel);
         add(scrollPane);
@@ -64,20 +155,25 @@ public class Visualizer extends JFrame {
 
     public static void main(String[] args) throws IOException {
         BufferedReader reader = new BufferedReader(new FileReader("example.txt"));
-        ArrayList<Element> elements = new ArrayList<>();
+        ArrayList<Element> elementList = new ArrayList<>();
+        HashMap<String, Element> elementMap = new HashMap<>();
+        ArrayList<Integer> colHeights = new ArrayList<>();
         String line = "";
         while ((line = reader.readLine()) != null) {
-            elements.add(new Element(line));
+            Element element = new Element(line);
+            elementList.add(element);
+            elementMap.put(element.getName(), element);
         }
         reader.close();
-        System.out.println(elements);
+        System.out.println(elementMap);
 
         EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
-                Visualizer vis = new Visualizer();
+                Visualizer vis = new Visualizer(elementMap);
                 vis.setVisible(true);
             }
         });
     }
+
 }
