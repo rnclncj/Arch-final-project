@@ -157,7 +157,7 @@ public class Visualizer extends JFrame {
         BufferedReader reader = new BufferedReader(new FileReader("example.txt"));
         ArrayList<Element> elementList = new ArrayList<>();
         HashMap<String, Element> elementMap = new HashMap<>();
-        ArrayList<Integer> colHeights = new ArrayList<>();
+        
         String line = "";
         while ((line = reader.readLine()) != null) {
             Element element = new Element(line);
@@ -166,6 +166,8 @@ public class Visualizer extends JFrame {
         }
         reader.close();
         System.out.println(elementMap);
+
+        setCoords(elementList, elementMap);
 
         EventQueue.invokeLater(new Runnable() {
             @Override
@@ -176,4 +178,16 @@ public class Visualizer extends JFrame {
         });
     }
 
+    //col is zero indexed
+    public static void setCoords(ArrayList<Element> elementList, HashMap<String, Element> elementMap){
+        ArrayList<Integer> colHeights = new ArrayList<>();
+        for(Element elem : elementList){
+            int col = elem.getMaxColOfInputs(elementMap);
+            if(col >= colHeights.size())
+                colHeights.add(0);
+            int yCoord = colHeights.get(col) + VERT_DIST;
+            elem.setOutputPoint(col, yCoord);
+            colHeights.set(col, yCoord + elem.getHeight());
+        }
+    }
 }
