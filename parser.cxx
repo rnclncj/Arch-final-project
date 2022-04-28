@@ -135,14 +135,14 @@
     public:
     Interpreter(char const* prog): program(prog), current(prog) {}
 
-    // []
+    // variable name and optional []
     string e0() {
         if (auto id = consume_identifier()) {
             return id.value() + consume_bracket();
         }
     }
 
-    // ()
+    // numbers, ()
     string e1() {
         auto v = e0();
         
@@ -267,13 +267,60 @@
         while (true) {
             if (consume("==")) {
 
+            } else if (consume("!=")) {
+
+            } else {
+                return v;
+            }
+        }
+    }
+
+    // === !==
+    string e10() {
+        auto v = e9();
+
+        while (true) {
+            if (consume("===")) {
+
+            } else if (consume("!==")) {
+                
+            } else {
+                return v;
+            }
+        }
+    }
+
+    // &
+    string e11() {
+        auto v = e10();
+
+        while (true) {
+            if (consume("&") && !peek("&")) {
+
+            } else {
+                return v;
+            }
+        }
+    }
+
+    // ^, ^~, ~^
+    string e12() {
+        auto v = e11();
+
+        while (true) {
+            if (consume("^~") || consume("~^")) {
+                
+            } else if (consume("^")) {
+
+            } else {
+                return v;
             }
         }
     }
 
     // |
-    string e10() {
-        auto v = e9();
+    string e13() {
+        auto v = e12();
 
         while (true) {
             if (consume("|") && !peek("|")) {
@@ -286,36 +333,11 @@
     }
 
     // &&
-    string e11() {
-        return e10();
-    }
-
-    // ||
-    string e12() {
-        return e11();
-    }
-
-    // (right with special treatment for middle expression) ?:
-    string e13() {
-        return e12();
-    }
-
-    // = += -= ...
     string e14() {
-        return e13();
-    }
-
-    // ,
-    string e15() {
-        return e14();
-    }
-
-    // && 
-    string e16() {
-        auto v = e15();
+        auto v = e13();
 
         while (true) {
-            if (consume("&") && !peek("|")) {
+            if (consume("&&")) {
 
             }
             else {
@@ -325,11 +347,11 @@
     }
 
     // ||
-    string e17() {
-        auto v = e16();
+    string e15() {
+        auto v = e14();
 
         while (true) {
-            if (consume("|") && !peek("|")) {
+            if (consume("||")) {
 
             }
             else {
@@ -339,8 +361,8 @@
     }
 
     // ? :
-    string e18() {
-        auto v = e18();
+    string e16() {
+        auto v = e15();
 
         // make everything ternaries
         while (true) {
@@ -352,10 +374,10 @@
             else {
                 return v;
             }
+        }
     }
-
     string expression() {
-        return e18();
+        return e16();
     }
 
     int64_t get_size() {

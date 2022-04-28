@@ -143,6 +143,9 @@ class Panel extends JPanel {
 }
 
 public class Visualizer extends JFrame {
+    private static final int ADDITIONAL_WIDTH = 4;
+    private static final int ADDITIONAL_HEIGHT = 32;
+
     public static final int BASE_HEIGHT = 30;
     public static final int WIDTH = 50;
     public static final int VERT_DIST = 30;
@@ -159,7 +162,7 @@ public class Visualizer extends JFrame {
         add(scrollPane);
 
         setTitle("Verilog Visualizer");
-        setSize(dim);
+        setSize((int) dim.getWidth() + ADDITIONAL_WIDTH, (int) dim.getHeight() + ADDITIONAL_HEIGHT);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
@@ -203,7 +206,7 @@ public class Visualizer extends JFrame {
             colHeights.set(col, newHeight);
             maxHeight = Math.max(maxHeight, newHeight);
         }
-        int xCoord = (colHeights.size()) * (Visualizer.HORIZ_DIST + Visualizer.WIDTH) + Visualizer.HORIZ_DIST;
+        int xCoord = colHeights.size() * (Visualizer.HORIZ_DIST + Visualizer.WIDTH) + Visualizer.HORIZ_DIST;
         int yCoord = maxHeight + Visualizer.VERT_DIST;
         return new Dimension(xCoord, yCoord);
         // return new Dimension(xCoord + 20, yCoord + 20);
