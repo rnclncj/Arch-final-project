@@ -120,8 +120,18 @@ class Panel extends JPanel {
 
         for (Element element : elementMap.values()) {
             g2d.drawRect(element.getXCoord(), element.getYCoord(), Visualizer.WIDTH, element.getHeight());
-            g2d.drawString(element.getOperation(), element.getXCoord() + Visualizer.WIDTH / 2 - 5, element.getYCoord() + element.getHeight()/2 + 5);
-            // add input wires
+            g2d.drawString(element.getOperation(), element.getXCoord() + Visualizer.WIDTH / 2 - 5, element.getYCoord() + element.getHeight()/2 - 5);
+            g2d.drawString(element.getName(), element.getXCoord() + Visualizer.WIDTH / 2 - 5, element.getYCoord() + element.getHeight()/2 + 10);
+
+            // input wires
+            ArrayList<String> operands = element.getOperands();
+            for (int i = 0; i < operands.size(); i++) {
+                int operandX = element.getXCoord();
+                int operandY = element.getYCoord() + (int) (Visualizer.BASE_HEIGHT * (i + 0.5));
+                int inputX = elementMap.get(operands.get(i)).getOutX();
+                int inputY = elementMap.get(operands.get(i)).getOutY();
+                g2d.drawLine(inputX, inputY, operandX, operandY);
+            }
         }
     }
 
@@ -138,18 +148,18 @@ public class Visualizer extends JFrame {
     public static final int VERT_DIST = 30;
     public static final int HORIZ_DIST = 30;
 
-    public Visualizer(HashMap<String, Element> em) {
-        initUI(em);
+    public Visualizer(HashMap<String, Element> em, Dimension dim) {
+        initUI(em, dim);
     }
 
-    private void initUI(HashMap<String, Element> em) {
+    private void initUI(HashMap<String, Element> em, Dimension dim) {
         Panel panel = new Panel(em);
-        panel.setPreferredSize(new Dimension(1000, 1000));
+        panel.setPreferredSize(dim);
         JScrollPane scrollPane = new JScrollPane(panel);
         add(scrollPane);
 
         setTitle("Verilog Visualizer");
-        setSize(300, 300);
+        setSize(dim);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
@@ -168,27 +178,33 @@ public class Visualizer extends JFrame {
         reader.close();
         System.out.println(elementMap);
 
-        setCoords(elementList, elementMap);
+        Dimension dim = setCoords(elementList, elementMap);
 
         EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
-                Visualizer vis = new Visualizer(elementMap);
+                Visualizer vis = new Visualizer(elementMap, dim);
                 vis.setVisible(true);
             }
         });
     }
 
     //col is zero indexed
-    public static void setCoords(ArrayList<Element> elementList, HashMap<String, Element> elementMap){
+    public static Dimension setCoords(ArrayList<Element> elementList, HashMap<String, Element> elementMap){
         ArrayList<Integer> colHeights = new ArrayList<>();
-        for(Element elem : elementList){
+        int maxHeight = 0;
+        for (Element elem : elementList){
             int col = elem.getMaxColOfInputs(elementMap) + 1;
             if(col >= colHeights.size())
                 colHeights.add(0);
             int yCoord = colHeights.get(col) + VERT_DIST;
             elem.setOutputPoint(col, yCoord);
-            colHeights.set(col, yCoord + elem.getHeight());
+            int newHeight = yCoord + elem.getHeight();
+            colHeights.set(col, newHeight);
+            maxHeight = Math.max(maxHeight, newHeight);
         }
+        int xCoord = (colHeights.size()) * (Visualizer.HORIZ_DIST + Visualizer.WIDTH) + Visualizer.HORIZ_DIST;
+        int yCoord = maxHeight + Visualizer.VERT_DIST;
+        return new Dimension(xCoord, yCoord);
     }
 }

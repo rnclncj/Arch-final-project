@@ -60,11 +60,11 @@
             char const found = current[i];
             if (expected == 0) {
             /* survived to the end of the expected string */
-            current += i;
-            return true;
+                current += i;
+                return true;
             }
             if (expected != found) {
-            return false;
+                return false;
             }
             // assertion: found != 0
             i += 1;
@@ -101,20 +101,34 @@
         }
     }
 
+    string consume_bracket() {
+        skip();
+        string res = "";
+        if(consume("[")) {
+            res += "[";
+            while (!consume("]")) {
+                res += *current;
+            }
+            res += "]";
+        }
+        return res;
+    }
+
     public:
     Interpreter(char const* prog): program(prog), current(prog) {}
 
+    // []
     string e0() {
-        
+        if (auto id = consume_identifier()) {
+            return id.value() + consume_bracket();
+        }
     }
 
-    // () [] . -> ...
+    // ()
     string e1() {
-        if (auto id = consume_identifier()) {
-            // TODO: write []
-            // read wire value
-            return id.value();
-        } else if (auto v = consume_literal()) {
+        auto v = e0();
+        
+        if (auto v = consume_literal()) {
             return to_string(v.value());
         } else if (consume("(")) {
             auto v = expression();
@@ -125,39 +139,71 @@
         }
     }
 
-    // ++ -- unary+ unary- ... (Right)
+    // ! ~ & | ~& ~| ^ ~^ ^~ logical negation, negation, reduction AND, reduction OR, reduction NAND, reduction NOR, reduction XOR, reduction XNOR
     string e2() {
-        return e1();
-    }
+        auto v = e1();
 
-    // * / % (Left)
-    string e3() {
-        auto v = e2();
+        while(true) {
+            if (consume("!")) {
 
-        while (true) {
-            if (consume("*")) {
-                v = v * e2();
-            } else if (consume("/")) {
-                auto right = e2();
-                v = (right == 0) ? 0 : v / right;
-            } else if (consume("%")) {
-                auto right = e2();
-                v = (right == 0) ? 0 : v % right;
+            } else if (consume("~&")) {
+
+            } else if (consume("~|")) {
+
+            } else if (consume("~^") || consume("^~")) {
+
+            } else if (consume("&")) {
+                
+            } else if (consume("|")) {
+
+            } else if (consume("^")) {
+
+            } else if (consume("~")) {
+                
             } else {
                 return v;
             }
         }
     }
 
-    // (Left) + -
+    // + - unary, sign
+    string e3() {
+        auto v = e2();
+        return v;
+    }
+
+    // {} {{}} concatenation, possibly replication
     string e4() {
+        // TODO
         auto v = e3();
+        return v;
+    }
+
+    // * / %
+    string e5() {
+        auto v = e4();
+        while (true) {
+            if (consume("*")) {
+
+            } else if (consume("/")) {
+
+            } else if (consume("%")) {
+                
+            } else {
+                return v;
+            }
+        }
+    }
+
+    // + - binary
+    string e6() {
+        auto v = e5();
 
         while (true) {
             if (consume("+")) {
-                v = v + e3();
+                auto right = e5();
             } else if (consume("-")) {
-                v = v - e3();
+                auto right = e5();
             } else {
                 return v;
             }
@@ -165,18 +211,11 @@
     }
 
     // << >>
-    string e5() {
-        return e4();
-    }
-
-    // < <= > >=
-    string e6() {
-        return e5();
-    }
-
-    // == !=
     string e7() {
-        return e6();
+        auto v = e6();
+        while(true) {
+            if ()
+        }
     }
 
     // (left) &
@@ -219,8 +258,35 @@
         return e14();
     }
 
-    string expression() {
+    // ,
+    string e16() {
         return e15();
+    }
+
+    // ||
+    string e17() {
+        
+        return e16();
+    }
+
+    // ? :
+    string e18() {
+        auto v = e18();
+
+        // make everything ternaries
+        while (true) {
+            if (consume("?")) {
+                if (consume(":")) {
+                    
+                }
+            }   
+            else {
+                return v;
+            }
+    }
+
+    string expression() {
+        return e18();
     }
 
     int64_t get_size() {
