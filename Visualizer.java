@@ -19,7 +19,7 @@ class Element {
         name = tokenizer.nextToken();
         operation = tokenizer.nextToken();
         operands = new ArrayList<>();
-        colNum = 0;
+        colNum = -1;
         yCoord = 0;
         while (tokenizer.hasMoreTokens()) {
             operands.add(tokenizer.nextToken());
@@ -35,7 +35,7 @@ class Element {
     }
 
     public int getMaxColOfInputs(HashMap<String, Element> elementMap){
-        int max = 0;
+        int max = -1;
         for(String input : operands){
             if(!elementMap.containsKey(input))
                 continue;
@@ -182,7 +182,7 @@ public class Visualizer extends JFrame {
     public static void setCoords(ArrayList<Element> elementList, HashMap<String, Element> elementMap){
         ArrayList<Integer> colHeights = new ArrayList<>();
         for(Element elem : elementList){
-            int col = elem.getMaxColOfInputs(elementMap);
+            int col = elem.getMaxColOfInputs(elementMap) + 1;
             if(col >= colHeights.size())
                 colHeights.add(0);
             int yCoord = colHeights.get(col) + VERT_DIST;
