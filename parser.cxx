@@ -72,6 +72,24 @@
 
     }
 
+    bool peek(const char *str) {
+        skip();
+        size_t i = 0;
+        while (true) {
+            char const expected = str[i];
+            char const found = *(current + i);
+            if (expected == 0) {
+                /* survived to the end of the expected string */
+                return true;
+            }
+            if (expected != found) {
+                return false;
+            }
+            // assertion: found != 0
+            i += 1;
+        }
+    }
+
     optional<string> consume_identifier() {
         skip();
 
@@ -140,6 +158,7 @@
     }
 
     // ! ~ & | ~& ~| ^ ~^ ^~ logical negation, negation, reduction AND, reduction OR, reduction NAND, reduction NOR, reduction XOR, reduction XNOR
+    // ALL single operand!!
     string e2() {
         auto v = e1();
 
@@ -166,7 +185,7 @@
         }
     }
 
-    // + - unary, sign
+    // + - unary, sign, single operand
     string e3() {
         auto v = e2();
         return v;
@@ -214,23 +233,56 @@
     string e7() {
         auto v = e6();
         while(true) {
-            if ()
+            if (consume("<<")) {
+
+            } else if (consume(">>")) {
+
+            } else {
+                return v;
+            }
         }
     }
 
-    // (left) &
+    // > >= < <=
     string e8() {
-        return e7();
+        auto v = e7();
+        while(true) {
+            if (consume(">=")) {
+
+            } else if (consume("<=")) {
+
+            } else if (consume("<")) {
+
+            } else if (consume(">")) {
+
+            } else {
+                return v;
+            }
+        }
     }
 
-    // ^
+    // == !=
     string e9() {
-        return e8();
+        auto v = e8();
+        while (true) {
+            if (consume("==")) {
+
+            }
+        }
     }
 
     // |
     string e10() {
-        return e9();
+        auto v = e9();
+
+        while (true) {
+            if (consume("|") && !peek("|")) {
+
+            }
+            else {
+                return v;
+            }
+        }
     }
 
     // &&
@@ -258,15 +310,32 @@
         return e14();
     }
 
-    // ,
+    // && 
     string e16() {
-        return e15();
+        auto v = e15();
+
+        while (true) {
+            if (consume("&") && !peek("|")) {
+
+            }
+            else {
+                return v;
+            }
+        }
     }
 
     // ||
     string e17() {
-        
-        return e16();
+        auto v = e16();
+
+        while (true) {
+            if (consume("|") && !peek("|")) {
+
+            }
+            else {
+                return v;
+            }
+        }
     }
 
     // ? :

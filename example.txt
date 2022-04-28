@@ -1,9 +1,5 @@
-wire a = c
-wire b = c
-reg c + a b
-reg d + c b
+wire a = a
+wire b = a
+wire c = a
+wire d = a
 reg e + a b c d
-wire f = a 
-wire g + a b
-wire h + a b c
-reg i = c

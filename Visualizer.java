@@ -206,5 +206,6 @@ public class Visualizer extends JFrame {
         int xCoord = (colHeights.size()) * (Visualizer.HORIZ_DIST + Visualizer.WIDTH) + Visualizer.HORIZ_DIST;
         int yCoord = maxHeight + Visualizer.VERT_DIST;
         return new Dimension(xCoord, yCoord);
+        // return new Dimension(xCoord + 20, yCoord + 20);
     }
 }
