@@ -1,0 +1,12 @@
+1,6c1,3
+< wire [1]a 1
+< wire [7]b 8'b00111000
+< wire [8]c failed at offset 84
+< + b;          
+< 
+< 
+---
+> wire a 1 
+> wire [7:0]b 8'b00111000
+> wire [8:0]c + a [7:0]b
+\ No newline at end of file

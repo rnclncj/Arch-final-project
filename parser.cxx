@@ -27,7 +27,7 @@ class Interpreter {
     [[noreturn]]
     void fail() {
         printf("failed at offset %ld\n",size_t(current-program));
-        printf("%s\n",current);
+        cout << current << endl;
         exit(1);
     }
 
@@ -99,7 +99,7 @@ class Interpreter {
             } while(isalnum(*current) || *current == '[' || *current == ']');
             return ((string)start).substr(0,size_t(current-start));
         } else {
-            return "";
+            return {};
         }
     }
 
@@ -111,7 +111,7 @@ class Interpreter {
             do {
                 v += *current;
                 current += 1;
-            } while (isalnum(*current) | *current == '\'');
+            } while (isalnum(*current) || *current == '\'');
             return v;
         } else {
             return {};
@@ -145,8 +145,33 @@ class Interpreter {
         return res;
     }
 
+    void skip_line() {
+        skip();
+        while(!consume("\n")) {
+            current += 1;
+        }
+    }
+
+    void skip_block() {
+        int counter = 0;
+        while(true) {
+            if (consume("begin")) {
+                counter += 1;
+            } else if (consume("end")) {
+                counter -= 1;
+                if (!counter) {
+                    return;
+                }
+            } else {
+                current += 1;
+            }
+        }
+    }
+
     public:
-    Interpreter(char const* prog): program(prog), current(prog) {}
+    Interpreter(char const* prog): program(prog), current(prog) {
+        tempCounter = 0;
+    }
 
     // variable name and optional []
     string e0() {
@@ -253,11 +278,14 @@ class Interpreter {
     }
 
     // {} {{}} concatenation, possibly replication
+    // FIXME: 
     string e4() {
         if (consume("{")) {
+            string res = ".temp " + tempCounter;
+            tempCounter += 1;
             do {
+                // either literal values or replication
                 if (auto id = consume_literal()) {
-                    // either literal values or replication
                     auto v = id.value();
                     if (peek("{")) {
                         // run it again to get the inside
@@ -269,10 +297,12 @@ class Interpreter {
                         e4();
                     } 
                 } else if (auto id = consume_identifier()) {
-
+                    cout << " " << id.value() << " ";
                 }
-            } while (!consume(","));
+            } while (consume(","));
             consume("}");
+            cout << endl;
+            return res;
         } else {
             return e3();
         }
@@ -529,8 +559,6 @@ class Interpreter {
     }
 
     int64_t get_size() {
-        // TODO: FIX!!!!!!
-        // FIXME: please
         int64_t size;
         if (consume("[")) {
             size = consume_number().value();
@@ -547,60 +575,77 @@ class Interpreter {
         string wire_name;
         string reg_name;
         int64_t num_bits;
-        int64_t size;
+        // int64_t size;
 
         if (consume("wire")) {
             num_bits = get_size();
             wire_name = consume_identifier().value();
             if (consume("=")) {
-                printf("wire [%d]%s ", num_bits, wire_name);
+                printf("wire [%ld]%s ", num_bits, wire_name.c_str());
                 // parse expression
                 string wire_inputs = expression();
                 wire_table[wire_name] = make_pair(num_bits, wire_inputs);
-                printf("%s", wire_inputs);
+                cout << wire_inputs;
             } else {
                 wire_table[wire_name] = make_pair(num_bits, "");
             }
-            printf("\n");   
+            printf("\n");  
+            return true; 
 
         } else if (consume("assign")) {
             wire_name = consume_identifier().value();
             
             consume("=");
             num_bits = wire_table[wire_name].first;
-            printf("wire [%d]%s ", num_bits, wire_name);
+            printf("wire [%ld]%s ", num_bits, wire_name.c_str());
             // parse expression
             string wire_inputs = expression();
             wire_table[wire_name] = make_pair(num_bits, wire_inputs);
-            printf("%s\n", wire_inputs);       
+            cout << wire_inputs << endl;
+            return true;
         } else if (consume("reg")) {
             num_bits = get_size();
             reg_name = consume_identifier().value();
-            // TODO: add to map, skip rest of the line
+            return true;
+            // TODO: add to map, skip rest of the line, only initialization for reg, maybe save for display
         } else if (consume("always @(posedge clk)")) {
-            if (consume("initial")) {
-                // TODO: skip entire block
-            } else if (consume("$")) {
-                // TODO: skip line
+            if (consume("$")) {
+                skip_line();
+                return true;
             } else if (consume("if")) {
-
+                return true;
             } else if (consume("for")) {
                 // not doing for now
+                return true;
             } else {
                 if (auto id = consume_identifier()) {
                     reg_name = id.value();
                     consume("<=");
                     string reg_inputs = expression();
                     reg_table[reg_name] = reg_inputs;
+                    return true;
                 }
             }
+        } else if (consume("initial")) {
+            skip_block();
+            return true;
+        } else if (consume("//")) {
+            skip_line();
         } else {
             fail();
         }
+
+        
+        return false;
     }
 
     void statements() {
-        while (statement());
+        while (statement()) {
+            consume(";");
+            if (consume("//")) {
+                skip_line();
+            }
+        }
     }
 
     void run() {
