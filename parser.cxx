@@ -137,8 +137,11 @@
 
     // variable name and optional []
     string e0() {
-        if (auto id = consume_identifier()) {
+        auto id = consume_identifier();
+        if (id) {
             return id.value() + consume_bracket();
+        } else {
+            return v;
         }
     }
 
@@ -203,11 +206,20 @@
         auto v = e4();
         while (true) {
             if (consume("*")) {
-
+                auto right = e4();
+                cout << "wire .temp" << to_string(tempCounter) << " * " << v << " " << right << endl;
+                v = ".temp " + tempCounter;
+                tempCounter += 1;
             } else if (consume("/")) {
-
+                auto right = e4();
+                cout << "wire .temp" << to_string(tempCounter) << " / " << v << " " << right << endl;
+                v = ".temp " + tempCounter;
+                tempCounter += 1;
             } else if (consume("%")) {
-                
+                auto right = e4();
+                cout << "wire .temp" << to_string(tempCounter) << " % " << v << " " << right << endl;
+                v = ".temp " + tempCounter;
+                tempCounter += 1;
             } else {
                 return v;
             }
@@ -221,8 +233,14 @@
         while (true) {
             if (consume("+")) {
                 auto right = e5();
+                cout << "wire .temp" << to_string(tempCounter) << " + " << v << " " << right << endl;
+                v = ".temp " + tempCounter;
+                tempCounter += 1;
             } else if (consume("-")) {
                 auto right = e5();
+                cout << "wire .temp" << to_string(tempCounter) << " - " << v << " " << right << endl;
+                v = ".temp " + tempCounter;
+                tempCounter += 1;
             } else {
                 return v;
             }
@@ -234,9 +252,15 @@
         auto v = e6();
         while(true) {
             if (consume("<<")) {
-
+                auto right = e6();
+                cout << "wire .temp" << to_string(tempCounter) << " << " << v << " " << right << endl;
+                v = ".temp " + tempCounter;
+                tempCounter += 1;
             } else if (consume(">>")) {
-
+                auto right = e6();
+                cout << "wire .temp" << to_string(tempCounter) << " >> " << v << " " << right << endl;
+                v = ".temp " + tempCounter;
+                tempCounter += 1;
             } else {
                 return v;
             }
@@ -248,13 +272,25 @@
         auto v = e7();
         while(true) {
             if (consume(">=")) {
-
+                auto right = e7();
+                cout << "wire .temp" << to_string(tempCounter) << " >= " << v << " " << right << endl;
+                v = ".temp " + tempCounter;
+                tempCounter += 1;
             } else if (consume("<=")) {
-
+                auto right = e7();
+                cout << "wire .temp" << to_string(tempCounter) << " <=> " << v << " " << right << endl;
+                v = ".temp " + tempCounter;
+                tempCounter += 1;
             } else if (consume("<")) {
-
+                auto right = e7();
+                cout << "wire .temp" << to_string(tempCounter) << " < " << v << " " << right << endl;
+                v = ".temp " + tempCounter;
+                tempCounter += 1;
             } else if (consume(">")) {
-
+                auto right = e7();
+                cout << "wire .temp" << to_string(tempCounter) << " > " << v << " " << right << endl;
+                v = ".temp " + tempCounter;
+                tempCounter += 1;
             } else {
                 return v;
             }
@@ -266,9 +302,15 @@
         auto v = e8();
         while (true) {
             if (consume("==")) {
-
+                auto right = e8();
+                cout << "wire .temp" << to_string(tempCounter) << " == " << v << " " << right << endl;
+                v = ".temp " + tempCounter;
+                tempCounter += 1;
             } else if (consume("!=")) {
-
+                auto right = e8();
+                cout << "wire .temp" << to_string(tempCounter) << " != " << v << " " << right << endl;
+                v = ".temp " + tempCounter;
+                tempCounter += 1;
             } else {
                 return v;
             }
@@ -281,9 +323,15 @@
 
         while (true) {
             if (consume("===")) {
-
+                auto right = e9();
+                cout << "wire .temp" << to_string(tempCounter) << " === " << v << " " << right << endl;
+                v = ".temp " + tempCounter;
+                tempCounter += 1;
             } else if (consume("!==")) {
-                
+                auto right = e9();
+                cout << "wire .temp" << to_string(tempCounter) << " !== " << v << " " << right << endl;
+                v = ".temp " + tempCounter;
+                tempCounter += 1;
             } else {
                 return v;
             }
@@ -296,7 +344,10 @@
 
         while (true) {
             if (consume("&") && !peek("&")) {
-
+                auto right = e10();
+                cout << "wire .temp" << to_string(tempCounter) << " & " << v << " " << right << endl;
+                v = ".temp " + tempCounter;
+                tempCounter += 1;
             } else {
                 return v;
             }
@@ -309,9 +360,15 @@
 
         while (true) {
             if (consume("^~") || consume("~^")) {
-                
+                auto right = e11();
+                cout << "wire .temp" << to_string(tempCounter) << " ~^ " << v << " " << right << endl;
+                v = ".temp " + tempCounter;
+                tempCounter += 1;
             } else if (consume("^")) {
-
+                auto right = e11();
+                cout << "wire .temp" << to_string(tempCounter) << " ^ " << v << " " << right << endl;
+                v = ".temp " + tempCounter;
+                tempCounter += 1;
             } else {
                 return v;
             }
@@ -324,7 +381,10 @@
 
         while (true) {
             if (consume("|") && !peek("|")) {
-
+                auto right = e12();
+                cout << "wire .temp" << to_string(tempCounter) << " | " << v << " " << right << endl;
+                v = ".temp " + tempCounter;
+                tempCounter += 1;
             }
             else {
                 return v;
@@ -338,7 +398,10 @@
 
         while (true) {
             if (consume("&&")) {
-
+                auto right = e13();
+                cout << "wire .temp" << to_string(tempCounter) << " && " << v << " " << right << endl;
+                v = ".temp " + tempCounter;
+                tempCounter += 1;
             }
             else {
                 return v;
@@ -352,7 +415,10 @@
 
         while (true) {
             if (consume("||")) {
-
+                auto right = e14();
+                cout << "wire .temp" << to_string(tempCounter) << " || " << v << " " << right << endl;
+                v = ".temp " + tempCounter;
+                tempCounter += 1;
             }
             else {
                 return v;
@@ -367,8 +433,12 @@
         // make everything ternaries
         while (true) {
             if (consume("?")) {
+                auto first = e14();
                 if (consume(":")) {
-                    
+                    auto second = e14();
+                    cout << "wire .temp" << to_string(tempCounter) << " ?: " << v << " " << first << " " << second << endl;
+                    v = ".temp " + tempCounter;
+                    tempCounter += 1;
                 }
             }   
             else {
@@ -376,6 +446,7 @@
             }
         }
     }
+
     string expression() {
         return e16();
     }
@@ -445,10 +516,13 @@
         } else {
             fail();
         }
+    }
 
 
     void statements() {
-        while (statement());
+        while (true) {
+            statement();
+        }
     }
 
     void run() {

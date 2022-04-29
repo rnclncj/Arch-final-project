@@ -3,7 +3,7 @@
 !!!!!Visualizing Verilog!!!!!
 https://docs.google.com/document/d/1V2MCwSHJi483bNEmYI0gwZn8zQcxFdl0dA9kNGC65PE/edit
 
-"wire/reg" [num_bits]name ADD [num_bits]arg1 [num_bits]arg2...
+"wire/reg" [num_bits]name operand arg1[bitrange] arg2[bitrange]...
 
 wire b = 1;
 wire a = b + c + d;

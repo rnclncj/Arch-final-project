@@ -120,17 +120,25 @@ class Panel extends JPanel {
 
         for (Element element : elementMap.values()) {
             g2d.drawRect(element.getXCoord(), element.getYCoord(), Visualizer.WIDTH, element.getHeight());
-            g2d.drawString(element.getOperation(), element.getXCoord() + Visualizer.WIDTH / 2 - 5, element.getYCoord() + element.getHeight()/2 - 5);
+
+            if(element.getOperation().equals("<-")){
+                g2d.drawString(element.getOperands().get(0), element.getXCoord() + Visualizer.WIDTH / 2 - 5, element.getYCoord() + element.getHeight()/2-5);
+            }
+            else{
+                g2d.drawString(element.getOperation(), element.getXCoord() + Visualizer.WIDTH / 2 - 5, element.getYCoord() + element.getHeight()/2 - 5);
+            }
             g2d.drawString(element.getName(), element.getXCoord() + Visualizer.WIDTH / 2 - 5, element.getYCoord() + element.getHeight()/2 + 10);
 
             // input wires
-            ArrayList<String> operands = element.getOperands();
-            for (int i = 0; i < operands.size(); i++) {
-                int operandX = element.getXCoord();
-                int operandY = element.getYCoord() + (int) (Visualizer.BASE_HEIGHT * (i + 0.5));
-                int inputX = elementMap.get(operands.get(i)).getOutX();
-                int inputY = elementMap.get(operands.get(i)).getOutY();
-                g2d.drawLine(inputX, inputY, operandX, operandY);
+            if (!element.getOperation().equals("<-")) {
+                ArrayList<String> operands = element.getOperands();
+                for (int i = 0; i < operands.size(); i++) {
+                    int operandX = element.getXCoord();
+                    int operandY = element.getYCoord() + (int) (Visualizer.BASE_HEIGHT * (i + 0.5));
+                    int inputX = elementMap.get(operands.get(i)).getOutX();
+                    int inputY = elementMap.get(operands.get(i)).getOutY();
+                    g2d.drawLine(inputX, inputY, operandX, operandY);
+                }
             }
         }
     }
@@ -148,8 +156,8 @@ public class Visualizer extends JFrame {
 
     public static final int BASE_HEIGHT = 30;
     public static final int WIDTH = 50;
-    public static final int VERT_DIST = 30;
-    public static final int HORIZ_DIST = 30;
+    public static final int VERT_DIST = 20;
+    public static final int HORIZ_DIST = 40;
 
     public Visualizer(HashMap<String, Element> em, Dimension dim) {
         initUI(em, dim);

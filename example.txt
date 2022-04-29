@@ -1,4 +1,5 @@
-wire a = a
+wire temp1 <- 1
+wire a = temp1
 wire b = a
 wire c = a
 wire d = a
