@@ -278,7 +278,7 @@ class Interpreter {
     }
 
     // {} {{}} concatenation, possibly replication
-    // FIXME: 
+    // FIXME: need to store list of each level
     string e4() {
         if (consume("{")) {
             string res = ".temp " + tempCounter;
@@ -292,12 +292,13 @@ class Interpreter {
                         cout << "wire .temp" << to_string(tempCounter) << " {{}} " << v << " ";
                         v = ".temp " + tempCounter;
                         tempCounter += 1;
-                        auto inside = e3();
+                        auto inside = e4();
                         cout << inside << " ";
-                        e4();
-                    } 
+                    } else {
+                        cout << " " << v;
+                    }
                 } else if (auto id = consume_identifier()) {
-                    cout << " " << id.value() << " ";
+                    cout << " " << id.value();
                 }
             } while (consume(","));
             consume("}");
