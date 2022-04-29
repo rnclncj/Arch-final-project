@@ -106,6 +106,48 @@ class Element {
     public int getYCoord() {
         return yCoord;
     }
+
+    public int getYBase() {
+        return yCoord + getHeight();
+    }
+
+    public void draw(Graphics g, HashMap<String, Element> elementMap) {
+        Graphics2D g2d = (Graphics2D) g;
+
+        if (getOperation().equals("=") && !getType().equals("reg")) {
+            g2d.drawLine(getXCoord(), getYCoord() + Visualizer.BASE_HEIGHT/2, getXCoord() + Visualizer.WIDTH, getYCoord() + Visualizer.BASE_HEIGHT/2);
+        } else {
+            g2d.drawRect(getXCoord(), getYCoord(), Visualizer.WIDTH, getHeight());
+            if(type.equals("reg")){
+                int base = getYBase();
+                int peakY = base - Visualizer.WIDTH / 6;
+                int peakX = getXCoord() + Visualizer.WIDTH/2;
+                g2d.drawLine(peakX, peakY, getXCoord() + Visualizer.WIDTH/3, base);
+                g2d.drawLine(peakX, peakY, getXCoord() + 2*Visualizer.WIDTH/3, base);
+            }
+        }
+
+        if(getOperation().equals("<-")){
+            g2d.drawString(getOperands().get(0), getXCoord() + Visualizer.WIDTH / 2 - 5, getYCoord() + getHeight()/2-5);
+        }
+        else{
+            g2d.drawString(getOperation(), getXCoord() + Visualizer.WIDTH / 2 - 5, getYCoord() + getHeight()/2 - 5);
+        }
+        g2d.drawString(getName(), getXCoord() + Visualizer.WIDTH / 2 - 5, getYCoord() + getHeight()/2 + 10);
+        
+
+        // input wires
+        if (!getOperation().equals("<-")) {
+            ArrayList<String> operands = getOperands();
+            for (int i = 0; i < operands.size(); i++) {
+                int operandX = getXCoord();
+                int operandY = getYCoord() + (int) (Visualizer.BASE_HEIGHT * (i + 0.5));
+                int inputX = elementMap.get(operands.get(i)).getOutX();
+                int inputY = elementMap.get(operands.get(i)).getOutY();
+                g2d.drawLine(inputX, inputY, operandX, operandY);
+            }
+        }
+    }
 }
 
 class Panel extends JPanel {
@@ -116,30 +158,8 @@ class Panel extends JPanel {
     }
     
     private void doDrawing(Graphics g) {
-        Graphics2D g2d = (Graphics2D) g;
-
         for (Element element : elementMap.values()) {
-            g2d.drawRect(element.getXCoord(), element.getYCoord(), Visualizer.WIDTH, element.getHeight());
-
-            if(element.getOperation().equals("<-")){
-                g2d.drawString(element.getOperands().get(0), element.getXCoord() + Visualizer.WIDTH / 2 - 5, element.getYCoord() + element.getHeight()/2-5);
-            }
-            else{
-                g2d.drawString(element.getOperation(), element.getXCoord() + Visualizer.WIDTH / 2 - 5, element.getYCoord() + element.getHeight()/2 - 5);
-            }
-            g2d.drawString(element.getName(), element.getXCoord() + Visualizer.WIDTH / 2 - 5, element.getYCoord() + element.getHeight()/2 + 10);
-
-            // input wires
-            if (!element.getOperation().equals("<-")) {
-                ArrayList<String> operands = element.getOperands();
-                for (int i = 0; i < operands.size(); i++) {
-                    int operandX = element.getXCoord();
-                    int operandY = element.getYCoord() + (int) (Visualizer.BASE_HEIGHT * (i + 0.5));
-                    int inputX = elementMap.get(operands.get(i)).getOutX();
-                    int inputY = elementMap.get(operands.get(i)).getOutY();
-                    g2d.drawLine(inputX, inputY, operandX, operandY);
-                }
-            }
+            element.draw(g, elementMap);
         }
     }
 

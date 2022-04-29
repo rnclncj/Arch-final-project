@@ -1,29 +1,28 @@
-    // libc includes (available in both C and C++)
-    #include <sys/mman.h>
-    #include <sys/stat.h>
-    #include <unistd.h>
-    #include <fcntl.h>
-    #include <stdlib.h>
-    #include <ctype.h>
-    #include <stdio.h>
-    #include <stdint.h>
+// libc includes (available in both C and C++)
+#include <sys/mman.h>
+#include <sys/stat.h>
+#include <unistd.h>
+#include <fcntl.h>
+#include <stdlib.h>
+#include <ctype.h>
+#include <stdio.h>
+#include <stdint.h>
+#include <stddef.h>
 
-    // C++ stdlib includes (not available in C)
-    #include <optional>
-    #include <iostream>
-    #include <string>
-    #include <unordered_map>
-    #include <cmath>
-    using namespace std;
+// C++ stdlib includes (not available in C)
+#include <optional>
+#include <iostream>
+#include <string>
+#include <unordered_map>
+#include <cmath>
+using namespace std;
 
-    // Implementation includes
-
-    class Interpreter {
-        char const * const program;
-        char const * current;
-        unordered_map<string,pair<int64_t, string>> wire_table{};
-        unordered_map<string,string> reg_table{};
-        int tempCounter;
+class Interpreter {
+    char const * const program;
+    char const * current;
+    unordered_map<string,pair<int64_t, string>> wire_table{};
+    unordered_map<string,string> reg_table{};
+    int tempCounter;
 
     [[noreturn]]
     void fail() {
@@ -97,26 +96,40 @@
             char const * start = current;
             do {
             current += 1;
-            } while(isalnum(*current));
+            } while(isalnum(*current) || *current == '[' || *current == ']');
             return ((string)start).substr(0,size_t(current-start));
+        } else {
+            return "";
+        }
+    }
+
+    optional<string> consume_literal() {
+        skip();
+
+        if (isdigit(*current)) {
+            string v = "";
+            do {
+            v += *current;
+            current += 1;
+            } while (isalnum(*current) | *current == '\'');
+            return v;
         } else {
             return {};
         }
     }
 
-    optional<uint64_t> consume_literal() {
-        skip();
-
-        if (isdigit(*current)) {
-            uint64_t v = 0;
-            do {
-            v = 10*v + ((*current) - '0');
-            current += 1;
-            } while (isdigit(*current));
-            return v;
-        } else {
-            return {};
-        }
+    optional<uint64_t> consume_number() {
+            skip();
+            if (isdigit(*current)) {
+                uint64_t v = 0;
+                do {
+                v = 10*v + ((*current) - '0');
+                current += 1;
+                } while (isdigit(*current));
+                return v;
+            } else {
+                return {};
+            }
     }
 
     string consume_bracket() {
@@ -138,10 +151,10 @@
     // variable name and optional []
     string e0() {
         auto id = consume_identifier();
-        if (id) {
+        if (auto id = consume_identifier()) {
             return id.value() + consume_bracket();
         } else {
-            return v;
+            return "";
         }
     }
 
@@ -150,7 +163,7 @@
         auto v = e0();
         
         if (auto v = consume_literal()) {
-            return to_string(v.value());
+            return v.value();
         } else if (consume("(")) {
             auto v = expression();
             consume(")");
@@ -163,42 +176,106 @@
     // ! ~ & | ~& ~| ^ ~^ ^~ logical negation, negation, reduction AND, reduction OR, reduction NAND, reduction NOR, reduction XOR, reduction XNOR
     // ALL single operand!!
     string e2() {
-        auto v = e1();
+        // auto v = e1();
 
         while(true) {
             if (consume("!")) {
-
+                auto right = e2();
+                cout << "wire .temp" << to_string(tempCounter) << " ! " << right << endl;
+                right = ".temp " + tempCounter;
+                tempCounter += 1;
+                return right;
             } else if (consume("~&")) {
-
+                auto right = e2();
+                cout << "wire .temp" << to_string(tempCounter) << " ~& " << right << endl;
+                right = ".temp " + tempCounter;
+                tempCounter += 1;
+                return right;
             } else if (consume("~|")) {
-
+                auto right = e2();
+                cout << "wire .temp" << to_string(tempCounter) << " ~| " << right << endl;
+                right = ".temp " + tempCounter;
+                tempCounter += 1;
+                return right;
             } else if (consume("~^") || consume("^~")) {
-
+                auto right = e2();
+                cout << "wire .temp" << to_string(tempCounter) << " ~^ " << right << endl;
+                right = ".temp " + tempCounter;
+                tempCounter += 1;
+                return right;
             } else if (consume("&")) {
-                
+                auto right = e2();
+                cout << "wire .temp" << to_string(tempCounter) << " & " << right << endl;
+                right = ".temp " + tempCounter;
+                tempCounter += 1;
+                return right;
             } else if (consume("|")) {
-
+                auto right = e2();
+                cout << "wire .temp" << to_string(tempCounter) << " | " << right << endl;
+                right = ".temp " + tempCounter;
+                tempCounter += 1;
+                return right;
             } else if (consume("^")) {
-
+                auto right = e2();
+                cout << "wire .temp" << to_string(tempCounter) << " ^ " << right << endl;
+                right = ".temp " + tempCounter;
+                tempCounter += 1;
+                return right;
             } else if (consume("~")) {
-                
+                auto right = e2();
+                cout << "wire .temp" << to_string(tempCounter) << " ~ " << right << endl;
+                right = ".temp " + tempCounter;
+                tempCounter += 1;
+                return right;
             } else {
-                return v;
+                return e1();
             }
         }
     }
 
     // + - unary, sign, single operand
     string e3() {
-        auto v = e2();
-        return v;
+        if (consume("+")) {
+            auto right = e3();
+            cout << "wire .temp" << to_string(tempCounter) << " + " << right << endl;
+            right = ".temp " + tempCounter;
+            tempCounter += 1;
+            return right;
+        } else if (consume("-")) {
+            auto right = e3();
+            cout << "wire .temp" << to_string(tempCounter) << " - " << right << endl;
+            right = ".temp " + tempCounter;
+            tempCounter += 1;
+            return right;
+        } else {
+            return e2();
+        }
     }
 
     // {} {{}} concatenation, possibly replication
     string e4() {
-        // TODO
-        auto v = e3();
-        return v;
+        if (consume("{")) {
+            do {
+                if (auto id = consume_literal()) {
+                    // either literal values or replication
+                    auto v = id.value();
+                    if (peek("{")) {
+                        // run it again to get the inside
+                        cout << "wire .temp" << to_string(tempCounter) << " {{}} " << v << " " << endl;
+                        v = ".temp " + tempCounter;
+                        tempCounter += 1;
+                        auto inside = e3();
+                        cout << inside << " ";
+                        e4();
+                    } 
+                } else if (auto id = consume_identifier()) {
+
+                }
+            } while (!consume(","));
+            consume("}");
+        } else {
+            return e3();
+        }
     }
 
     // * / %
@@ -452,11 +529,13 @@
     }
 
     int64_t get_size() {
+        // TODO: FIX!!!!!!
+        // FIXME: please
         int64_t size;
         if (consume("[")) {
-            size = consume_literal().value();
+            size = consume_number().value();
             consume(":");
-            size -= consume_literal().value();
+            size -= consume_number().value();
             size = abs(size);
             consume("]");
             return size;
@@ -464,7 +543,7 @@
         return 1;
     }
 
-    void statement() {
+    bool statement() {
         string wire_name;
         string reg_name;
         int64_t num_bits;
@@ -507,32 +586,31 @@
 
             } else if (consume("for")) {
                 // not doing for now
-            } else if (auto id = consume_identifier()) {
-                reg_name = id.value();
-                consume("<=");
-                string reg_inputs = expression();
-                reg_table[reg_name] = reg_inputs;
+            } else {
+                if (auto id = consume_identifier()) {
+                    reg_name = id.value();
+                    consume("<=");
+                    string reg_inputs = expression();
+                    reg_table[reg_name] = reg_inputs;
+                }
             }
         } else {
             fail();
         }
     }
 
-
     void statements() {
-        while (true) {
-            statement();
-        }
+        while (statement());
     }
 
     void run() {
         statements();
         end_or_fail();
     }
-    };
+};
 
 
-    int main(int argc, const char *const *const argv) {
+int main(int argc, const char *const *const argv) {
 
     if (argc != 2) {
         fprintf(stderr,"usage: %s <file name>\n",argv[0]);
@@ -568,12 +646,6 @@
     }
 
     Interpreter x{prog};
-
-
     x.run();
-
-
     return 0;
-    }
-
-    // vim: tabstop=4 shiftwidth=2 expandtab
+}

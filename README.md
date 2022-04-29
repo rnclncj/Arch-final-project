@@ -5,6 +5,8 @@ https://docs.google.com/document/d/1V2MCwSHJi483bNEmYI0gwZn8zQcxFdl0dA9kNGC65PE/
 
 "wire/reg" [num_bits]name operand arg1[bitrange] arg2[bitrange]...
 
+{{}}
+
 wire b = 1;
 wire a = b + c + d;
 
@@ -16,3 +18,12 @@ wire a + .temp0 d
 
 ⸘⸘⸘⸘⸘⸘⸘⸘⸘⸘⸘⸘hello!!!!!!👌🤪🍿‽😎n‽‽o‽‽‽‽‽‽‽‽🤷‍♀️🤷‍♂️😶‍🌫️🤐😯😭😡🤬
 ¬ƒˆ¥©ˆ˙˚…ˆ∆˙…øˆ©¨†¥∂¨¥†ƒˆ…¶∞§∞£†¥ø¥˙ˆ¨¥∂ç˚∆˜¬øˆ¥««‘ˆ¥∂¨†´¨¥†®`∑√ƒ≈®ƒ©∆√¥®∂®©˜©√≤µ¥¨†µ˙˜ƒ ©˜∆¥ƒ
+
+# md
+# wait this is so cool
+# can I have folding feature too
+sdflkdslf
+sdf
+ds
+fds
+
