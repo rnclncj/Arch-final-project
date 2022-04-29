@@ -27,7 +27,7 @@ class Interpreter {
     [[noreturn]]
     void fail() {
         printf("failed at offset %ld\n",size_t(current-program));
-        printf("%s\n",current);
+        cout << current << endl;
         exit(1);
     }
 
@@ -99,7 +99,7 @@ class Interpreter {
             } while(isalnum(*current) || *current == '[' || *current == ']');
             return ((string)start).substr(0,size_t(current-start));
         } else {
-            return "";
+            return {};
         }
     }
 
@@ -111,7 +111,7 @@ class Interpreter {
             do {
                 v += *current;
                 current += 1;
-            } while (isalnum(*current) | *current == '\'');
+            } while (isalnum(*current) || *current == '\'');
             return v;
         } else {
             return {};
@@ -145,8 +145,34 @@ class Interpreter {
         return res;
     }
 
+    void consume_line() {
+        skip();
+        while(!consume(";")) {
+            current += 1;
+        }
+    }
+
+    void skip_block() {
+        int begin_count = 0;
+        while(true) {
+            if (consume("begin")) {
+                begin_count += 1;
+            } else if (consume("end")) {
+                begin_count -= 1;
+                if (!begin_count) {
+                    return;
+                }
+            } else {
+                current += 1; 
+            }
+        }
+
+    }
+
     public:
-    Interpreter(char const* prog): program(prog), current(prog) {}
+    Interpreter(char const* prog): program(prog), current(prog) {
+        tempCounter = 0;
+    }
 
     // variable name and optional []
     string e0() {
@@ -253,6 +279,7 @@ class Interpreter {
     }
 
     // {} {{}} concatenation, possibly replication
+    // FIXME:
     string e4() {
         if (consume("{")) {
             do {
@@ -271,7 +298,7 @@ class Interpreter {
                 } else if (auto id = consume_identifier()) {
 
                 }
-            } while (!consume(","));
+            } while (consume(","));
             consume("}");
         } else {
             return e3();
@@ -529,8 +556,6 @@ class Interpreter {
     }
 
     int64_t get_size() {
-        // TODO: FIX!!!!!!
-        // FIXME: please
         int64_t size;
         if (consume("[")) {
             size = consume_number().value();
@@ -547,17 +572,16 @@ class Interpreter {
         string wire_name;
         string reg_name;
         int64_t num_bits;
-        int64_t size;
 
         if (consume("wire")) {
             num_bits = get_size();
             wire_name = consume_identifier().value();
             if (consume("=")) {
-                printf("wire [%d]%s ", num_bits, wire_name);
+                printf("wire [%ld]%s ", num_bits, wire_name.c_str());
                 // parse expression
                 string wire_inputs = expression();
                 wire_table[wire_name] = make_pair(num_bits, wire_inputs);
-                printf("%s", wire_inputs);
+                cout << wire_inputs;
             } else {
                 wire_table[wire_name] = make_pair(num_bits, "");
             }
@@ -568,20 +592,20 @@ class Interpreter {
             
             consume("=");
             num_bits = wire_table[wire_name].first;
-            printf("wire [%d]%s ", num_bits, wire_name);
+            printf("wire [%ld]%s ", num_bits, wire_name.c_str());
             // parse expression
             string wire_inputs = expression();
             wire_table[wire_name] = make_pair(num_bits, wire_inputs);
-            printf("%s\n", wire_inputs);       
+            cout << wire_inputs << endl;
         } else if (consume("reg")) {
             num_bits = get_size();
             reg_name = consume_identifier().value();
-            // TODO: add to map, skip rest of the line
+            // TODO: add to map, skip rest of the line because it is only the initial state, maybe store value for display
         } else if (consume("always @(posedge clk)")) {
             if (consume("initial")) {
-                // TODO: skip entire block
+                skip_block();
             } else if (consume("$")) {
-                // TODO: skip line
+                skip_line();
             } else if (consume("if")) {
 
             } else if (consume("for")) {
