@@ -109,8 +109,8 @@ class Interpreter {
         if (isdigit(*current)) {
             string v = "";
             do {
-            v += *current;
-            current += 1;
+                v += *current;
+                current += 1;
             } while (isalnum(*current) | *current == '\'');
             return v;
         } else {
