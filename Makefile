@@ -1,4 +1,3 @@
-
 B=build
 CXX=g++
 CXX_FLAGS=-Wall -Werror -std=c++17
@@ -15,12 +14,12 @@ C_O_FILES=${addprefix $B/,${subst .c,.o,${C_FILES}}}
 LINK=${firstword ${patsubst %.cxx,${CXX},${CXX_FILES} ${patsubst %.c,${CC},${C_FILES}}}}
 LINK_FLAGS=
 
-FUN_FILES=${wildcard *.fun}
-TESTS=${subst .fun,.test,${FUN_FILES}}
-OK_FILES=${subst .fun,.ok,${FUN_FILES}}
-OUT_FILES=${subst .fun,.out,${FUN_FILES}}
-DIFF_FILES=${subst .fun,.diff,${FUN_FILES}}
-RESULT_FILES=${subst .fun,.result,${FUN_FILES}}
+V_FILES=${wildcard *.v}
+TESTS=${subst .v,.test,${V_FILES}}
+OK_FILES=${subst .v,.ok,${V_FILES}}
+OUT_FILES=${subst .v,.out,${V_FILES}}
+DIFF_FILES=${subst .v,.diff,${V_FILES}}
+RESULT_FILES=${subst .v,.result,${V_FILES}}
 
 all : $B/main
 
@@ -50,9 +49,9 @@ ${DIFF_FILES}: %.diff : Makefile %.out %.ok
 	@echo "no diff" > $@
 	-diff $*.out $*.ok > $@ 2>&1
 
-${OUT_FILES}: %.out : Makefile $B/main %.fun
+${OUT_FILES}: %.out : Makefile $B/main %.v
 	@echo "failed to run" > $@
-	-time --quiet -f '%e' -o $*.time timeout 10 $B/main $*.fun > $@
+	-time --quiet -f '%e' -o $*.time timeout 10 $B/main $*.v > $@
 
 -include $B/*.d
 
