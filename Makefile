@@ -1,6 +1,6 @@
 B=build
 CXX=g++
-CXX_FLAGS=-Wall -Werror -std=c++17
+CXX_FLAGS=-Wall -Werror -g -std=c++17
 CC=cc
 CC_FLAGS=-Wall -Werror -g -std=c99
 

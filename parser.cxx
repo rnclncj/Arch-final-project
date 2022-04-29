@@ -1,32 +1,31 @@
 // libc includes (available in both C and C++)
+#include <ctype.h>
+#include <fcntl.h>
+#include <stddef.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
 #include <sys/mman.h>
 #include <sys/stat.h>
 #include <unistd.h>
-#include <fcntl.h>
-#include <stdlib.h>
-#include <ctype.h>
-#include <stdio.h>
-#include <stdint.h>
-#include <stddef.h>
 
 // C++ stdlib includes (not available in C)
-#include <optional>
+#include <cmath>
 #include <iostream>
+#include <optional>
 #include <string>
 #include <unordered_map>
-#include <cmath>
 using namespace std;
 
 class Interpreter {
-    char const * const program;
-    char const * current;
-    unordered_map<string,pair<int64_t, string>> wire_table{};
-    unordered_map<string,string> reg_table{};
+    char const* const program;
+    char const* current;
+    unordered_map<string, pair<int64_t, string>> wire_table{};
+    unordered_map<string, string> reg_table{};
     int tempCounter;
 
-    [[noreturn]]
-    void fail() {
-        printf("failed at offset %ld\n",size_t(current-program));
+    [[noreturn]] void fail() {
+        printf("failed at offset %ld\n", size_t(current - program));
         cout << current << endl;
         exit(1);
     }
@@ -58,7 +57,7 @@ class Interpreter {
             char const expected = str[i];
             char const found = current[i];
             if (expected == 0) {
-            /* survived to the end of the expected string */
+                /* survived to the end of the expected string */
                 current += i;
                 return true;
             }
@@ -68,10 +67,9 @@ class Interpreter {
             // assertion: found != 0
             i += 1;
         }
-
     }
 
-    bool peek(const char *str) {
+    bool peek(const char* str) {
         skip();
         size_t i = 0;
         while (true) {
@@ -93,11 +91,11 @@ class Interpreter {
         skip();
 
         if (isalpha(*current)) {
-            char const * start = current;
+            char const* start = current;
             do {
-            current += 1;
-            } while(isalnum(*current) || *current == '[' || *current == ']');
-            return ((string)start).substr(0,size_t(current-start));
+                current += 1;
+            } while (isalnum(*current) || *current == '[' || *current == ']');
+            return ((string)start).substr(0, size_t(current - start));
         } else {
             return {};
         }
@@ -119,23 +117,23 @@ class Interpreter {
     }
 
     optional<uint64_t> consume_number() {
-            skip();
-            if (isdigit(*current)) {
-                uint64_t v = 0;
-                do {
-                v = 10*v + ((*current) - '0');
+        skip();
+        if (isdigit(*current)) {
+            uint64_t v = 0;
+            do {
+                v = 10 * v + ((*current) - '0');
                 current += 1;
-                } while (isdigit(*current));
-                return v;
-            } else {
-                return {};
-            }
+            } while (isdigit(*current));
+            return v;
+        } else {
+            return {};
+        }
     }
 
     string consume_bracket() {
         skip();
         string res = "";
-        if(consume("[")) {
+        if (consume("[")) {
             res += "[";
             while (!consume("]")) {
                 res += *current;
@@ -147,14 +145,14 @@ class Interpreter {
 
     void skip_line() {
         skip();
-        while(!consume("\n")) {
+        while (!consume("\n")) {
             current += 1;
         }
     }
 
     void skip_block() {
         int counter = 0;
-        while(true) {
+        while (true) {
             if (consume("begin")) {
                 counter += 1;
             } else if (consume("end")) {
@@ -168,26 +166,25 @@ class Interpreter {
         }
     }
 
-    public:
-    Interpreter(char const* prog): program(prog), current(prog) {
+   public:
+    Interpreter(char const* prog) : program(prog), current(prog) {
         tempCounter = 0;
     }
 
     // variable name and optional []
-    string e0() {
-        auto id = consume_identifier();
+    optional<string> e0() {
         if (auto id = consume_identifier()) {
             return id.value() + consume_bracket();
         } else {
-            return "";
+            return {};
         }
     }
 
     // numbers, ()
     string e1() {
-        auto v = e0();
-        
-        if (auto v = consume_literal()) {
+        if (auto e0_ret = e0()) {
+            return e0_ret.value();
+        } else if (auto v = consume_literal()) {
             return v.value();
         } else if (consume("(")) {
             auto v = expression();
@@ -198,57 +195,66 @@ class Interpreter {
         }
     }
 
-    // ! ~ & | ~& ~| ^ ~^ ^~ logical negation, negation, reduction AND, reduction OR, reduction NAND, reduction NOR, reduction XOR, reduction XNOR
-    // ALL single operand!!
+    // ! ~ & | ~& ~| ^ ~^ ^~ logical negation, negation, reduction AND,
+    // reduction OR, reduction NAND, reduction NOR, reduction XOR, reduction
+    // XNOR ALL single operand!!
     string e2() {
         // auto v = e1();
 
-        while(true) {
+        while (true) {
             if (consume("!")) {
                 auto right = e2();
-                cout << "wire .temp" << to_string(tempCounter) << " ! " << right << endl;
+                cout << "wire .temp" << to_string(tempCounter) << " ! " << right
+                     << endl;
                 right = ".temp " + tempCounter;
                 tempCounter += 1;
                 return right;
             } else if (consume("~&")) {
                 auto right = e2();
-                cout << "wire .temp" << to_string(tempCounter) << " ~& " << right << endl;
+                cout << "wire .temp" << to_string(tempCounter) << " ~& "
+                     << right << endl;
                 right = ".temp " + tempCounter;
                 tempCounter += 1;
                 return right;
             } else if (consume("~|")) {
                 auto right = e2();
-                cout << "wire .temp" << to_string(tempCounter) << " ~| " << right << endl;
+                cout << "wire .temp" << to_string(tempCounter) << " ~| "
+                     << right << endl;
                 right = ".temp " + tempCounter;
                 tempCounter += 1;
                 return right;
             } else if (consume("~^") || consume("^~")) {
                 auto right = e2();
-                cout << "wire .temp" << to_string(tempCounter) << " ~^ " << right << endl;
+                cout << "wire .temp" << to_string(tempCounter) << " ~^ "
+                     << right << endl;
                 right = ".temp " + tempCounter;
                 tempCounter += 1;
                 return right;
             } else if (consume("&")) {
                 auto right = e2();
-                cout << "wire .temp" << to_string(tempCounter) << " & " << right << endl;
+                cout << "wire .temp" << to_string(tempCounter) << " & " << right
+                     << endl;
                 right = ".temp " + tempCounter;
                 tempCounter += 1;
                 return right;
             } else if (consume("|")) {
                 auto right = e2();
-                cout << "wire .temp" << to_string(tempCounter) << " | " << right << endl;
+                cout << "wire .temp" << to_string(tempCounter) << " | " << right
+                     << endl;
                 right = ".temp " + tempCounter;
                 tempCounter += 1;
                 return right;
             } else if (consume("^")) {
                 auto right = e2();
-                cout << "wire .temp" << to_string(tempCounter) << " ^ " << right << endl;
+                cout << "wire .temp" << to_string(tempCounter) << " ^ " << right
+                     << endl;
                 right = ".temp " + tempCounter;
                 tempCounter += 1;
                 return right;
             } else if (consume("~")) {
                 auto right = e2();
-                cout << "wire .temp" << to_string(tempCounter) << " ~ " << right << endl;
+                cout << "wire .temp" << to_string(tempCounter) << " ~ " << right
+                     << endl;
                 right = ".temp " + tempCounter;
                 tempCounter += 1;
                 return right;
@@ -262,13 +268,15 @@ class Interpreter {
     string e3() {
         if (consume("+")) {
             auto right = e3();
-            cout << "wire .temp" << to_string(tempCounter) << " + " << right << endl;
+            cout << "wire .temp" << to_string(tempCounter) << " + " << right
+                 << endl;
             right = ".temp " + tempCounter;
             tempCounter += 1;
             return right;
         } else if (consume("-")) {
             auto right = e3();
-            cout << "wire .temp" << to_string(tempCounter) << " - " << right << endl;
+            cout << "wire .temp" << to_string(tempCounter) << " - " << right
+                 << endl;
             right = ".temp " + tempCounter;
             tempCounter += 1;
             return right;
@@ -289,7 +297,8 @@ class Interpreter {
                     auto v = id.value();
                     if (peek("{")) {
                         // run it again to get the inside
-                        cout << "wire .temp" << to_string(tempCounter) << " {{}} " << v << " ";
+                        cout << "wire .temp" << to_string(tempCounter)
+                             << " {{}} " << v << " ";
                         v = ".temp " + tempCounter;
                         tempCounter += 1;
                         auto inside = e4();
@@ -315,17 +324,20 @@ class Interpreter {
         while (true) {
             if (consume("*")) {
                 auto right = e4();
-                cout << "wire .temp" << to_string(tempCounter) << " * " << v << " " << right << endl;
+                cout << "wire .temp" << to_string(tempCounter) << " * " << v
+                     << " " << right << endl;
                 v = ".temp " + tempCounter;
                 tempCounter += 1;
             } else if (consume("/")) {
                 auto right = e4();
-                cout << "wire .temp" << to_string(tempCounter) << " / " << v << " " << right << endl;
+                cout << "wire .temp" << to_string(tempCounter) << " / " << v
+                     << " " << right << endl;
                 v = ".temp " + tempCounter;
                 tempCounter += 1;
             } else if (consume("%")) {
                 auto right = e4();
-                cout << "wire .temp" << to_string(tempCounter) << " % " << v << " " << right << endl;
+                cout << "wire .temp" << to_string(tempCounter) << " % " << v
+                     << " " << right << endl;
                 v = ".temp " + tempCounter;
                 tempCounter += 1;
             } else {
@@ -341,12 +353,14 @@ class Interpreter {
         while (true) {
             if (consume("+")) {
                 auto right = e5();
-                cout << "wire .temp" << to_string(tempCounter) << " + " << v << " " << right << endl;
+                cout << "wire .temp" << to_string(tempCounter) << " + " << v
+                     << " " << right << endl;
                 v = ".temp " + tempCounter;
                 tempCounter += 1;
             } else if (consume("-")) {
                 auto right = e5();
-                cout << "wire .temp" << to_string(tempCounter) << " - " << v << " " << right << endl;
+                cout << "wire .temp" << to_string(tempCounter) << " - " << v
+                     << " " << right << endl;
                 v = ".temp " + tempCounter;
                 tempCounter += 1;
             } else {
@@ -358,15 +372,17 @@ class Interpreter {
     // << >>
     string e7() {
         auto v = e6();
-        while(true) {
+        while (true) {
             if (consume("<<")) {
                 auto right = e6();
-                cout << "wire .temp" << to_string(tempCounter) << " << " << v << " " << right << endl;
+                cout << "wire .temp" << to_string(tempCounter) << " << " << v
+                     << " " << right << endl;
                 v = ".temp " + tempCounter;
                 tempCounter += 1;
             } else if (consume(">>")) {
                 auto right = e6();
-                cout << "wire .temp" << to_string(tempCounter) << " >> " << v << " " << right << endl;
+                cout << "wire .temp" << to_string(tempCounter) << " >> " << v
+                     << " " << right << endl;
                 v = ".temp " + tempCounter;
                 tempCounter += 1;
             } else {
@@ -378,25 +394,29 @@ class Interpreter {
     // > >= < <=
     string e8() {
         auto v = e7();
-        while(true) {
+        while (true) {
             if (consume(">=")) {
                 auto right = e7();
-                cout << "wire .temp" << to_string(tempCounter) << " >= " << v << " " << right << endl;
+                cout << "wire .temp" << to_string(tempCounter) << " >= " << v
+                     << " " << right << endl;
                 v = ".temp " + tempCounter;
                 tempCounter += 1;
             } else if (consume("<=")) {
                 auto right = e7();
-                cout << "wire .temp" << to_string(tempCounter) << " <=> " << v << " " << right << endl;
+                cout << "wire .temp" << to_string(tempCounter) << " <=> " << v
+                     << " " << right << endl;
                 v = ".temp " + tempCounter;
                 tempCounter += 1;
             } else if (consume("<")) {
                 auto right = e7();
-                cout << "wire .temp" << to_string(tempCounter) << " < " << v << " " << right << endl;
+                cout << "wire .temp" << to_string(tempCounter) << " < " << v
+                     << " " << right << endl;
                 v = ".temp " + tempCounter;
                 tempCounter += 1;
             } else if (consume(">")) {
                 auto right = e7();
-                cout << "wire .temp" << to_string(tempCounter) << " > " << v << " " << right << endl;
+                cout << "wire .temp" << to_string(tempCounter) << " > " << v
+                     << " " << right << endl;
                 v = ".temp " + tempCounter;
                 tempCounter += 1;
             } else {
@@ -411,12 +431,14 @@ class Interpreter {
         while (true) {
             if (consume("==")) {
                 auto right = e8();
-                cout << "wire .temp" << to_string(tempCounter) << " == " << v << " " << right << endl;
+                cout << "wire .temp" << to_string(tempCounter) << " == " << v
+                     << " " << right << endl;
                 v = ".temp " + tempCounter;
                 tempCounter += 1;
             } else if (consume("!=")) {
                 auto right = e8();
-                cout << "wire .temp" << to_string(tempCounter) << " != " << v << " " << right << endl;
+                cout << "wire .temp" << to_string(tempCounter) << " != " << v
+                     << " " << right << endl;
                 v = ".temp " + tempCounter;
                 tempCounter += 1;
             } else {
@@ -432,12 +454,14 @@ class Interpreter {
         while (true) {
             if (consume("===")) {
                 auto right = e9();
-                cout << "wire .temp" << to_string(tempCounter) << " === " << v << " " << right << endl;
+                cout << "wire .temp" << to_string(tempCounter) << " === " << v
+                     << " " << right << endl;
                 v = ".temp " + tempCounter;
                 tempCounter += 1;
             } else if (consume("!==")) {
                 auto right = e9();
-                cout << "wire .temp" << to_string(tempCounter) << " !== " << v << " " << right << endl;
+                cout << "wire .temp" << to_string(tempCounter) << " !== " << v
+                     << " " << right << endl;
                 v = ".temp " + tempCounter;
                 tempCounter += 1;
             } else {
@@ -453,7 +477,8 @@ class Interpreter {
         while (true) {
             if (consume("&") && !peek("&")) {
                 auto right = e10();
-                cout << "wire .temp" << to_string(tempCounter) << " & " << v << " " << right << endl;
+                cout << "wire .temp" << to_string(tempCounter) << " & " << v
+                     << " " << right << endl;
                 v = ".temp " + tempCounter;
                 tempCounter += 1;
             } else {
@@ -469,12 +494,14 @@ class Interpreter {
         while (true) {
             if (consume("^~") || consume("~^")) {
                 auto right = e11();
-                cout << "wire .temp" << to_string(tempCounter) << " ~^ " << v << " " << right << endl;
+                cout << "wire .temp" << to_string(tempCounter) << " ~^ " << v
+                     << " " << right << endl;
                 v = ".temp " + tempCounter;
                 tempCounter += 1;
             } else if (consume("^")) {
                 auto right = e11();
-                cout << "wire .temp" << to_string(tempCounter) << " ^ " << v << " " << right << endl;
+                cout << "wire .temp" << to_string(tempCounter) << " ^ " << v
+                     << " " << right << endl;
                 v = ".temp " + tempCounter;
                 tempCounter += 1;
             } else {
@@ -490,11 +517,11 @@ class Interpreter {
         while (true) {
             if (consume("|") && !peek("|")) {
                 auto right = e12();
-                cout << "wire .temp" << to_string(tempCounter) << " | " << v << " " << right << endl;
+                cout << "wire .temp" << to_string(tempCounter) << " | " << v
+                     << " " << right << endl;
                 v = ".temp " + tempCounter;
                 tempCounter += 1;
-            }
-            else {
+            } else {
                 return v;
             }
         }
@@ -507,11 +534,11 @@ class Interpreter {
         while (true) {
             if (consume("&&")) {
                 auto right = e13();
-                cout << "wire .temp" << to_string(tempCounter) << " && " << v << " " << right << endl;
+                cout << "wire .temp" << to_string(tempCounter) << " && " << v
+                     << " " << right << endl;
                 v = ".temp " + tempCounter;
                 tempCounter += 1;
-            }
-            else {
+            } else {
                 return v;
             }
         }
@@ -524,11 +551,11 @@ class Interpreter {
         while (true) {
             if (consume("||")) {
                 auto right = e14();
-                cout << "wire .temp" << to_string(tempCounter) << " || " << v << " " << right << endl;
+                cout << "wire .temp" << to_string(tempCounter) << " || " << v
+                     << " " << right << endl;
                 v = ".temp " + tempCounter;
                 tempCounter += 1;
-            }
-            else {
+            } else {
                 return v;
             }
         }
@@ -544,20 +571,19 @@ class Interpreter {
                 auto first = e14();
                 if (consume(":")) {
                     auto second = e14();
-                    cout << "wire .temp" << to_string(tempCounter) << " ?: " << v << " " << first << " " << second << endl;
+                    cout << "wire .temp" << to_string(tempCounter)
+                         << " ?: " << v << " " << first << " " << second
+                         << endl;
                     v = ".temp " + tempCounter;
                     tempCounter += 1;
                 }
-            }   
-            else {
+            } else {
                 return v;
             }
         }
     }
 
-    string expression() {
-        return e16();
-    }
+    string expression() { return e16(); }
 
     int64_t get_size() {
         int64_t size;
@@ -582,20 +608,20 @@ class Interpreter {
             num_bits = get_size();
             wire_name = consume_identifier().value();
             if (consume("=")) {
+                string wire_inputs = expression();
                 printf("wire [%ld]%s ", num_bits, wire_name.c_str());
                 // parse expression
-                string wire_inputs = expression();
                 wire_table[wire_name] = make_pair(num_bits, wire_inputs);
                 cout << wire_inputs;
             } else {
                 wire_table[wire_name] = make_pair(num_bits, "");
             }
-            printf("\n");  
-            return true; 
+            printf("\n");
+            return true;
 
         } else if (consume("assign")) {
             wire_name = consume_identifier().value();
-            
+
             consume("=");
             num_bits = wire_table[wire_name].first;
             printf("wire [%ld]%s ", num_bits, wire_name.c_str());
@@ -608,7 +634,8 @@ class Interpreter {
             num_bits = get_size();
             reg_name = consume_identifier().value();
             return true;
-            // TODO: add to map, skip rest of the line, only initialization for reg, maybe save for display
+            // TODO: add to map, skip rest of the line, only initialization for
+            // reg, maybe save for display
         } else if (consume("always @(posedge clk)")) {
             if (consume("$")) {
                 skip_line();
@@ -636,7 +663,6 @@ class Interpreter {
             fail();
         }
 
-        
         return false;
     }
 
@@ -655,16 +681,14 @@ class Interpreter {
     }
 };
 
-
-int main(int argc, const char *const *const argv) {
-
+int main(int argc, const char* const* const argv) {
     if (argc != 2) {
-        fprintf(stderr,"usage: %s <file name>\n",argv[0]);
+        fprintf(stderr, "usage: %s <file name>\n", argv[0]);
         exit(1);
     }
 
     // open the file
-    int fd = open(argv[1],O_RDONLY);
+    int fd = open(argv[1], O_RDONLY);
     if (fd < 0) {
         perror("open");
         exit(1);
@@ -672,20 +696,15 @@ int main(int argc, const char *const *const argv) {
 
     // determine its size (std::filesystem::get_size?)
     struct stat file_stats;
-    int rc = fstat(fd,&file_stats);
+    int rc = fstat(fd, &file_stats);
     if (rc != 0) {
         perror("fstat");
         exit(1);
     }
 
     // map the file in my address space
-    char const* prog = (char const *)mmap(
-        0,
-        file_stats.st_size,
-        PROT_READ,
-        MAP_PRIVATE,
-        fd,
-        0);
+    char const* prog =
+        (char const*)mmap(0, file_stats.st_size, PROT_READ, MAP_PRIVATE, fd, 0);
     if (prog == MAP_FAILED) {
         perror("mmap");
         exit(1);
