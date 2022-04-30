@@ -7,14 +7,13 @@ https://docs.google.com/document/d/1V2MCwSHJi483bNEmYI0gwZn8zQcxFdl0dA9kNGC65PE/
 
 {{}}
 
-wire b = 1;
-wire a = b + c + d;
-
-wire b = 1
-wire c = c
-wire d = d
-wire .temp0 + b c
-wire a + .temp0 d
+# formats
+literal assignment: wire y = 5 
+wire .temp1 <- 5
+wire y = .temp1
+bit select: wire a = s0[1:0]
+wire .temp2 [1:0] s0
+wire a = .temp2
 
 ⸘⸘⸘⸘⸘⸘⸘⸘⸘⸘⸘⸘hello!!!!!!👌🤪🍿‽😎n‽‽o‽‽‽‽‽‽‽‽🤷‍♀️🤷‍♂️😶‍🌫️🤐😯😭😡🤬
 ¬ƒˆ¥©ˆ˙˚…ˆ∆˙…øˆ©¨†¥∂¨¥†ƒˆ…¶∞§∞£†¥ø¥˙ˆ¨¥∂ç˚∆˜¬øˆ¥««‘ˆ¥∂¨†´¨¥†®`∑√ƒ≈®ƒ©∆√¥®∂®©˜©√≤µ¥¨†µ˙˜ƒ ©˜∆¥ƒ

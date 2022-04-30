@@ -1,0 +1,7 @@
+1,6d0
+< wire .temp0 | a b
+< wire [1]m = .temp0
+< wire .temp1 && a b
+< wire [1]n = .temp1
+< wire .temp2 || a b
+< wire [1]o = .temp2
