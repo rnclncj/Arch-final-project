@@ -166,7 +166,7 @@ class Interpreter {
         }
     }
 
-   public:
+    public:
     Interpreter(char const* prog) : program(prog), current(prog) {
         tempCounter = 0;
     }
@@ -289,6 +289,7 @@ class Interpreter {
     // FIXME: need to store list of each level
     string e4() {
         if (consume("{")) {
+            list<string> operators;
             string res = ".temp " + tempCounter;
             tempCounter += 1;
             do {
@@ -303,15 +304,16 @@ class Interpreter {
                         tempCounter += 1;
                         auto inside = e4();
                         cout << inside << " ";
+                        operators.push_back(v);
                     } else {
-                        cout << " " << v;
+                        operators.push_back(v);
                     }
                 } else if (auto id = consume_identifier()) {
-                    cout << " " << id.value();
+                    operators.push_back(id.value());
                 }
             } while (consume(","));
             consume("}");
-            cout << endl;
+            // TODO: print wire .temp# operators list
             return res;
         } else {
             return e3();
@@ -609,7 +611,8 @@ class Interpreter {
             wire_name = consume_identifier().value();
             if (consume("=")) {
                 string wire_inputs = expression();
-                printf("wire [%ld]%s ", num_bits, wire_name.c_str());
+                // printf("wire [%ld]%s ", num_bits, wire_name.c_str());
+                cout << "wire " << wire_name << " ";
                 // parse expression
                 wire_table[wire_name] = make_pair(num_bits, wire_inputs);
                 cout << wire_inputs;
@@ -677,7 +680,7 @@ class Interpreter {
 
     void run() {
         statements();
-        end_or_fail();
+        // end_or_fail();
     }
 };
 

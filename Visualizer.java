@@ -196,7 +196,7 @@ public class Visualizer extends JFrame {
     }
 
     public static void main(String[] args) throws IOException {
-        BufferedReader reader = new BufferedReader(new FileReader("example.txt"));
+        BufferedReader reader = new BufferedReader(new FileReader("example.vf"));
         ArrayList<Element> elementList = new ArrayList<>();
         HashMap<String, Element> elementMap = new HashMap<>();
         

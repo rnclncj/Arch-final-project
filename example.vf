@@ -2,5 +2,5 @@ wire temp1 <- 1
 wire a = temp1
 wire b = a
 reg c = a
-wire d = a
+wire d ~ a
 reg e + a b c d
