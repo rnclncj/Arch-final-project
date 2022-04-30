@@ -154,7 +154,7 @@ class Panel extends JPanel {
     private HashMap<String, Element> elementMap;
 
     public Panel(HashMap<String, Element> em) {
-        setBackground(new Color(238, 238, 238));
+        // setBackground(new Color(238, 238, 238));
         elementMap = em;
     }
 
