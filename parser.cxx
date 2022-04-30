@@ -730,7 +730,10 @@ class Interpreter {
         consume("begin");
         while(!consume("end")) {
             unordered_map<string, string> part = always_statement();
-            cout << *current << endl;
+            consume(";");
+            if (consume("//")) {
+                skip_line();
+            }
             for (auto i = part.begin(); i != part.end(); i++) {
                 res[i->first] += i->second;
             }
