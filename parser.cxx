@@ -629,15 +629,16 @@ class Interpreter {
             wire_name = consume_identifier().value();
 
             consume("=");
-            cout << "wire " << wire_name << " ";
             // parse expression
             string wire_inputs = expression();
             wire_table[wire_name] = make_pair(num_bits, wire_inputs);
+            cout << "wire " << wire_name << " ";
             cout << wire_inputs << endl;
             return true;
         } else if (consume("reg")) {
             num_bits = get_size();
             reg_name = consume_identifier().value();
+            skip_line();
             return true;
             // TODO: add to map, skip rest of the line, only initialization for
             // reg, maybe save for display
