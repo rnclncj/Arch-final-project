@@ -693,15 +693,15 @@ class Interpreter {
                 tempCounter += 1;
                 cout << "wire " << temp << " ?: " << condition << " " << res[i->first] << " " << reg_table[i->first] << endl;
             }
-            
+            // TODO: do it!
             while (consume("else")) {
                 if (consume("if")) {
                     // else if block
                     string condition = expression();
                     unordered_map<string, string> inside = always_statements();
-                    // for (auto i = inside.begin(); i != inside.end(); i++) {
+                    for (auto i = inside.begin(); i != inside.end(); i++) {
                         
-                    // }
+                    }
                 } else {
                     //else
 
