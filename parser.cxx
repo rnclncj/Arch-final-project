@@ -16,6 +16,7 @@
 #include <string>
 #include <unordered_map>
 #include <vector>
+#include <tuple>
 using namespace std;
 
 class Interpreter {
@@ -24,6 +25,7 @@ class Interpreter {
     unordered_map<string, pair<int64_t, string>> wire_table{};
     unordered_map<string, string> reg_table{};
     int tempCounter;
+    int timeout = 1024;
 
     [[noreturn]] void fail() {
         printf("failed at offset %ld\n", size_t(current - program));
@@ -95,8 +97,7 @@ class Interpreter {
             char const* start = current;
             do {
                 current += 1;
-            } while (isalnum(*current) || *current == '[' || *current == ']' ||
-                     *current == ':');
+            } while (isalnum(*current));
             return ((string)start).substr(0, size_t(current - start));
         } else {
             return {};
@@ -132,17 +133,19 @@ class Interpreter {
         }
     }
 
-    string consume_bracket() {
+    optional<string> consume_bit_select() {
         skip();
-        string res = "";
         if (consume("[")) {
-            res += "[";
-            while (!consume("]")) {
+            string res = "[";
+            while (*current != ']') {
                 res += *current;
+                current += 1;
             }
+            consume("]");
             res += "]";
+            return res;
         }
-        return res;
+        return {};
     }
 
     void skip_line() {
@@ -175,7 +178,13 @@ class Interpreter {
     // variable name and optional []
     optional<string> e0() {
         if (auto id = consume_identifier()) {
-            return id.value() + consume_bracket();
+            if (auto bit_select = consume_bit_select()) {
+                string res = ".temp" + to_string(tempCounter);
+                tempCounter += 1;
+                cout << "wire "<< res << " " << bit_select.value() << " " << id.value() << endl;
+                return res;
+            }   
+            return id.value();
         } else {
             return {};
         }
@@ -186,9 +195,8 @@ class Interpreter {
         if (auto e0_ret = e0()) {
             return e0_ret.value();
         } else if (auto v = consume_literal()) {
-            // TODO: make value into temp
             string res = ".temp" + to_string(tempCounter);
-            cout << "wire " << res << " = " << v.value() << endl;
+            cout << "wire " << res << " <- " << v.value() << endl;
             tempCounter += 1;
             return res;
         } else if (consume("(")) {
@@ -204,8 +212,6 @@ class Interpreter {
     // reduction OR, reduction NAND, reduction NOR, reduction XOR, reduction
     // XNOR ALL single operand!!
     string e2() {
-        // auto v = e1();
-
         while (true) {
             if (consume("!")) {
                 auto right = e2();
@@ -299,8 +305,10 @@ class Interpreter {
             do {
                 // either literal values or replication
                 if (auto id = consume_literal()) {
-                    // TODO: make value into temp
-                    auto v = id.value();
+                    string res = ".temp" + to_string(tempCounter);
+                    cout << "wire " << res << " <- " << id.value() << endl;
+                    tempCounter += 1;
+                    auto v = res;
                     if (peek("{")) {
                         // run it again to get the inside
                         auto inside = e4();
@@ -331,6 +339,7 @@ class Interpreter {
     // * / %
     string e5() {
         auto v = e4();
+
         while (true) {
             if (consume("*")) {
                 auto right = e4();
@@ -382,6 +391,7 @@ class Interpreter {
     // << >>
     string e7() {
         auto v = e6();
+
         while (true) {
             if (consume("<<")) {
                 auto right = e6();
@@ -404,6 +414,7 @@ class Interpreter {
     // > >= < <=
     string e8() {
         auto v = e7();
+
         while (true) {
             if (consume(">=")) {
                 auto right = e7();
@@ -438,14 +449,15 @@ class Interpreter {
     // == !=
     string e9() {
         auto v = e8();
+
         while (true) {
-            if (consume("==")) {
+            if (!peek("===") && consume("==")) {
                 auto right = e8();
                 cout << "wire .temp" << to_string(tempCounter) << " == " << v
                      << " " << right << endl;
                 v = ".temp" + to_string(tempCounter);
                 tempCounter += 1;
-            } else if (consume("!=")) {
+            } else if (!peek("!==") && consume("!=")) {
                 auto right = e8();
                 cout << "wire .temp" << to_string(tempCounter) << " != " << v
                      << " " << right << endl;
@@ -485,7 +497,7 @@ class Interpreter {
         auto v = e10();
 
         while (true) {
-            if (consume("&") && !peek("&")) {
+            if (!peek("&&") && consume("&")) {
                 auto right = e10();
                 cout << "wire .temp" << to_string(tempCounter) << " & " << v
                      << " " << right << endl;
@@ -525,7 +537,7 @@ class Interpreter {
         auto v = e12();
 
         while (true) {
-            if (consume("|") && !peek("|")) {
+            if (!peek("||") && consume("|")) {
                 auto right = e12();
                 cout << "wire .temp" << to_string(tempCounter) << " | " << v
                      << " " << right << endl;
@@ -619,9 +631,7 @@ class Interpreter {
             wire_name = consume_identifier().value();
             if (consume("=")) {
                 string wire_inputs = expression();
-                // printf("wire [%ld]%s ", num_bits, wire_name.c_str());
-                cout << "wire " << wire_name << " = " << wire_inputs << endl;
-                // parse expression
+                cout << "wire [" << num_bits << "]" << wire_name << " = " << wire_inputs << endl;
                 wire_table[wire_name] = make_pair(num_bits, wire_inputs);
             } else {
                 wire_table[wire_name] = make_pair(num_bits, "");
@@ -631,48 +641,76 @@ class Interpreter {
         } else if (consume("assign")) {
             num_bits = get_size();
             wire_name = consume_identifier().value();
-
             consume("=");
             // parse expression
             string wire_inputs = expression();
             wire_table[wire_name] = make_pair(num_bits, wire_inputs);
-            cout << "wire " << wire_name << " = " << wire_inputs << endl;
+            cout << "wire [" << num_bits << "]" << wire_name << " = " << wire_inputs << endl;
             return true;
         } else if (consume("reg")) {
             num_bits = get_size();
             reg_name = consume_identifier().value();
             skip_line();
             return true;
-            // TODO: add to map, skip rest of the line, only initialization for
-            // reg, maybe save for display
         } else if (consume("always @(posedge clk)")) {
-            if (consume("$") || consume("#")) {
-                skip_line();
-                return true;
-            } else if (consume("if")) {
-                return true;
-            } else if (consume("for")) {
-                // not doing for now
-                return true;
-            } else {
-                if (auto id = consume_identifier()) {
-                    reg_name = id.value();
-                    consume("<=");
-                    string reg_inputs = expression();
-                    reg_table[reg_name] = reg_inputs;
-                    return true;
-                }
-            }
-        } else if (consume("initial")) {
+            always_statements();
+        } else if (consume("initial") || consume("for") || consume("if")) {
             skip_block();
             return true;
-        } else if (consume("//") || consume("$") || consume("`")) {
+        } else if (consume("//") || consume("$") || consume("`") || consume("module") || consume("endmodule")) {
             skip_line();
             return true;
         } else {
             return false;
         }
         return false;
+    }
+
+    unordered_map<string, string> always_statement() {
+        string reg_name;
+        unordered_map<string, string> res;
+        if (consume("$") || consume("#")) {
+            skip_line();
+            return res;
+        } else if (consume("if")) {
+            string condition = expression();
+            res = always_statements();
+            for (auto i = res.begin(); i != res.end(); i++) {
+                
+            }
+            while (consume("else")) {
+                if (consume("if")) {
+                    string condition = expression();
+                    
+                } else {
+
+                }
+            }
+            return res;
+        } else if (consume("for")) {
+            skip_block();
+            return res;
+        } else {
+            // reg
+            if (auto id = consume_identifier()) {
+                reg_name = id.value();
+                consume("<=");
+                string reg_inputs = expression();
+                res[reg_name] = reg_inputs;
+                return res;
+            }
+        }
+        return res;
+    }
+
+    unordered_map<string, string> always_statements() {
+        unordered_map<string, string> res;
+        consume("begin");
+        while(!consume("end")) {
+            unordered_map<string, string> res = always_statement();
+        }
+        return res;
+        
     }
 
     void statements() {
