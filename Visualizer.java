@@ -34,10 +34,10 @@ class Element {
         return str;
     }
 
-    public int getMaxColOfInputs(HashMap<String, Element> elementMap){
+    public int getMaxColOfInputs(HashMap<String, Element> elementMap) {
         int max = -1;
-        for(String input : operands){
-            if(!elementMap.containsKey(input))
+        for (String input : operands) {
+            if (!elementMap.containsKey(input))
                 continue;
             int currCol = elementMap.get(input).getColNum();
             max = Math.max(currCol, max);
@@ -49,8 +49,8 @@ class Element {
         return Visualizer.HORIZ_DIST + getColNum() * (Visualizer.WIDTH + Visualizer.HORIZ_DIST);
     }
 
-    //returns the height of the element
-    public int getHeight(){
+    // returns the height of the element
+    public int getHeight() {
         return Visualizer.BASE_HEIGHT * getOperands().size();
     }
 
@@ -66,7 +66,7 @@ class Element {
         return name;
     }
 
-    public void setName(String name){
+    public void setName(String name) {
         this.name = name;
     }
 
@@ -74,7 +74,7 @@ class Element {
         return type;
     }
 
-    public void setType(String type){
+    public void setType(String type) {
         this.type = type;
     }
 
@@ -82,24 +82,24 @@ class Element {
         return operation;
     }
 
-    public void setOperation(String operation){
+    public void setOperation(String operation) {
         this.operation = operation;
     }
-    
+
     public ArrayList<String> getOperands() {
         return operands;
     }
 
-    public void setOutputPoint(int colNum, int yCoord){
+    public void setOutputPoint(int colNum, int yCoord) {
         this.colNum = colNum;
         this.yCoord = yCoord;
     }
 
-    public int getColNum(){
+    public int getColNum() {
         return colNum;
     }
 
-    public void setColNum(int colNum){
+    public void setColNum(int colNum) {
         this.colNum = colNum;
     }
 
@@ -115,26 +115,26 @@ class Element {
         Graphics2D g2d = (Graphics2D) g;
 
         if (getOperation().equals("=") && !getType().equals("reg")) {
-            g2d.drawLine(getXCoord(), getYCoord() + Visualizer.BASE_HEIGHT/2, getXCoord() + Visualizer.WIDTH, getYCoord() + Visualizer.BASE_HEIGHT/2);
+            g2d.drawLine(getXCoord(), getYCoord() + Visualizer.BASE_HEIGHT / 2, getXCoord() + Visualizer.WIDTH,
+                    getYCoord() + Visualizer.BASE_HEIGHT / 2);
         } else {
             g2d.drawRect(getXCoord(), getYCoord(), Visualizer.WIDTH, getHeight());
-            if(type.equals("reg")){
+            if (type.equals("reg")) {
                 int base = getYBase();
                 int peakY = base - Visualizer.WIDTH / 6;
-                int peakX = getXCoord() + Visualizer.WIDTH/2;
-                g2d.drawLine(peakX, peakY, getXCoord() + Visualizer.WIDTH/3, base);
-                g2d.drawLine(peakX, peakY, getXCoord() + 2*Visualizer.WIDTH/3, base);
+                int peakX = getXCoord() + Visualizer.WIDTH / 2;
+                g2d.drawLine(peakX, peakY, getXCoord() + Visualizer.WIDTH / 3, base);
+                g2d.drawLine(peakX, peakY, getXCoord() + 2 * Visualizer.WIDTH / 3, base);
             }
         }
 
-        if(getOperation().equals("<-")){
-            g2d.drawString(getOperands().get(0), getXCoord() + Visualizer.WIDTH / 2 - 5, getYCoord() + getHeight()/2-5);
+        if (getOperation().equals("<-")) {
+            g2d.drawString(getOperands().get(0), getXCoord() + Visualizer.WIDTH / 2 - 5,
+                    getYCoord() + getHeight() / 2 - 5);
+        } else {
+            g2d.drawString(getOperation(), getXCoord() + Visualizer.WIDTH / 2 - 5, getYCoord() + getHeight() / 2 - 5);
         }
-        else{
-            g2d.drawString(getOperation(), getXCoord() + Visualizer.WIDTH / 2 - 5, getYCoord() + getHeight()/2 - 5);
-        }
-        g2d.drawString(getName(), getXCoord() + Visualizer.WIDTH / 2 - 5, getYCoord() + getHeight()/2 + 10);
-        
+        g2d.drawString(getName(), getXCoord() + Visualizer.WIDTH / 2 - 5, getYCoord() + getHeight() / 2 + 10);
 
         // input wires
         if (!getOperation().equals("<-")) {
@@ -154,9 +154,10 @@ class Panel extends JPanel {
     private HashMap<String, Element> elementMap;
 
     public Panel(HashMap<String, Element> em) {
+        System.out.println(getBackground());
         elementMap = em;
     }
-    
+
     private void doDrawing(Graphics g) {
         for (Element element : elementMap.values()) {
             element.draw(g, elementMap);
@@ -199,7 +200,7 @@ public class Visualizer extends JFrame {
         BufferedReader reader = new BufferedReader(new FileReader("example.vf"));
         ArrayList<Element> elementList = new ArrayList<>();
         HashMap<String, Element> elementMap = new HashMap<>();
-        
+
         String line = "";
         while ((line = reader.readLine()) != null) {
             Element element = new Element(line);
@@ -207,7 +208,6 @@ public class Visualizer extends JFrame {
             elementMap.put(element.getName(), element);
         }
         reader.close();
-        System.out.println(elementMap);
 
         Dimension dim = setCoords(elementList, elementMap);
 
@@ -220,13 +220,13 @@ public class Visualizer extends JFrame {
         });
     }
 
-    //col is zero indexed
-    public static Dimension setCoords(ArrayList<Element> elementList, HashMap<String, Element> elementMap){
+    // col is zero indexed
+    public static Dimension setCoords(ArrayList<Element> elementList, HashMap<String, Element> elementMap) {
         ArrayList<Integer> colHeights = new ArrayList<>();
         int maxHeight = 0;
-        for (Element elem : elementList){
+        for (Element elem : elementList) {
             int col = elem.getMaxColOfInputs(elementMap) + 1;
-            if(col >= colHeights.size())
+            if (col >= colHeights.size())
                 colHeights.add(0);
             int yCoord = colHeights.get(col) + VERT_DIST;
             elem.setOutputPoint(col, yCoord);
