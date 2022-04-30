@@ -5,6 +5,10 @@ import javax.swing.*;
 import java.io.*;
 import java.util.*;
 
+// TODO: remove temps, remove boxes for literals
+// TODO: fix strings
+// TODO: fix wires!
+
 class Element {
     private String name;
     private String type;

@@ -95,7 +95,8 @@ class Interpreter {
             char const* start = current;
             do {
                 current += 1;
-            } while (isalnum(*current) || *current == '[' || *current == ']');
+            } while (isalnum(*current) || *current == '[' || *current == ']' ||
+                     *current == ':');
             return ((string)start).substr(0, size_t(current - start));
         } else {
             return {};
@@ -185,6 +186,7 @@ class Interpreter {
         if (auto e0_ret = e0()) {
             return e0_ret.value();
         } else if (auto v = consume_literal()) {
+            // TODO: make value into temp
             return v.value();
         } else if (consume("(")) {
             auto v = expression();
@@ -294,6 +296,7 @@ class Interpreter {
             do {
                 // either literal values or replication
                 if (auto id = consume_literal()) {
+                    // TODO: make value into temp
                     auto v = id.value();
                     if (peek("{")) {
                         // run it again to get the inside
@@ -407,7 +410,7 @@ class Interpreter {
                 tempCounter += 1;
             } else if (consume("<=")) {
                 auto right = e7();
-                cout << "wire .temp" << to_string(tempCounter) << " <=> " << v
+                cout << "wire .temp" << to_string(tempCounter) << " <= " << v
                      << " " << right << endl;
                 v = ".temp" + to_string(tempCounter);
                 tempCounter += 1;
@@ -666,7 +669,6 @@ class Interpreter {
         } else {
             return false;
         }
-
         return false;
     }
 
