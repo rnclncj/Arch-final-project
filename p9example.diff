@@ -1,7 +1,205 @@
-1,6d0
-< wire .temp0 | a b
-< wire [1]m = .temp0
-< wire .temp1 && a b
-< wire [1]n = .temp1
-< wire .temp2 || a b
-< wire [1]o = .temp2
+1,204d0
+< wire .temp0 <- 1
+< wire .temp1 ?: D_is_adrp .temp0 D_is_add
+< wire .temp2 <- 2
+< wire .temp3 ?: .temp1 .temp2 D_is_movz
+< wire .temp4 <- 3
+< wire .temp5 ?: .temp3 .temp4 D_is_ldr_post
+< wire .temp6 <- 4
+< wire .temp7 ?: .temp5 .temp6 D_is_ldr_pre
+< wire .temp8 <- 5
+< wire .temp9 ?: .temp7 .temp8 D_is_ldr_unsigned
+< wire .temp10 <- 6
+< wire .temp11 ?: .temp9 .temp10 D_is_ldrb_post
+< wire .temp12 <- 7
+< wire .temp13 ?: .temp11 .temp12 D_is_ldrb_pre
+< wire .temp14 <- 8
+< wire .temp15 ?: .temp13 .temp14 D_is_ldrb_unsigned
+< wire .temp16 <- 9
+< wire .temp17 ?: .temp15 .temp16 D_is_strb_post
+< wire .temp18 <- 10
+< wire .temp19 ?: .temp17 .temp18 D_is_strb_pre
+< wire .temp20 <- 11
+< wire .temp21 ?: .temp19 .temp20 D_is_strb_unsigned
+< wire .temp22 <- 12
+< wire .temp23 ?: .temp21 .temp22 D_is_cbnz
+< wire .temp24 <- 13
+< wire .temp25 <- 0
+< wire .temp26 ?: .temp23 .temp24 .temp25
+< wire [3]D_ins_num = .temp26
+< wire .temp27 <- 0
+< wire .temp28 == D_ins_num .temp27
+< wire [1]D_terminate = .temp28
+< wire .temp29 [31] D_ins
+< wire .temp30 <- 1
+< wire .temp31 == .temp29 .temp30
+< wire .temp32 && D_valid .temp31
+< wire .temp33 [28:24] D_ins
+< wire .temp34 <- 5'b10000
+< wire .temp35 == .temp33 .temp34
+< wire .temp36 && .temp32 .temp35
+< wire [1]D_is_adrp = .temp36
+< wire .temp37 [30:23] D_ins
+< wire .temp38 <- 8'b00100010
+< wire .temp39 == .temp37 .temp38
+< wire .temp40 && D_valid .temp39
+< wire [1]D_is_add = .temp40
+< wire .temp41 [30:23] D_ins
+< wire .temp42 <- 8'b10100101
+< wire .temp43 == .temp41 .temp42
+< wire .temp44 && D_valid .temp43
+< wire [1]D_is_movz = .temp44
+< wire .temp45 [31] D_ins
+< wire .temp46 <- 1
+< wire .temp47 == .temp45 .temp46
+< wire .temp48 && D_valid .temp47
+< wire .temp49 [29:21] D_ins
+< wire .temp50 <- 9'b111000010
+< wire .temp51 == .temp49 .temp50
+< wire .temp52 && .temp48 .temp51
+< wire .temp53 [11:10] D_ins
+< wire .temp54 <- 2'b01
+< wire .temp55 == .temp53 .temp54
+< wire .temp56 && .temp52 .temp55
+< wire [1]D_is_ldr_post = .temp56
+< wire .temp57 [31] D_ins
+< wire .temp58 <- 1
+< wire .temp59 == .temp57 .temp58
+< wire .temp60 && D_valid .temp59
+< wire .temp61 [29:21] D_ins
+< wire .temp62 <- 9'b111000010
+< wire .temp63 == .temp61 .temp62
+< wire .temp64 && .temp60 .temp63
+< wire .temp65 [11:10] D_ins
+< wire .temp66 <- 2'b11
+< wire .temp67 == .temp65 .temp66
+< wire .temp68 && .temp64 .temp67
+< wire [1]D_is_ldr_pre = .temp68
+< wire .temp69 [31] D_ins
+< wire .temp70 <- 1
+< wire .temp71 == .temp69 .temp70
+< wire .temp72 && D_valid .temp71
+< wire .temp73 [29:22] D_ins
+< wire .temp74 <- 8'b11100101
+< wire .temp75 == .temp73 .temp74
+< wire .temp76 && .temp72 .temp75
+< wire [1]D_is_ldr_unsigned = .temp76
+< wire .temp77 | D_is_ldr_post D_is_ldr_pre
+< wire .temp78 | .temp77 D_is_ldr_unsigned
+< wire .temp79 && D_valid .temp78
+< wire [1]D_is_ldr = .temp79
+< wire .temp80 [31:21] D_ins
+< wire .temp81 <- 11'b00111000010
+< wire .temp82 == .temp80 .temp81
+< wire .temp83 && D_valid .temp82
+< wire .temp84 [11:10] D_ins
+< wire .temp85 <- 2'b01
+< wire .temp86 == .temp84 .temp85
+< wire .temp87 && .temp83 .temp86
+< wire [1]D_is_ldrb_post = .temp87
+< wire .temp88 [31:21] D_ins
+< wire .temp89 <- 11'b00111000010
+< wire .temp90 == .temp88 .temp89
+< wire .temp91 && D_valid .temp90
+< wire .temp92 [11:10] D_ins
+< wire .temp93 <- 2'b11
+< wire .temp94 == .temp92 .temp93
+< wire .temp95 && .temp91 .temp94
+< wire [1]D_is_ldrb_pre = .temp95
+< wire .temp96 [31:22] D_ins
+< wire .temp97 <- 10'b0011100101
+< wire .temp98 == .temp96 .temp97
+< wire .temp99 && D_valid .temp98
+< wire [1]D_is_ldrb_unsigned = .temp99
+< wire .temp100 | D_is_ldrb_post D_is_ldrb_pre
+< wire .temp101 | .temp100 D_is_ldrb_unsigned
+< wire .temp102 && D_valid .temp101
+< wire [1]D_is_ldrb = .temp102
+< wire .temp103 [31:21] D_ins
+< wire .temp104 <- 11'b00111000000
+< wire .temp105 == .temp103 .temp104
+< wire .temp106 && D_valid .temp105
+< wire .temp107 [11:10] D_ins
+< wire .temp108 <- 2'b01
+< wire .temp109 == .temp107 .temp108
+< wire .temp110 && .temp106 .temp109
+< wire [1]D_is_strb_post = .temp110
+< wire .temp111 [31:21] D_ins
+< wire .temp112 <- 11'b00111000000
+< wire .temp113 == .temp111 .temp112
+< wire .temp114 && D_valid .temp113
+< wire .temp115 [11:10] D_ins
+< wire .temp116 <- 2'b11
+< wire .temp117 == .temp115 .temp116
+< wire .temp118 && .temp114 .temp117
+< wire [1]D_is_strb_pre = .temp118
+< wire .temp119 [31:22] D_ins
+< wire .temp120 <- 10'b0011100100
+< wire .temp121 == .temp119 .temp120
+< wire .temp122 && D_valid .temp121
+< wire [1]D_is_strb_unsigned = .temp122
+< wire .temp123 | D_is_strb_post D_is_strb_pre
+< wire .temp124 | .temp123 D_is_strb_unsigned
+< wire .temp125 && D_valid .temp124
+< wire [1]D_is_strb = .temp125
+< wire .temp126 [30:24] D_ins
+< wire .temp127 <- 7'b0110101
+< wire .temp128 == .temp126 .temp127
+< wire .temp129 && D_valid .temp128
+< wire [1]D_is_cbnz = .temp129
+< wire .temp130 | D_is_ldr D_is_ldrb
+< wire .temp131 | .temp130 D_is_strb
+< wire [1]D_is_ldrstrb = .temp131
+< wire .temp132 | D_is_ldr_unsigned D_is_ldrb_unsigned
+< wire .temp133 | .temp132 D_is_strb_unsigned
+< wire [1]D_is_ldrstrb_unsigned = .temp133
+< wire .temp134 [4:0] D_ins
+< wire [4]D_d = .temp134
+< wire .temp135 [9:5] D_ins
+< wire [4]D_n = .temp135
+< wire .temp136 [31] D_ins
+< wire [1]D_sf = .temp136
+< wire .temp137 <- 1
+< wire .temp138 == D_ins_num .temp137
+< wire .temp139 <- 2
+< wire .temp140 == D_ins_num .temp139
+< wire .temp141 ?: .temp138 D_adrp_imm .temp140
+< wire .temp142 <- 3
+< wire .temp143 == D_ins_num .temp142
+< wire .temp144 ?: .temp141 D_add_imm .temp143
+< wire .temp145 <- 0
+< wire .temp146 ?: .temp144 D_movz_imm .temp145
+< wire [63]D_imm = .temp146
+< wire .temp147 | D_is_ldr_post D_is_ldr_pre
+< wire .temp148 | .temp147 D_is_ldrb_post
+< wire .temp149 | .temp148 D_is_ldrb_pre
+< wire .temp150 | .temp149 D_is_strb_post
+< wire .temp151 | .temp150 D_is_strb_pre
+< wire .temp152 <- 1
+< wire .temp153 <- 0
+< wire .temp154 ?: .temp151 .temp152 .temp153
+< wire [1]D_wback = .temp154
+< wire .temp155 | D_is_ldr_post D_is_ldrb_post
+< wire .temp156 | .temp155 D_is_strb_post
+< wire .temp157 <- 1
+< wire .temp158 <- 0
+< wire .temp159 ?: .temp156 .temp157 .temp158
+< wire [1]D_postindex = .temp159
+< wire .temp160 ?: D_is_ldrstrb_unsigned D_zero_extend_imm D_sign_extend_imm
+< wire .temp161 <- 0
+< wire .temp162 ?: D_is_ldrstrb .temp160 .temp161
+< wire [63]D_offset = .temp162
+< wire .temp163 [31:30] D_ins
+< wire [1]D_scale = .temp163
+< wire .temp164 <- 8
+< wire .temp165 << .temp164 D_scale
+< wire [63]D_datasize = .temp165
+< wire .temp166 <- 2'b11
+< wire .temp167 == D_scale .temp166
+< wire .temp168 <- 64
+< wire .temp169 <- 32
+< wire .temp170 ?: .temp167 .temp168 .temp169
+< wire [63]D_regsize = .temp170
+< wire .temp172 <- 31'b0
+< wire .temp171 {} .temp172 D_ins
+< wire [63]D_adrp_imm = .temp171

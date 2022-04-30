@@ -93,11 +93,11 @@ class Interpreter {
     optional<string> consume_identifier() {
         skip();
 
-        if (isalpha(*current)) {
+        if (isalpha(*current) || *current == '_') {
             char const* start = current;
             do {
                 current += 1;
-            } while (isalnum(*current));
+            } while (isalnum(*current) || *current == '_');
             return ((string)start).substr(0, size_t(current - start));
         } else {
             return {};
@@ -154,6 +154,12 @@ class Interpreter {
         }
     }
 
+    void skip_multiline() {
+        while (!consume("*/")) {
+            current += 1;
+        }
+    }
+
     void skip_block() {
         int counter = 0;
         while (true) {
@@ -177,6 +183,10 @@ class Interpreter {
 
     // variable name and optional []
     optional<string> e0() {
+        // parse multiline comments
+        if (consume("/*")) { 
+            skip_multiline();
+        }
         if (auto id = consume_identifier()) {
             if (auto bit_select = consume_bit_select()) {
                 string res = ".temp" + to_string(tempCounter);
@@ -637,7 +647,6 @@ class Interpreter {
                 wire_table[wire_name] = make_pair(num_bits, "");
             }
             return true;
-
         } else if (consume("assign")) {
             num_bits = get_size();
             wire_name = consume_identifier().value();
@@ -652,8 +661,12 @@ class Interpreter {
             reg_name = consume_identifier().value();
             skip_line();
             return true;
-        } else if (consume("always @(posedge clk)")) {
-            always_statements();
+        } else if (consume("always @(") && consume("posedge clk") && consume(")")) {
+            // TODO: expand parameters
+            unordered_map<string, string> res = always_statements();
+            for (auto i = res.begin(); i != res.end(); i++) {
+                reg_table[i->first] = i->second;
+            }
         } else if (consume("initial") || consume("for") || consume("if")) {
             skip_block();
             return true;
@@ -676,13 +689,21 @@ class Interpreter {
             string condition = expression();
             res = always_statements();
             for (auto i = res.begin(); i != res.end(); i++) {
-                
+                string temp = ".temp" + to_string(tempCounter);
+                tempCounter += 1;
+                cout << "wire " << temp << " ?: " << condition << " " << res[i->first] << " " << reg_table[i->first] << endl;
             }
+            
             while (consume("else")) {
                 if (consume("if")) {
+                    // else if block
                     string condition = expression();
-                    
+                    unordered_map<string, string> inside = always_statements();
+                    // for (auto i = inside.begin(); i != inside.end(); i++) {
+                        
+                    // }
                 } else {
+                    //else
 
                 }
             }
@@ -704,13 +725,17 @@ class Interpreter {
     }
 
     unordered_map<string, string> always_statements() {
+        // puff shroom! :( not helping
         unordered_map<string, string> res;
         consume("begin");
         while(!consume("end")) {
-            unordered_map<string, string> res = always_statement();
+            unordered_map<string, string> part = always_statement();
+            cout << *current << endl;
+            for (auto i = part.begin(); i != part.end(); i++) {
+                res[i->first] += i->second;
+            }
         }
         return res;
-        
     }
 
     void statements() {
@@ -724,6 +749,9 @@ class Interpreter {
 
     void run() {
         statements();
+        for (auto i = reg_table.begin(); i != reg_table.end(); i++) {
+            cout << "reg " << i->first << " = " << i->second << endl;
+        }
         // end_or_fail();
     }
 };
