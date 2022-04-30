@@ -663,8 +663,9 @@ class Interpreter {
             return true;
         } else if (consume("//")) {
             skip_line();
+            return true;
         } else {
-            fail();
+            return false;
         }
 
         return false;
