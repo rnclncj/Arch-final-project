@@ -15,6 +15,7 @@
 #include <optional>
 #include <string>
 #include <unordered_map>
+#include <vector>
 using namespace std;
 
 class Interpreter {
@@ -288,37 +289,40 @@ class Interpreter {
     // {} {{}} concatenation, possibly replication
     // FIXME: need to store list of each level
     string e4() {
-        // if (consume("{")) {
-        //     list<string> operators;
-        //     string res = ".temp" + to_string(tempCounter);
-        //     tempCounter += 1;
-        //     do {
-        //         // either literal values or replication
-        //         if (auto id = consume_literal()) {
-        //             auto v = id.value();
-        //             if (peek("{")) {
-        //                 // run it again to get the inside
-        //                 cout << "wire .temp" << to_string(tempCounter)
-        //                      << " {{}} " << v << " ";
-        //                 v = ".temp" + to_string(tempCounter);
-        //                 tempCounter += 1;
-        //                 auto inside = e4();
-        //                 cout << inside << " ";
-        //                 operators.push_back(v);
-        //             } else {
-        //                 operators.push_back(v);
-        //             }
-        //         } else if (auto id = consume_identifier()) {
-        //             operators.push_back(id.value());
-        //         }
-        //     } while (consume(","));
-        //     consume("}");
-        //     // TODO: print wire .temp# operators list
-        //     return res;
-        // } else {
-        //     return e3();
-        // }
-        return e3();
+        if (consume("{")) {
+            vector<string> operators;
+            string res = ".temp" + to_string(tempCounter);
+            tempCounter += 1;
+            do {
+                // either literal values or replication
+                if (auto id = consume_literal()) {
+                    auto v = id.value();
+                    if (peek("{")) {
+                        // run it again to get the inside
+                        auto inside = e4();
+                        cout << "wire .temp" << to_string(tempCounter)
+                             << " {{}} " << v << " " << inside << endl;
+                        v = ".temp" + to_string(tempCounter);
+                        tempCounter += 1;
+                        operators.push_back(v);
+                    } else {
+                        operators.push_back(v);
+                    }
+                } else if (auto id = consume_identifier()) {
+                    operators.push_back(id.value());
+                }
+            } while (consume(","));
+            consume("}");
+            cout << "wire " << res << " {}";
+            // TODO: print operators list
+            for (auto a : operators) {
+                cout << " " << a;
+            }
+            cout << endl;
+            return res;
+        } else {
+            return e3();
+        }
     }
 
     // * / %
