@@ -625,11 +625,11 @@ class Interpreter {
             return true;
 
         } else if (consume("assign")) {
+            num_bits = get_size();
             wire_name = consume_identifier().value();
 
             consume("=");
-            num_bits = wire_table[wire_name].first;
-            printf("wire [%ld]%s ", num_bits, wire_name.c_str());
+            cout << "wire " << wire_name << " ";
             // parse expression
             string wire_inputs = expression();
             wire_table[wire_name] = make_pair(num_bits, wire_inputs);

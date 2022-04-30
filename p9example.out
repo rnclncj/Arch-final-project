@@ -1,0 +1,21 @@
+wire a 1
+wire b a
+wire c a
+wire .temp0 ~ a
+wire d .temp0
+wire .temp1 + a b
+wire .temp2 + .temp1 c
+wire .temp3 + .temp2 d
+wire e .temp3
+wire .temp4 {} 4 a
+wire f .temp4
+wire .temp6 {} f a b
+wire .temp7 {{}} 4 .temp6
+wire .temp5 {} .temp7 c d e
+wire g .temp5
+wire [1]b wire .temp8 == a 4
+wire .temp9 + c a
+wire .temp10 ~ a
+wire .temp11 * d .temp10
+wire .temp12 ?: .temp8 .temp9 .temp11
+.temp12
