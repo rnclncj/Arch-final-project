@@ -145,8 +145,7 @@ class Interpreter {
     }
 
     void skip_line() {
-        skip();
-        while (!consume("\n")) {
+        while (*current != '\n') {
             current += 1;
         }
     }
@@ -287,7 +286,6 @@ class Interpreter {
     }
 
     // {} {{}} concatenation, possibly replication
-    // FIXME: need to store list of each level
     string e4() {
         if (consume("{")) {
             vector<string> operators;
@@ -314,7 +312,6 @@ class Interpreter {
             } while (consume(","));
             consume("}");
             cout << "wire " << res << " {}";
-            // TODO: print operators list
             for (auto a : operators) {
                 cout << " " << a;
             }
