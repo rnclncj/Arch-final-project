@@ -614,14 +614,12 @@ class Interpreter {
             if (consume("=")) {
                 string wire_inputs = expression();
                 // printf("wire [%ld]%s ", num_bits, wire_name.c_str());
-                cout << "wire " << wire_name << " ";
+                cout << "wire " << wire_name << " = " << wire_inputs << endl;
                 // parse expression
                 wire_table[wire_name] = make_pair(num_bits, wire_inputs);
-                cout << wire_inputs;
             } else {
                 wire_table[wire_name] = make_pair(num_bits, "");
             }
-            printf("\n");
             return true;
 
         } else if (consume("assign")) {
@@ -632,8 +630,7 @@ class Interpreter {
             // parse expression
             string wire_inputs = expression();
             wire_table[wire_name] = make_pair(num_bits, wire_inputs);
-            cout << "wire " << wire_name << " ";
-            cout << wire_inputs << endl;
+            cout << "wire " << wire_name << " = " << wire_inputs << endl;
             return true;
         } else if (consume("reg")) {
             num_bits = get_size();
