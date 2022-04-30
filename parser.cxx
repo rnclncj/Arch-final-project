@@ -187,7 +187,10 @@ class Interpreter {
             return e0_ret.value();
         } else if (auto v = consume_literal()) {
             // TODO: make value into temp
-            return v.value();
+            string res = ".temp" + to_string(tempCounter);
+            cout << "wire " << res << " = " << v.value() << endl;
+            tempCounter += 1;
+            return res;
         } else if (consume("(")) {
             auto v = expression();
             consume(")");
@@ -643,7 +646,7 @@ class Interpreter {
             // TODO: add to map, skip rest of the line, only initialization for
             // reg, maybe save for display
         } else if (consume("always @(posedge clk)")) {
-            if (consume("$")) {
+            if (consume("$") || consume("#")) {
                 skip_line();
                 return true;
             } else if (consume("if")) {
@@ -663,7 +666,7 @@ class Interpreter {
         } else if (consume("initial")) {
             skip_block();
             return true;
-        } else if (consume("//")) {
+        } else if (consume("//") || consume("$") || consume("`")) {
             skip_line();
             return true;
         } else {
