@@ -11,6 +11,7 @@ import java.util.*;
 class Element {
     private String name;
     private String type;
+    private int width;
     private String operation;
     private ArrayList<String> operands;
     private int colNum;
@@ -31,6 +32,11 @@ class Element {
         StringTokenizer tokenizer = new StringTokenizer(line);
         type = tokenizer.nextToken();
         name = tokenizer.nextToken();
+        width = 1;
+        if(name.contains("]")){
+            width = Integer.parseInt(name.substring(name.indexOf("[")+1, name.indexOf("]")));
+            name = name.substring(name.indexOf("]")+1);
+        }
         operation = tokenizer.nextToken();
         operands = new ArrayList<>();
         colNum = -1;
@@ -176,7 +182,9 @@ class Element {
             for (int i = 0; i < operands.size(); i++) {
                 int operandX = getXCoord();
                 int operandY = getYCoord() + (int) (getRealBaseHeight() * (i + 0.5));
-
+                
+                if(elementMap.get(operands.get(i)) == null)
+                    System.out.println(operands.get(i));
                 Element fromElem;
                 if (elementMap.get(operands.get(i)).getColNum() >= getColNum()) {
                     fromElem = elementMap.get(operands.get(i));
@@ -243,7 +251,7 @@ public class Visualizer extends JFrame {
     }
 
     public static void main(String[] args) throws IOException {
-        BufferedReader reader = new BufferedReader(new FileReader(args[0]));
+        BufferedReader reader = new BufferedReader(new FileReader("p9example.out"));
         ArrayList<Element> elementList = new ArrayList<>();
         HashMap<String, Element> elementMap = new HashMap<>();
 
