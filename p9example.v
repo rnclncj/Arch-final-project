@@ -1,12 +1,13 @@
-// setup
-wire a = 2'b10; 
-wire b;
-wire c;
-// testing operators
-wire d = a[1:0];
-wire e = (a+b)/(c/d);
-wire f = !!a;
-wire g = ~c;
-
-// wire g = {4{f,a,b},c,d,e};
-// assign b = (a == 4) ? c+a : d*~a 
+reg a = 4 + 6;
+reg D_valid;
+reg F2_valid;
+reg WB1_is_flush;
+reg WB2_is_flush;
+always @(posedge clk) begin
+    if (a == 10) begin
+        D_valid <= 4;
+    else begin
+        D_valid <= 6;
+    end
+    D_pc <= F2_pc;
+end

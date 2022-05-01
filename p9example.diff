@@ -1,0 +1,14 @@
+1,13d0
+< wire .temp0 <- 10
+< wire .temp1 == a .temp0
+< wire .temp2 <- 4
+< wire .temp3 <- 6
+< wire .temp4 ?: .temp1 begin 
+< wire .temp5 ?: .temp1 .temp2.temp3 D_valid
+< reg D_pc = F2_pc
+< reg D_valid = .temp5
+< reg WB1_is_flush = WB1_is_flush
+< reg a = a
+< reg F2_valid = F2_valid
+< reg WB2_is_flush = WB2_is_flush
+< reg else = .temp4

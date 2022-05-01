@@ -1,7 +1,18 @@
 {
     "files.associations": {
         "stdlib.h": "c",
-        "string": "cpp"
+        "string": "cpp",
+        "ostream": "cpp",
+        "array": "cpp",
+        "deque": "cpp",
+        "list": "cpp",
+        "unordered_map": "cpp",
+        "vector": "cpp",
+        "initializer_list": "cpp",
+        "string_view": "cpp",
+        "iostream": "cpp",
+        "system_error": "cpp",
+        "optional": "cpp"
     },
     "C_Cpp.errorSquiggles": "Disabled"
 }
