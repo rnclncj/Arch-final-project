@@ -65,7 +65,7 @@ class Element {
     }
 
     public int getXCoord() {
-        return Visualizer.HORIZ_DIST + getColNum() * (Visualizer.WIDTH + Visualizer.HORIZ_DIST);
+        return Visualizer.HORIZ_DIST + getColNum() * (Visualizer.FULL_WIDTH + Visualizer.HORIZ_DIST);
     }
 
     // returns the height of the element
@@ -81,7 +81,7 @@ class Element {
     }
 
     public int getOutX() {
-        return getXCoord() + Visualizer.WIDTH;
+        return getXCoord() + Visualizer.FULL_WIDTH;
     }
 
     public int getOutY() {
@@ -149,32 +149,48 @@ class Element {
         lastCol = lc;
     }
 
+    public int getWidth(){
+        return width;
+    }
+
+    public void setWidth(int width){
+        this.width = width;
+    }
+
     public void draw(Graphics g, HashMap<String, Element> elementMap, ArrayList<HashMap<String, Element>> columnMaps) {
         Graphics2D g2d = (Graphics2D) g;
 
         if ((getOperation().equals("=") && !getType().equals("reg")) || getOperation().equals("->")) {
-            g2d.drawLine(getXCoord(), getYCoord() + getHeight() / 2, getXCoord() + Visualizer.WIDTH,
+            g2d.drawLine(getXCoord(), getYCoord() + getHeight() / 2, getXCoord() + Visualizer.BOX_WIDTH,
                     getYCoord() + getHeight() / 2);
         } else if (!getOperation().equals("<-")) {
-            g2d.drawRect(getXCoord(), getYCoord(), Visualizer.WIDTH, getHeight());
+            g2d.drawRect(getXCoord(), getYCoord(), Visualizer.BOX_WIDTH, getHeight()); //draws box
             if (type.equals("reg")) {
                 int base = getYBase();
-                int peakY = base - Visualizer.WIDTH / 6;
-                int peakX = getXCoord() + Visualizer.WIDTH / 2;
-                g2d.drawLine(peakX, peakY, getXCoord() + Visualizer.WIDTH / 3, base);
-                g2d.drawLine(peakX, peakY, getXCoord() + 2 * Visualizer.WIDTH / 3, base);
+                int peakY = base - Visualizer.BOX_WIDTH / 6;
+                int peakX = getXCoord() + Visualizer.BOX_WIDTH / 2;
+                g2d.drawLine(peakX, peakY, getXCoord() + Visualizer.BOX_WIDTH / 3, base);
+                g2d.drawLine(peakX, peakY, getXCoord() + 2 * Visualizer.BOX_WIDTH / 3, base);
             }
         }
 
         if (getOperation().equals("<-")) {
-            g2d.drawString(getOperands().get(0), getXCoord() + Visualizer.WIDTH / 2 - 5,
+            g2d.drawString(getOperands().get(0), getXCoord() + Visualizer.FULL_WIDTH / 2 - 5,
                     getYCoord() + getHeight() / 2 - 5);
         } else if (!getOperation().equals("->")) {
-            g2d.drawString(getOperation(), getXCoord() + Visualizer.WIDTH / 2 - 5, getYCoord() + getHeight() / 2 - 5);
+            g2d.drawString(getOperation(), getXCoord() + Visualizer.BOX_WIDTH / 2 - 3*getOperation().length(), getYCoord() + getHeight() / 2 + 4);
         }
-        
+        //draw stud line
+        g2d.drawLine(getXCoord()+Visualizer.BOX_WIDTH, getYCoord() + getHeight() / 2, getXCoord() + Visualizer.FULL_WIDTH,
+                    getYCoord() + getHeight() / 2);
+        //draws name
         if (!(getName().charAt(0) == '.' || getOperation().equals("->"))) {
-            g2d.drawString(getName(), getXCoord() + Visualizer.WIDTH / 2 - 5, getYCoord() + getHeight() / 2 + 10);
+            String name = Visualizer.condenseName(getName(), 10);
+            g2d.drawString(name, getXCoord() + Visualizer.BOX_WIDTH + Visualizer.STUD_WIDTH / 2 - 3*name.length(), getYCoord() + getHeight() / 2 + 10); //draw name
+            g2d.drawLine(getXCoord()+Visualizer.BOX_WIDTH + Visualizer.STUD_WIDTH / 2 + 1, getYCoord() + getHeight() / 2 - 3, 
+                    getXCoord()+Visualizer.BOX_WIDTH + Visualizer.STUD_WIDTH / 2 - 1, getYCoord() + getHeight() / 2 + 2);
+            g2d.drawString(""+getWidth(), getXCoord() + Visualizer.BOX_WIDTH + Visualizer.STUD_WIDTH / 2 - 3*(int)(Math.log10(getWidth())), getYCoord() + getHeight() / 2 - 5); //draw name
+
         }
 
         // input wires
@@ -231,7 +247,9 @@ public class Visualizer extends JFrame {
     private static final int ADDITIONAL_HEIGHT = 32;
 
     public static final int BASE_HEIGHT = 20;
-    public static final int WIDTH = 40;
+    public static final int FULL_WIDTH = 40;
+    public static final int BOX_WIDTH = 20;
+    public static final int STUD_WIDTH = FULL_WIDTH - BOX_WIDTH;
     public static final int VERT_DIST = 10;
     public static final int HORIZ_DIST = 50;
 
@@ -252,7 +270,7 @@ public class Visualizer extends JFrame {
     }
 
     public static void main(String[] args) throws IOException {
-        BufferedReader reader = new BufferedReader(new FileReader("p9example.out"));
+        BufferedReader reader = new BufferedReader(new FileReader(args[0]));
         ArrayList<Element> elementList = new ArrayList<>();
         HashMap<String, Element> elementMap = new HashMap<>();
 
@@ -268,7 +286,7 @@ public class Visualizer extends JFrame {
         addPaths(columns, elementMap);
         ArrayList<HashMap<String, Element>> columnMaps = getColumnMaps(columns);
         int yDim = setCoords(columns);
-        int xDim = columns.size() * (Visualizer.HORIZ_DIST + Visualizer.WIDTH) + Visualizer.HORIZ_DIST;
+        int xDim = columns.size() * (Visualizer.HORIZ_DIST + Visualizer.FULL_WIDTH) + Visualizer.HORIZ_DIST;
 
         EventQueue.invokeLater(new Runnable() {
             @Override
@@ -372,6 +390,12 @@ public class Visualizer extends JFrame {
             maxHeight = Math.max(maxHeight, currHeight);
         }
         return maxHeight + Visualizer.VERT_DIST;
+    }
+
+    public static String condenseName(String name, int length){
+        if(name.length() <= length)
+            return name;
+        return name.substring(0, length / 2 - 1) + ".." + name.substring(name.length() - length / 2 - 1);
     }
 
 }
