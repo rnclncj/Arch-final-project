@@ -7,6 +7,7 @@ import java.util.*;
 
 // TODO: fix strings
 // TODO: fix wires
+// TODO: add specialized gates
 
 class Element {
     private String name;
