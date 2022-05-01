@@ -710,6 +710,7 @@ class Interpreter {
                 string temp = ".temp" + to_string(tempCounter);
                 tempCounter += 1;
                 cout << "wire " << temp << " ?: " << condition << " " << res[i->first] << " " << reg_table[i->first] << endl;
+                res[i->first] = temp;
             }
             // TODO: do it! Good advice
             while (consume("else")) {
@@ -721,13 +722,16 @@ class Interpreter {
                         string temp = ".temp" + to_string(tempCounter); 
                         tempCounter += 1;
                         cout << "wire " << temp << " ?: " << condition << " " << inside[i->first] << " " << reg_table[i->first] << endl;
+                        res[i->first] = temp;
                     }
                 } else {
                     //else
                     unordered_map<string, string> inside = always_statements();
                     for (auto i = inside.begin(); i != inside.end(); i++) {
-                        res[i->first] = i->second;
-                        cout << "wire " << endl;
+                        string temp = ".temp" + to_string(tempCounter); 
+                        tempCounter += 1;
+                        cout << "wire "  << temp << " = " << i->second << endl;
+                        res[i->first] = temp;
                     }
                 }
             }
