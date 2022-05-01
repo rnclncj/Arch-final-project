@@ -9,197 +9,6 @@ import java.util.*;
 // TODO: fix wires
 // TODO: add specialized gates
 
-class Element {
-    private String name;
-    private String type;
-    private int width;
-    private String operation;
-    private ArrayList<String> operands;
-    private int colNum;
-    private int yCoord;
-    private int lastCol;
-
-    public Element(Element elem, int cn){
-        this.name = elem.name;
-        this.type = elem.type;
-        operation = "->";
-        operands = new ArrayList<>();
-        operands.add(name);
-        this.colNum = cn;
-        lastCol = 0;
-    }
-
-    public Element(String line) {
-        StringTokenizer tokenizer = new StringTokenizer(line);
-        type = tokenizer.nextToken();
-        name = tokenizer.nextToken();
-        width = 1;
-        if(name.contains("]")){
-            width = Integer.parseInt(name.substring(name.indexOf("[")+1, name.indexOf("]")));
-            name = name.substring(name.indexOf("]")+1);
-        }
-        operation = tokenizer.nextToken();
-        operands = new ArrayList<>();
-        colNum = -1;
-        yCoord = 0;
-        while (tokenizer.hasMoreTokens()) {
-            operands.add(tokenizer.nextToken());
-        }
-        lastCol = 0;
-    }
-
-    public String toString() {
-        String str = name + " " + type + " " + operation + " " + operands;
-        return str;
-    }
-
-    public int getMaxColOfInputs(HashMap<String, Element> elementMap) {
-        int max = -1;
-        for (String input : operands) {
-            if (!elementMap.containsKey(input))
-                continue;
-            int currCol = elementMap.get(input).getColNum();
-            max = Math.max(currCol, max);
-        }
-        return max;
-    }
-
-    public int getXCoord() {
-        return Visualizer.HORIZ_DIST + getColNum() * (Visualizer.WIDTH + Visualizer.HORIZ_DIST);
-    }
-
-    // returns the height of the element
-    public int getHeight() {
-        if(operation.equals("->"))
-            return Visualizer.BASE_HEIGHT / 4;
-        return Visualizer.BASE_HEIGHT * getOperands().size();
-    }
-
-    // returns the height of the element
-    public int getRealBaseHeight() {
-        return getHeight() / operands.size();
-    }
-
-    public int getOutX() {
-        return getXCoord() + Visualizer.WIDTH;
-    }
-
-    public int getOutY() {
-        return yCoord + getHeight() / 2;
-    }
-
-    public void setYCoord(int yCoord) {
-        this.yCoord = yCoord;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public String getOperation() {
-        return operation;
-    }
-
-    public void setOperation(String operation) {
-        this.operation = operation;
-    }
-
-    public ArrayList<String> getOperands() {
-        return operands;
-    }
-
-    public void setOutputPoint(int colNum, int yCoord) {
-        this.colNum = colNum;
-        this.yCoord = yCoord;
-    }
-
-    public int getColNum() {
-        return colNum;
-    }
-
-    public void setColNum(int colNum) {
-        this.colNum = colNum;
-    }
-
-    public int getYCoord() {
-        return yCoord;
-    }
-
-    public int getYBase() {
-        return yCoord + getHeight();
-    }
-
-    public int getLastCol() {
-        return lastCol;
-    }
-
-    public void setLastCol(int lc) {
-        lastCol = lc;
-    }
-
-    public void draw(Graphics g, HashMap<String, Element> elementMap, ArrayList<HashMap<String, Element>> columnMaps) {
-        Graphics2D g2d = (Graphics2D) g;
-
-        if ((getOperation().equals("=") && !getType().equals("reg")) || getOperation().equals("->")) {
-            g2d.drawLine(getXCoord(), getYCoord() + getHeight() / 2, getXCoord() + Visualizer.WIDTH,
-                    getYCoord() + getHeight() / 2);
-        } else if (!getOperation().equals("<-")) {
-            g2d.drawRect(getXCoord(), getYCoord(), Visualizer.WIDTH, getHeight());
-            if (type.equals("reg")) {
-                int base = getYBase();
-                int peakY = base - Visualizer.WIDTH / 6;
-                int peakX = getXCoord() + Visualizer.WIDTH / 2;
-                g2d.drawLine(peakX, peakY, getXCoord() + Visualizer.WIDTH / 3, base);
-                g2d.drawLine(peakX, peakY, getXCoord() + 2 * Visualizer.WIDTH / 3, base);
-            }
-        }
-
-        if (getOperation().equals("<-")) {
-            g2d.drawString(getOperands().get(0), getXCoord() + Visualizer.WIDTH / 2 - 5,
-                    getYCoord() + getHeight() / 2 - 5);
-        } else if (!getOperation().equals("->")) {
-            g2d.drawString(getOperation(), getXCoord() + Visualizer.WIDTH / 2 - 5, getYCoord() + getHeight() / 2 - 5);
-        }
-        
-        if (!(getName().charAt(0) == '.' || getOperation().equals("->"))) {
-            g2d.drawString(getName(), getXCoord() + Visualizer.WIDTH / 2 - 5, getYCoord() + getHeight() / 2 + 10);
-        }
-
-        // input wires
-        if (!getOperation().equals("<-")) {
-            ArrayList<String> operands = getOperands();
-            for (int i = 0; i < operands.size(); i++) {
-                int operandX = getXCoord();
-                int operandY = getYCoord() + (int) (getRealBaseHeight() * (i + 0.5));
-                
-                if(elementMap.get(operands.get(i)) == null)
-                    System.out.println(operands.get(i));
-                Element fromElem;
-                if (elementMap.get(operands.get(i)).getColNum() >= getColNum()) {
-                    fromElem = elementMap.get(operands.get(i));
-                } else {
-                    fromElem = columnMaps.get(getColNum() - 1).get(operands.get(i));
-                }
-                int inputX = fromElem.getOutX();
-                int inputY = fromElem.getOutY();
-                g2d.drawLine(inputX, inputY, operandX, operandY);
-            }
-        }
-    }
-}
-
 class Panel extends JPanel {
     private ArrayList<ArrayList<Element>> columns;
     private HashMap<String, Element> elementMap;
@@ -227,13 +36,17 @@ class Panel extends JPanel {
 }
 
 public class Visualizer extends JFrame {
+    private static final int MAX_WIDTH = 1500;
+    private static final int MAX_HEIGHT = 800;
     private static final int ADDITIONAL_WIDTH = 4;
     private static final int ADDITIONAL_HEIGHT = 32;
 
     public static final int BASE_HEIGHT = 20;
-    public static final int WIDTH = 40;
-    public static final int VERT_DIST = 10;
-    public static final int HORIZ_DIST = 50;
+    public static final int FULL_WIDTH = 80;
+    public static final int BOX_WIDTH = 40;
+    public static final int STUD_WIDTH = FULL_WIDTH - BOX_WIDTH;
+    public static final int VERT_DIST = 4;
+    public static final int HORIZ_DIST = 60;
 
     public Visualizer(ArrayList<ArrayList<Element>> c, HashMap<String, Element> em, ArrayList<HashMap<String, Element>> cm, int xDim, int yDim) {
         initUI(c, em, cm, xDim, yDim);
@@ -246,13 +59,13 @@ public class Visualizer extends JFrame {
         add(scrollPane);
 
         setTitle("Verilog Visualizer");
-        setSize(xDim + ADDITIONAL_WIDTH, yDim + ADDITIONAL_HEIGHT);
+        setSize(Math.min(xDim + ADDITIONAL_WIDTH, MAX_WIDTH), Math.min(yDim + ADDITIONAL_HEIGHT,MAX_HEIGHT));
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
 
     public static void main(String[] args) throws IOException {
-        BufferedReader reader = new BufferedReader(new FileReader("p9example.out"));
+        BufferedReader reader = new BufferedReader(new FileReader("p9example.vf"));
         ArrayList<Element> elementList = new ArrayList<>();
         HashMap<String, Element> elementMap = new HashMap<>();
 
@@ -265,10 +78,11 @@ public class Visualizer extends JFrame {
         reader.close();
 
         ArrayList<ArrayList<Element>> columns = placeElements(elementList, elementMap);
-        addPaths(columns, elementMap);
+        addPaths(columns);
         ArrayList<HashMap<String, Element>> columnMaps = getColumnMaps(columns);
+        reorder(columns, elementMap, columnMaps);
         int yDim = setCoords(columns);
-        int xDim = columns.size() * (Visualizer.HORIZ_DIST + Visualizer.WIDTH) + Visualizer.HORIZ_DIST;
+        int xDim = columns.size() * (Visualizer.HORIZ_DIST + Visualizer.FULL_WIDTH) + Visualizer.HORIZ_DIST;
 
         EventQueue.invokeLater(new Runnable() {
             @Override
@@ -325,12 +139,18 @@ public class Visualizer extends JFrame {
         return false;
     }
 
-    public static void addPaths(ArrayList<ArrayList<Element>> columns, HashMap<String, Element> elementMap) {
+    public static void addPaths(ArrayList<ArrayList<Element>> columns) {
+        HashMap<String, Integer> lastColMap = new HashMap<>();
+        HashMap<String, Integer> firstColMap = new HashMap<>();
         for (int i = 0; i < columns.size(); i++) {
             for (Element elem : columns.get(i)) {
-                for (String operand : elem.getOperands()) {
-                    if (elementMap.containsKey(operand))
-                        elementMap.get(operand).setLastCol(i);
+                if (!lastColMap.containsKey(elem.getName())) {
+                    lastColMap.put(elem.getName(), 0);
+                }
+                if (!elem.getOperation().equals("<-")) {
+                    for (String operand : elem.getOperands()) {
+                        lastColMap.put(operand, i);
+                    }
                 }
             }
         }
@@ -342,7 +162,7 @@ public class Visualizer extends JFrame {
             }
         }
         for (Element elem : tempList) {
-            for (int i = elem.getColNum() + 1; i < elem.getLastCol(); i++) {
+            for (int i = elem.getColNum() + 1; i < lastColMap.get(elem.getName()); i++) {
                 columns.get(i).add(new Element(elem, i));
             }
         }
@@ -360,6 +180,59 @@ public class Visualizer extends JFrame {
         return columnMaps;
     }
 
+    public static void reorder(ArrayList<ArrayList<Element>> columns, HashMap<String, Element> elementMap, ArrayList<HashMap<String, Element>> columnMaps) {
+        HashMap<String, Double> scoreMap = new HashMap<>();
+        HashMap<String, Integer> indexMap = getIndexMap(columns.get(0));
+        for (int i = 1; i < columns.size(); i++) {
+            ArrayList<Element> column = columns.get(i);
+            for (int j = 0; j < column.size(); j++) {
+                Element elem = column.get(j);
+                int scoreSum = i;
+                int scoreNum = 1;
+                if (!elem.getOperation().equals("<-")) {
+                    for (String operand : elem.getOperands()) {
+                        if (elementMap.get(operand).getColNum() >= elem.getColNum()) {
+                            continue;
+                        }
+                        Element fromElem = columnMaps.get(elem.getColNum() - 1).get(operand);
+                        scoreSum += indexMap.get(fromElem.getName());
+                        scoreNum++;
+                    }
+                }
+                scoreMap.put(elem.getName(), ((double) scoreSum) / scoreNum);
+            }
+            column.sort(new ScoreComp(scoreMap));
+            indexMap = getIndexMap(column);
+        }
+    }
+
+    private static HashMap<String, Integer> getIndexMap(ArrayList<Element> column) {
+        HashMap<String, Integer> indexMap = new HashMap<>();
+        for (int i = 0; i < column.size(); i++) {
+            indexMap.put(column.get(i).getName(), i);
+        }
+        return indexMap;
+    }
+
+    private static class ScoreComp implements Comparator<Element> {
+        private HashMap<String, Double> scoreMap;
+
+        public ScoreComp(HashMap<String, Double> sm) {
+            scoreMap = sm;
+        }
+
+        public int compare(Element a, Element b) {
+            double diff = scoreMap.get(a.getName()) - scoreMap.get(b.getName());
+            if (diff > 0) {
+                return 1;
+            }
+            if (diff < 0) {
+                return -1;
+            }
+            return 0;
+        }
+    }
+
     //sets yCoords to correct values within each column, returns the max Height of any column
     public static int setCoords(ArrayList<ArrayList<Element>> columns){
         int maxHeight = 0;
@@ -372,6 +245,12 @@ public class Visualizer extends JFrame {
             maxHeight = Math.max(maxHeight, currHeight);
         }
         return maxHeight + Visualizer.VERT_DIST;
+    }
+
+    public static String condenseName(String name, int length){
+        if(name.length() <= length)
+            return name;
+        return name.substring(0, length / 2 - 2) + ".." + name.substring(name.length() - length / 2);
     }
 
 }
