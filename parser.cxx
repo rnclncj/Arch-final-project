@@ -104,6 +104,20 @@ class Interpreter {
         }
     }
 
+    optional<string> consume_identifier_with_brackets() {
+        skip();
+
+        if (isalpha(*current) || *current == '_') {
+            char const* start = current;
+            do {
+                current += 1;
+            } while (isalnum(*current) || *current == '_' || *current == '[' || *current == ']' || *current == ':');
+            return ((string)start).substr(0, size_t(current - start));
+        } else {
+            return {};
+        }
+    }
+
     optional<string> consume_literal() {
         skip();
 
@@ -330,9 +344,12 @@ class Interpreter {
                     } else {
                         operators.push_back(v);
                     }
-                } else if (auto id = consume_identifier()) {
-                    operators.push_back(id.value());
+                } else {
+                    operators.push_back(e4());
                 }
+                // else if (auto id = consume_identifier_with_brackets()) {
+                //     operators.push_back(id.value());
+                // }
             } while (consume(","));
             consume("}");
             cout << "wire " << res << " {}";
@@ -659,6 +676,7 @@ class Interpreter {
         } else if (consume("reg")) {
             num_bits = get_size();
             reg_name = consume_identifier().value();
+            reg_table[reg_name] = reg_name;
             skip_line();
             return true;
         } else if (consume("always @(") && consume("posedge clk") && consume(")")) {
@@ -693,18 +711,24 @@ class Interpreter {
                 tempCounter += 1;
                 cout << "wire " << temp << " ?: " << condition << " " << res[i->first] << " " << reg_table[i->first] << endl;
             }
-            // TODO: do it!
+            // TODO: do it! Good advice
             while (consume("else")) {
                 if (consume("if")) {
                     // else if block
                     string condition = expression();
                     unordered_map<string, string> inside = always_statements();
                     for (auto i = inside.begin(); i != inside.end(); i++) {
-                        
+                        string temp = ".temp" + to_string(tempCounter); 
+                        tempCounter += 1;
+                        cout << "wire " << temp << " ?: " << condition << " " << inside[i->first] << " " << reg_table[i->first] << endl;
                     }
                 } else {
                     //else
-
+                    unordered_map<string, string> inside = always_statements();
+                    for (auto i = inside.begin(); i != inside.end(); i++) {
+                        res[i->first] = i->second;
+                        cout << "wire " << endl;
+                    }
                 }
             }
             return res;

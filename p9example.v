@@ -1,6 +1,3 @@
-wire [31:0] D_ins = 143352;
-wire D_valid = 1'b1;
-
 wire [3:0] D_ins_num =  D_is_adrp ? 1 :
                             D_is_add ? 2 :
                             D_is_movz ? 3 :

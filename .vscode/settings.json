@@ -10,7 +10,9 @@
         "vector": "cpp",
         "initializer_list": "cpp",
         "string_view": "cpp",
-        "iostream": "cpp"
+        "iostream": "cpp",
+        "system_error": "cpp",
+        "optional": "cpp"
     },
     "C_Cpp.errorSquiggles": "Disabled"
 }
