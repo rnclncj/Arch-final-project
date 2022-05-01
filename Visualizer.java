@@ -9,8 +9,6 @@ import java.util.*;
 // TODO: fix wires
 // TODO: add specialized gates
 
-
-
 class Panel extends JPanel {
     private ArrayList<ArrayList<Element>> columns;
     private HashMap<String, Element> elementMap;
@@ -38,6 +36,8 @@ class Panel extends JPanel {
 }
 
 public class Visualizer extends JFrame {
+    private static final int MAX_WIDTH = 1500;
+    private static final int MAX_HEIGHT = 800;
     private static final int ADDITIONAL_WIDTH = 4;
     private static final int ADDITIONAL_HEIGHT = 32;
 
@@ -59,7 +59,7 @@ public class Visualizer extends JFrame {
         add(scrollPane);
 
         setTitle("Verilog Visualizer");
-        setSize(xDim + ADDITIONAL_WIDTH, yDim + ADDITIONAL_HEIGHT);
+        setSize(Math.min(xDim + ADDITIONAL_WIDTH, MAX_WIDTH), Math.min(yDim + ADDITIONAL_HEIGHT,MAX_HEIGHT));
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
@@ -78,7 +78,7 @@ public class Visualizer extends JFrame {
         reader.close();
 
         ArrayList<ArrayList<Element>> columns = placeElements(elementList, elementMap);
-        addPaths(columns, elementMap);
+        addPaths(columns);
         ArrayList<HashMap<String, Element>> columnMaps = getColumnMaps(columns);
         reorder(columns, elementMap, columnMaps);
         int yDim = setCoords(columns);
@@ -139,12 +139,18 @@ public class Visualizer extends JFrame {
         return false;
     }
 
-    public static void addPaths(ArrayList<ArrayList<Element>> columns, HashMap<String, Element> elementMap) {
+    public static void addPaths(ArrayList<ArrayList<Element>> columns) {
+        HashMap<String, Integer> lastColMap = new HashMap<>();
+        HashMap<String, Integer> firstColMap = new HashMap<>();
         for (int i = 0; i < columns.size(); i++) {
             for (Element elem : columns.get(i)) {
-                for (String operand : elem.getOperands()) {
-                    if (elementMap.containsKey(operand))
-                        elementMap.get(operand).setLastCol(i);
+                if (!lastColMap.containsKey(elem.getName())) {
+                    lastColMap.put(elem.getName(), 0);
+                }
+                if (!elem.getOperation().equals("<-")) {
+                    for (String operand : elem.getOperands()) {
+                        lastColMap.put(operand, i);
+                    }
                 }
             }
         }
@@ -156,7 +162,7 @@ public class Visualizer extends JFrame {
             }
         }
         for (Element elem : tempList) {
-            for (int i = elem.getColNum() + 1; i < elem.getLastCol(); i++) {
+            for (int i = elem.getColNum() + 1; i < lastColMap.get(elem.getName()); i++) {
                 columns.get(i).add(new Element(elem, i));
             }
         }

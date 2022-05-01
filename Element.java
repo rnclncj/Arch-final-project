@@ -11,7 +11,6 @@ public class Element {
     private ArrayList<String> operands;
     private int colNum;
     private int yCoord;
-    private int lastCol;
 
     public Element(String line) {
         StringTokenizer tokenizer = new StringTokenizer(line);
@@ -29,17 +28,16 @@ public class Element {
         while (tokenizer.hasMoreTokens()) {
             operands.add(tokenizer.nextToken());
         }
-        lastCol = 0;
     }
 
     public Element(Element elem, int cn){
         this.name = elem.name;
         this.type = elem.type;
+        width = elem.width;
         operation = "->";
         operands = new ArrayList<>();
         operands.add(name);
-        this.colNum = cn;
-        lastCol = 0;
+        colNum = cn;
     }
 
     public String toString() {
@@ -131,16 +129,12 @@ public class Element {
         return yCoord;
     }
 
+    public int getOperandYCoord(int ind) {
+        return yCoord + (int) (getRealBaseHeight() * (ind + 0.5));
+    }
+
     public int getYBase() {
         return yCoord + getHeight();
-    }
-
-    public int getLastCol() {
-        return lastCol;
-    }
-
-    public void setLastCol(int lc) {
-        lastCol = lc;
     }
 
     public int getWidth(){
@@ -151,13 +145,27 @@ public class Element {
         this.width = width;
     }
 
-    public void draw(Graphics g, HashMap<String, Element> elementMap, ArrayList<HashMap<String, Element>> columnMaps) {
-        Graphics2D g2d = (Graphics2D) g;
+    private void drawStringCentered(Graphics2D g2d, String str, int x, int y){
+        int width =  g2d.getFontMetrics().stringWidth(str);
+        g2d.drawString(str, x - width / 2, y);
+    }
 
+    public void drawGate(Graphics2D g2d){
         if ((getOperation().equals("=") && !getType().equals("reg")) || getOperation().equals("->")) {
             g2d.drawLine(getXCoord(), getYCoord() + getHeight() / 2, getXCoord() + Visualizer.BOX_WIDTH,
                     getYCoord() + getHeight() / 2);
-        } else if (!getOperation().equals("<-")) {
+        } else if(getOperation().equals("?:")){
+            int[] xPoints = {getXCoord(),getXCoord()+Visualizer.BOX_WIDTH*3/4,getXCoord()+Visualizer.BOX_WIDTH*3/4, getXCoord()};
+            int height = getHeight() - Visualizer.BASE_HEIGHT;
+            int yCorner = getYCoord() + Visualizer.BASE_HEIGHT;
+            int[] yPoints = {yCorner, yCorner + height / 3,yCorner + 2 * height / 3 , yCorner + height};
+            g2d.drawPolygon(xPoints,yPoints, 4);
+            int yIn = getYCoord() + Visualizer.BASE_HEIGHT / 2;
+            g2d.drawLine(getXCoord(), yIn, getXCoord() + Visualizer.BOX_WIDTH * 3 / 8, yIn);
+            g2d.drawLine(getXCoord() + Visualizer.BOX_WIDTH * 3 / 8, yIn, getXCoord() + Visualizer.BOX_WIDTH * 3 / 8, yCorner + height / 6);
+            g2d.drawLine(getXCoord() + Visualizer.BOX_WIDTH * 3 / 4 , yCorner + height  * 3 / 4, getXCoord() + Visualizer.BOX_WIDTH, getYCoord() + getHeight() / 2);
+        }
+        else if (!getOperation().equals("<-")) {
             g2d.drawRect(getXCoord(), getYCoord(), Visualizer.BOX_WIDTH, getHeight()); //draws box
             if (type.equals("reg")) {
                 int base = getYBase();
@@ -167,13 +175,23 @@ public class Element {
                 g2d.drawLine(peakX, peakY, getXCoord() + 2 * Visualizer.BOX_WIDTH / 3, base);
             }
         }
+    }
+
+    public void draw(Graphics g, HashMap<String, Element> elementMap, ArrayList<HashMap<String, Element>> columnMaps) {
+        Graphics2D g2d = (Graphics2D) g;
+
+        drawGate(g2d);
+        
 
         if (getOperation().equals("<-")) {
-            g2d.drawString(getOperands().get(0), getXCoord() + Visualizer.FULL_WIDTH / 2 - 5,
-                    getYCoord() + getHeight() / 2 - 5);
-        } else if (!getOperation().equals("->")) {
+            g2d.setFont(new Font(g2d.getFont().getName(), Font.PLAIN, 9)); 
+            drawStringCentered(g2d, getOperands().get(0), getXCoord() + Visualizer.FULL_WIDTH / 2, getYCoord() + getHeight() / 2 - 3);
+            g2d.drawLine(getXCoord(), getYCoord() + getHeight() / 2, getXCoord() + Visualizer.FULL_WIDTH,
+                    getYCoord() + getHeight() / 2); //draws full line
+            g2d.drawLine(getXCoord(), getYCoord() + getHeight() / 2, getXCoord(), getYCoord() + getHeight() / 2 - 7);
+        } else if (!getOperation().equals("->") && !getOperation().equals("=")) {
             g2d.setFont(new Font(g2d.getFont().getName(), Font.PLAIN, 12)); 
-            g2d.drawString(getOperation(), getXCoord() + Visualizer.BOX_WIDTH / 2 - 3*getOperation().length(), getYCoord() + getHeight() / 2 + 4);
+            drawStringCentered(g2d, getOperation(), getXCoord() + Visualizer.BOX_WIDTH / 2, getYCoord() + getHeight() / 2 + 4);
         }
         //draw stud line
         g2d.drawLine(getXCoord()+Visualizer.BOX_WIDTH, getYCoord() + getHeight() / 2, getXCoord() + Visualizer.FULL_WIDTH,
@@ -182,11 +200,10 @@ public class Element {
         if (!(getName().charAt(0) == '.' || getOperation().equals("->"))) {
             g2d.setFont(new Font(g2d.getFont().getName(), Font.PLAIN, 9)); 
             String name = Visualizer.condenseName(getName(), 10);
-            g2d.drawString(name, getXCoord() + Visualizer.BOX_WIDTH + Visualizer.STUD_WIDTH / 2 - 2*name.length(), getYCoord() + getHeight() / 2 + 10); //draw name
+            drawStringCentered(g2d, name, getXCoord() + Visualizer.BOX_WIDTH + Visualizer.STUD_WIDTH / 2, getYCoord() + getHeight() / 2 + 10); //draw name
             g2d.drawLine(getXCoord()+Visualizer.BOX_WIDTH + Visualizer.STUD_WIDTH / 2 + 1, getYCoord() + getHeight() / 2 - 3, 
                     getXCoord()+Visualizer.BOX_WIDTH + Visualizer.STUD_WIDTH / 2 - 1, getYCoord() + getHeight() / 2 + 2);
-            g2d.drawString(""+getWidth(), getXCoord() + Visualizer.BOX_WIDTH + Visualizer.STUD_WIDTH / 2 - 3*(int)(Math.log10(getWidth())), getYCoord() + getHeight() / 2 - 5); //draw name
-
+            drawStringCentered(g2d, ""+getWidth(), getXCoord() + Visualizer.BOX_WIDTH + Visualizer.STUD_WIDTH / 2, getYCoord() + getHeight() / 2 - 5); //draw name
         }
 
         // input wires
@@ -194,7 +211,7 @@ public class Element {
             ArrayList<String> operands = getOperands();
             for (int i = 0; i < operands.size(); i++) {
                 int operandX = getXCoord();
-                int operandY = getYCoord() + (int) (getRealBaseHeight() * (i + 0.5));
+                int operandY = getOperandYCoord(i);
                 
                 if(elementMap.get(operands.get(i)) == null)
                     System.out.println(operands.get(i));
