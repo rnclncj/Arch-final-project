@@ -16,10 +16,7 @@ LINK_FLAGS=
 
 V_FILES=${wildcard *.v}
 TESTS=${subst .v,.test,${V_FILES}}
-OK_FILES=${subst .v,.ok,${V_FILES}}
-OUT_FILES=${subst .v,.out,${V_FILES}}
-DIFF_FILES=${subst .v,.diff,${V_FILES}}
-RESULT_FILES=${subst .v,.result,${V_FILES}}
+VF_FILES=${subst .v,.vf,${V_FILES}}
 
 all : $B/main
 
@@ -39,22 +36,13 @@ ${C_O_FILES} : $B/%.o: %.c Makefile
 
 ${TESTS}: %.test : Makefile %.result
 	echo "$* ... $$(cat $*.result) [$$(cat $*.time)]"
-
-${RESULT_FILES}: %.result : Makefile %.diff
-	echo "unknown" > $@
-	((test -s $*.diff && echo "fail") || echo "pass") > $@
-
-
-${DIFF_FILES}: %.diff : Makefile %.out %.ok
-	@echo "no diff" > $@
-	-diff $*.out $*.ok > $@ 2>&1
-
-${OUT_FILES}: %.out : Makefile $B/main %.v
+	
+${VF_FILES}: %.vf : Makefile $B/main %.v
 	@echo "failed to run" > $@
-	-time --quiet -f '%e' -o $*.time timeout 10 $B/main $*.v > $@
+	$B/main $*.v > $@
 
 -include $B/*.d
 
 clean:
 	rm -rf build
-	rm -f *.diff *.result *.out *.time
+	rm -f *.vf 
