@@ -141,7 +141,7 @@ public class Visualizer extends JFrame {
 
     public static void addPaths(ArrayList<ArrayList<Element>> columns) {
         HashMap<String, Integer> lastColMap = new HashMap<>();
-        HashMap<String, Integer> firstColMap = new HashMap<>();
+        // HashMap<String, Integer> firstColMap = new HashMap<>();
         for (int i = 0; i < columns.size(); i++) {
             for (Element elem : columns.get(i)) {
                 if (!lastColMap.containsKey(elem.getName())) {
