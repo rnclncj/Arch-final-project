@@ -1,0 +1,6 @@
+wire .temp1 <- 31'b0
+wire .temp2 [23:5] D_ins
+wire .temp3 [30:29] D_ins
+wire .temp4 <- 12'b0
+wire .temp0 {} .temp1 .temp2 .temp3 .temp4
+wire [63]D_adrp_imm = .temp0

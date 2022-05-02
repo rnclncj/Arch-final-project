@@ -1,4 +1,4 @@
-wire .temp0 <- 143352
+wire .temp0 <- 143342
 wire [31]D_ins = .temp0
 wire .temp1 <- 1'b1
 wire [1]D_valid = .temp1
@@ -204,57 +204,57 @@ wire .temp171 <- 32
 wire .temp172 ?: .temp169 .temp170 .temp171
 wire [63]D_regsize = .temp172
 wire .temp174 <- 31'b0
-wire .temp174 [23:5] D_ins
-wire .temp175 [30:29] D_ins
-wire .temp176 <- 12'b0
-wire .temp173 {} .temp174 .temp174 .temp175 .temp176
+wire .temp175 [23:5] D_ins
+wire .temp176 [30:29] D_ins
+wire .temp177 <- 12'b0
+wire .temp173 {} .temp174 .temp175 .temp176 .temp177
 wire [63]D_adrp_imm = .temp173
-wire .temp176 [22] D_ins
-wire [1]D_sh = .temp176
-wire .temp178 <- 40'b0
-wire .temp178 [21:10] D_ins
-wire .temp179 <- 12'b0
-wire .temp177 {} .temp178 .temp178 .temp179
-wire .temp180 <- 52'b0
-wire .temp180 [21:10] D_ins
-wire .temp179 {} .temp180 .temp180
-wire .temp181 ?: D_sh .temp177 .temp179
-wire [63]D_add_imm_is_64 = .temp181
-wire .temp183 <- 8'b0
-wire .temp183 [21:10] D_ins
-wire .temp184 <- 12'b0
-wire .temp182 {} .temp183 .temp183 .temp184
-wire .temp185 <- 40'b0
+wire .temp178 [22] D_ins
+wire [1]D_sh = .temp178
+wire .temp180 <- 40'b0
+wire .temp181 [21:10] D_ins
+wire .temp182 <- 12'b0
+wire .temp179 {} .temp180 .temp181 .temp182
+wire .temp184 <- 52'b0
 wire .temp185 [21:10] D_ins
-wire .temp184 {} .temp185 .temp185
-wire .temp186 ?: D_sh .temp182 .temp184
-wire [63]D_add_imm_is_32 = .temp186
-wire .temp187 ?: D_sf D_add_imm_is_64 D_add_imm_is_32
-wire [63]D_add_imm = .temp187
-wire .temp189 [22:21] D_ins
-wire .temp190 <- 4'b0
-wire .temp188 {} .temp189 .temp190
-wire [5]D_pos = .temp188
-wire .temp190 [20:5] D_ins
-wire [63]D_movz_imm = .temp190
-wire .temp193 <- 55
-wire .temp194 [20] D_ins
-wire .temp193 {} .temp194
-wire .temp195 {{}} .temp193 .temp193
-wire .temp192 {} .temp195
-wire .temp196 [20:12] D_ins
-wire .temp191 {} .temp192 .temp196
-wire [63]D_sign_extend_imm = .temp191
-wire .temp198 <- 51'b0
-wire .temp198 [21:10] D_ins
-wire .temp197 {} .temp198 .temp198
-wire .temp199 >> .temp197 D_scale
-wire [63]D_zero_extend_imm = .temp199
-wire .temp202 <- 45
-wire .temp203 [23] D_ins
-wire .temp202 {} .temp203
-wire .temp204 {{}} .temp202 .temp202
-wire .temp201 {} .temp204
-wire .temp205 [23:5] D_ins
-wire .temp200 {} .temp201 .temp205
-wire [63]D_cbnz_offset = .temp200
+wire .temp183 {} .temp184 .temp185
+wire .temp186 ?: D_sh .temp179 .temp183
+wire [63]D_add_imm_is_64 = .temp186
+wire .temp188 <- 8'b0
+wire .temp189 [21:10] D_ins
+wire .temp190 <- 12'b0
+wire .temp187 {} .temp188 .temp189 .temp190
+wire .temp192 <- 40'b0
+wire .temp193 [21:10] D_ins
+wire .temp191 {} .temp192 .temp193
+wire .temp194 ?: D_sh .temp187 .temp191
+wire [63]D_add_imm_is_32 = .temp194
+wire .temp195 ?: D_sf D_add_imm_is_64 D_add_imm_is_32
+wire [63]D_add_imm = .temp195
+wire .temp197 [22:21] D_ins
+wire .temp198 <- 4'b0
+wire .temp196 {} .temp197 .temp198
+wire [5]D_pos = .temp196
+wire .temp199 [20:5] D_ins
+wire [63]D_movz_imm = .temp199
+wire .temp202 <- 55
+wire .temp204 [20] D_ins
+wire .temp203 {} .temp204
+wire .temp205 {{}} .temp202 .temp203
+wire .temp201 {} .temp205
+wire .temp206 [20:12] D_ins
+wire .temp200 {} .temp201 .temp206
+wire [63]D_sign_extend_imm = .temp200
+wire .temp208 <- 51'b0
+wire .temp209 [21:10] D_ins
+wire .temp207 {} .temp208 .temp209
+wire .temp210 >> .temp207 D_scale
+wire [63]D_zero_extend_imm = .temp210
+wire .temp213 <- 45
+wire .temp215 [23] D_ins
+wire .temp214 {} .temp215
+wire .temp216 {{}} .temp213 .temp214
+wire .temp212 {} .temp216
+wire .temp217 [23:5] D_ins
+wire .temp211 {} .temp212 .temp217
+wire [63]D_cbnz_offset = .temp211
