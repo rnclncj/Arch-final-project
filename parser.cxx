@@ -223,7 +223,7 @@ class Interpreter {
             return e0_ret.value();
         } else if (auto v = consume_literal()) {
             string res = ".temp" + to_string(tempCounter++);
-            cout << "wire " << res << " <- " << v.value() << endl;
+            cout << "wire " << res << " -- " << v.value() << endl;
             return res;
         } else if (consume("(")) {
             auto v = expression();
@@ -321,7 +321,7 @@ class Interpreter {
                 // either literal values or replication
                 if (auto id = consume_literal()) {
                     string res = next_temp_wire();
-                    cout << "wire " << res << " <- " << id.value() << endl;
+                    cout << "wire " << res << " -- " << id.value() << endl;
                     auto v = res;
                     if (peek("{")) {
                         // run it again to get the inside
