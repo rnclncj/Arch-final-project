@@ -8,5 +8,11 @@ always @(posedge clk) begin
     if (a == -63) begin
         D_valid <= WB2_is_flush;
     end
+    else if (a == 4) begin
+        D_valid <= !WB2_is_flush;
+    end
+    else begin
+        D_valid <= 4 + WB2_is_flush;
+    end
     D_pc <= F2_pc;
 end

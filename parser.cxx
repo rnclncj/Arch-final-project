@@ -673,7 +673,7 @@ class Interpreter {
             skip_line();
             return res;
         } else if (consume("if")) {
-            string second_input = ".temp" + to_string(tempCounter++);
+            // string second_input = ".temp" + to_string(tempCounter++);
             condition = expression();
             prev_condition = condition;
             res = always_statements();
@@ -692,24 +692,29 @@ class Interpreter {
                     cout << "wire " << temp << " ! " << prev_condition << endl; // temp should have !prev_condition
                     condition = expression();
                     string result_condition = ".temp" + to_string(tempCounter++);
-                    cout << "wire " << result_condition << " && " << temp << " " << condition;
-                    condition = result_condition; // condition should be right
+                    cout << "wire " << result_condition << " && " << temp << " " << condition << endl;
                     string new_prev_condition = ".temp" + to_string(tempCounter++);
+                    cout << "wire " << new_prev_condition << " && " << prev_condition << " " << condition << endl;
+                    prev_condition = new_prev_condition;
+                    condition = result_condition; // condition should be right
                     
 
                     unordered_map<string, string> inside = always_statements();
                     for (auto i = inside.begin(); i != inside.end(); i++) {
-                        cout << "wire " << second_input << " ?: " << condition << " " << i->second << " " << reg_table[i->first] << endl;
-                        string second_input = ".temp" + to_string(tempCounter++); 
-                        res[i->first] = second_input;
+                        string out = ".temp" + to_string(tempCounter++); 
+                        cout << "wire " << out << " ?: " << condition << " " << i->second << " " << i->first << endl;
+                        res[i->first] = out;
                     }
                 } else {
                     //else
+                    string condition = ".temp" + to_string(tempCounter++);
+                    cout << "wire " << condition << " ! " << prev_condition << endl; // condition should have !prev_condition
+
                     unordered_map<string, string> inside = always_statements();
                     for (auto i = inside.begin(); i != inside.end(); i++) {
-                        cout << "wire "  << second_input << " = " << i->second << endl;
-                        string second_input = ".temp" + to_string(tempCounter++); 
-                        res[i->first] = second_input;
+                        string out = ".temp" + to_string(tempCounter++); 
+                        cout << "wire " << out << " ?: " << condition << " " << i->second << " " << i->first << endl;
+                        res[i->first] = out;
                     }
                 }
             }
