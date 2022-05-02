@@ -1,5 +1,3 @@
-// https://zetcode.com/gfx/java2d/
-
 import java.awt.*;
 import javax.swing.*;
 import java.io.*;
@@ -11,32 +9,6 @@ import java.util.*;
 // TODO: fix literal string length (when it juts out)
 // TODO: fix MUX jank
 // TODO: fix wire being set to temp late
-
-class Panel extends JPanel {
-    private ArrayList<ArrayList<Element>> columns;
-    private HashMap<String, Element> elementMap;
-    private ArrayList<HashMap<String, Element>>[] columnMaps;
-
-    public Panel(ArrayList<ArrayList<Element>> c, HashMap<String, Element> em, ArrayList<HashMap<String, Element>>[] cm) {
-        columns = c;
-        elementMap = em;
-        columnMaps = cm;
-    }
-
-    private void doDrawing(Graphics g) {
-        for (ArrayList<Element> column : columns) {
-            for (Element elem : column) {
-                elem.draw(g, elementMap, columnMaps);
-            }
-        }
-    }
-
-    @Override
-    public void paintComponent(Graphics g) {
-        super.paintComponent(g);
-        doDrawing(g);
-    }
-}
 
 public class Visualizer extends JFrame {
     private static final int MAX_WIDTH = 1500;
@@ -50,6 +22,8 @@ public class Visualizer extends JFrame {
     public static final int STUD_WIDTH = FULL_WIDTH - BOX_WIDTH;
     public static final int VERT_DIST = 4;
     public static final int HORIZ_DIST = 60;
+
+    public static final Color BACKWARDS_COLOR = Color.BLUE;
 
     public Visualizer(ArrayList<ArrayList<Element>> c, HashMap<String, Element> em, ArrayList<HashMap<String, Element>>[] cm, int xDim, int yDim) {
         initUI(c, em, cm, xDim, yDim);
@@ -249,6 +223,7 @@ public class Visualizer extends JFrame {
             if (b.getOperation().equals("<-") && !a.getOperation().equals("<-")) {
                 return -1;
             }
+
             double diff = scoreMap.get(a.getName()) - scoreMap.get(b.getName());
             if (diff > 0) {
                 return 1;

@@ -181,11 +181,9 @@ public class Element {
         }
     }
 
-    public void draw(Graphics g, HashMap<String, Element> elementMap, ArrayList<HashMap<String, Element>>[] columnMaps) {
-        Graphics2D g2d = (Graphics2D) g;
-
+    public void draw(Graphics2D g2d, HashMap<String, Element> elementMap, ArrayList<HashMap<String, Element>>[] columnMaps) {
         if (getOperation().equals("<-")) {
-            g2d.setColor(Color.RED);
+            g2d.setColor(Visualizer.BACKWARDS_COLOR);
         }
 
         drawGate(g2d);
