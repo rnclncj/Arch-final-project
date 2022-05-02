@@ -66,7 +66,7 @@ public class Element {
 
     // returns the height of the element
     public int getHeight() {
-        if(operation.equals("->"))
+        if (operation.equals("->") || operation.equals("<-"))
             return Visualizer.BASE_HEIGHT / 4;
         return Visualizer.BASE_HEIGHT * getOperands().size();
     }
@@ -155,7 +155,7 @@ public class Element {
     }
 
     public void drawGate(Graphics2D g2d){
-        if ((getOperation().equals("=") && !getType().equals("reg")) || getOperation().equals("->")) {
+        if ((getOperation().equals("=") && !getType().equals("reg")) || getOperation().equals("->") || getOperation().equals("<-")) {
             g2d.drawLine(getXCoord(), getYCoord() + getHeight() / 2, getXCoord() + Visualizer.BOX_WIDTH,
                     getYCoord() + getHeight() / 2);
         } else if(getOperation().equals("?:")){
@@ -181,19 +181,22 @@ public class Element {
         }
     }
 
-    public void draw(Graphics g, HashMap<String, Element> elementMap, ArrayList<HashMap<String, Element>> columnMaps) {
+    public void draw(Graphics g, HashMap<String, Element> elementMap, ArrayList<HashMap<String, Element>>[] columnMaps) {
         Graphics2D g2d = (Graphics2D) g;
+
+        if (getOperation().equals("<-")) {
+            g2d.setColor(Color.RED);
+        }
 
         drawGate(g2d);
         
-
         if (getOperation().equals("--")) {
             g2d.setFont(new Font(g2d.getFont().getName(), Font.PLAIN, 9)); 
             drawStringCentered(g2d, getOperands().get(0), getXCoord() + Visualizer.FULL_WIDTH / 2, getYCoord() + getHeight() / 2 - 3);
             g2d.drawLine(getXCoord(), getYCoord() + getHeight() / 2, getXCoord() + Visualizer.FULL_WIDTH,
                     getYCoord() + getHeight() / 2); //draws full line
             g2d.drawLine(getXCoord(), getYCoord() + getHeight() / 2, getXCoord(), getYCoord() + getHeight() / 2 - 7);
-        } else if (!getOperation().equals("->") && !getOperation().equals("=")) {
+        } else if (!(getOperation().equals("=") || getOperation().equals("->") || getOperation().equals("<-"))) {
             g2d.setFont(new Font(g2d.getFont().getName(), Font.PLAIN, 12)); 
             drawStringCentered(g2d, getOperation(), getXCoord() + Visualizer.BOX_WIDTH / 2, getYCoord() + getHeight() / 2 + 4);
         }
@@ -201,8 +204,8 @@ public class Element {
         g2d.drawLine(getXCoord()+Visualizer.BOX_WIDTH, getYCoord() + getHeight() / 2, getXCoord() + Visualizer.FULL_WIDTH,
                     getYCoord() + getHeight() / 2);
         //draws name
-        if (!(getName().charAt(0) == '.' || getOperation().equals("->"))) {
-            g2d.setFont(new Font(g2d.getFont().getName(), Font.PLAIN, 9)); 
+        if (!(getName().charAt(0) == '.' || getOperation().equals("->") || getOperation().equals("<-"))) {
+            g2d.setFont(new Font(g2d.getFont().getName(), Font.PLAIN, 9));
             String name = Visualizer.condenseName(getName(), 10);
             drawStringCentered(g2d, name, getXCoord() + Visualizer.BOX_WIDTH + Visualizer.STUD_WIDTH / 2, getYCoord() + getHeight() / 2 + 10); //draw name
             g2d.drawLine(getXCoord()+Visualizer.BOX_WIDTH + Visualizer.STUD_WIDTH / 2 + 1, getYCoord() + getHeight() / 2 - 3, 
@@ -217,18 +220,28 @@ public class Element {
                 int operandX = getXCoord();
                 int operandY = getOperandYCoord(i);
                 
-                if(elementMap.get(operands.get(i)) == null)
-                    System.out.println(operands.get(i));
+                // if (elementMap.get(operands.get(i)) == null)
+                //     System.out.println(operands.get(i));
+                // if backward propagation wire can't connect back anymore, skip this step
+                if (getOperation().equals("<-") && !columnMaps[1].get(getColNum() - 1).containsKey(operands.get(i))) {
+                    continue;
+                }
+                // if this input requires a backward wire, skip this step
+                if (!getOperation().equals("<-") && elementMap.get(operands.get(i)).getColNum() >= getColNum()) {
+                    continue;
+                }
                 Element fromElem;
-                if (elementMap.get(operands.get(i)).getColNum() >= getColNum()) {
-                    fromElem = elementMap.get(operands.get(i));
+                if (getOperation().equals("<-")) {
+                    fromElem = columnMaps[1].get(getColNum() - 1).get(operands.get(i));
                 } else {
-                    fromElem = columnMaps.get(getColNum() - 1).get(operands.get(i));
+                    fromElem = columnMaps[0].get(getColNum() - 1).get(operands.get(i));
                 }
                 int inputX = fromElem.getOutX();
                 int inputY = fromElem.getOutY();
                 g2d.drawLine(inputX, inputY, operandX, operandY);
             }
         }
+
+        g2d.setColor(Color.BLACK);
     }
 }
