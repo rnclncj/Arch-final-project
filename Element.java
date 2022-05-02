@@ -167,7 +167,7 @@ public class Element {
             int yIn = getYCoord() + Visualizer.BASE_HEIGHT / 2;
             g2d.drawLine(getXCoord(), yIn, getXCoord() + Visualizer.BOX_WIDTH * 3 / 8, yIn);
             g2d.drawLine(getXCoord() + Visualizer.BOX_WIDTH * 3 / 8, yIn, getXCoord() + Visualizer.BOX_WIDTH * 3 / 8, yCorner + height / 6);
-            g2d.drawLine(getXCoord() + Visualizer.BOX_WIDTH * 3 / 4 , yCorner + height  * 3 / 4, getXCoord() + Visualizer.BOX_WIDTH, getYCoord() + getHeight() / 2);
+            g2d.drawLine(getXCoord() + Visualizer.BOX_WIDTH * 3 / 4 , yCorner + height  / 2, getXCoord() + Visualizer.BOX_WIDTH, getYCoord() + getHeight() / 2);
         }
         else if (!getOperation().equals("--")) {
             g2d.drawRect(getXCoord(), getYCoord(), Visualizer.BOX_WIDTH, getHeight()); //draws box
@@ -190,11 +190,12 @@ public class Element {
         
         if (getOperation().equals("--")) {
             g2d.setFont(new Font(g2d.getFont().getName(), Font.PLAIN, 9)); 
-            drawStringCentered(g2d, getOperands().get(0), getXCoord() + Visualizer.FULL_WIDTH / 2, getYCoord() + getHeight() / 2 - 3);
+            String lit = Visualizer.condenseName(""+getOperands().get(0), 17);
+            drawStringCentered(g2d, lit, getXCoord() + Visualizer.FULL_WIDTH / 2, getYCoord() + getHeight() / 2 - 3);
             g2d.drawLine(getXCoord(), getYCoord() + getHeight() / 2, getXCoord() + Visualizer.FULL_WIDTH,
                     getYCoord() + getHeight() / 2); //draws full line
             g2d.drawLine(getXCoord(), getYCoord() + getHeight() / 2, getXCoord(), getYCoord() + getHeight() / 2 - 7);
-        } else if (!(getOperation().equals("=") || getOperation().equals("->") || getOperation().equals("<-"))) {
+        } else if (!(getOperation().equals("=") || getOperation().equals("->") || getOperation().equals("<-") || getOperation().equals("?:"))) {
             g2d.setFont(new Font(g2d.getFont().getName(), Font.PLAIN, 12)); 
             drawStringCentered(g2d, getOperation(), getXCoord() + Visualizer.BOX_WIDTH / 2, getYCoord() + getHeight() / 2 + 4);
         }
