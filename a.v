@@ -1,15 +1,21 @@
-wire D_valid;
-wire WB2_is_flush;
-wire a = 4 +5;
-// wire b = a * 6;
-// wire c = a * (^~a) /6;
-
 always @(posedge clk) begin
-    if (a == -63) begin
-        D_valid <= WB2_is_flush;
+
+        if (F1_valid) begin
+            if (WB2_is_flush) begin
+                if (F1_valid && WB2_branch_en)
+                    F1_pc <= WB2_branch_addr;
+                else    
+                    // standard flushing behavior
+                    F1_pc <= WB2_pc + 1;
+            end 
+            else if (WB1_is_flush) begin
+                if (F1_valid && WB1_branch_en)
+                    F1_pc <= WB1_branch_addr;
+                else
+                    // standard flushing behavior
+                    F1_pc <= WB1_pc + 1;
+            end 
+            else    
+                F1_pc <= F1_pc+1;
+        end
     end
-    else begin
-        D_valid <= !WB2_is_flush;
-    end
-    D_pc <= F2_pc;
-end

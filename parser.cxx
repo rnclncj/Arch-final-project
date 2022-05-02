@@ -37,7 +37,10 @@ class Interpreter {
         while (isspace(*current)) {
             current += 1;
         }
-        if (*current != 0) fail();
+        if (*current != 0) {
+            cout << "current: " << *current << endl;
+            fail();
+        }
     }
 
     void consume_or_fail(const char* str) {
@@ -202,7 +205,7 @@ class Interpreter {
     // variable name and optional []
     optional<string> e0() {
         // parse multiline comments
-        if (consume("/*")) { 
+        if (peek("/*")) { 
             skip_multiline();
         }
         if (auto id = consume_identifier()) {
@@ -618,9 +621,10 @@ class Interpreter {
         string wire_name;
         string reg_name;
         int64_t num_bits;
-        // int64_t size;
-
-        if (consume("wire")) {
+        if (peek("/*")) { 
+            skip_multiline();
+            return true;
+        } else if (consume("wire")) {
             num_bits = get_size();
             wire_name = consume_identifier().value();
             if (consume("=")) {
@@ -658,7 +662,8 @@ class Interpreter {
             for (auto i = res.begin(); i != res.end(); i++) {
                 reg_table[i->first] = i->second;
             }
-        } else if (consume("initial") || consume("for") || consume("if")) {
+            return true;
+        } else if (consume("initial") || consume("for") || consume("if") || (peek("always begin") && consume("always"))) {
             skip_block();
             return true;
         } else if (consume("//") || consume("$") || consume("`") || consume("module") || consume("endmodule")) {
@@ -675,7 +680,10 @@ class Interpreter {
         unordered_map<string, string> res;
         string prev_condition;
         string condition;
-        if (consume("$") || consume("#") || consume("//")) {
+        if (peek("/*")) { 
+            skip_multiline();
+            return always_statement();
+        } else if (consume("$") || consume("#") || consume("//")) {
             skip_line();
             return res;
         } else if (consume("if")) {
@@ -788,11 +796,12 @@ class Interpreter {
         for (auto i = reg_table.begin(); i != reg_table.end(); i++) {
             cout << "reg " << i->first << " = " << i->second << endl;
         }
-        // end_or_fail();
+        end_or_fail();
     }
 };
 
 int main(int argc, const char* const* const argv) {
+    unordered_map<string, pair<bool, string>> modules;
     if (argc != 2) {
         fprintf(stderr, "usage: %s <file name>\n", argv[0]);
         exit(1);
