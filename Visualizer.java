@@ -5,9 +5,12 @@ import javax.swing.*;
 import java.io.*;
 import java.util.*;
 
-// TODO: fix strings
-// TODO: fix wires
+// TODO: add backwards wires
 // TODO: add specialized gates
+// TODO: fix operator strings (chunk of wire)
+// TODO: fix literal string length (when it juts out)
+// TODO: fix MUX jank
+// TODO: represent wire lengths of unnamed wires?
 
 class Panel extends JPanel {
     private ArrayList<ArrayList<Element>> columns;
@@ -141,15 +144,15 @@ public class Visualizer extends JFrame {
 
     public static void addPaths(ArrayList<ArrayList<Element>> columns) {
         HashMap<String, Integer> lastColMap = new HashMap<>();
-        // HashMap<String, Integer> firstColMap = new HashMap<>();
+        HashMap<String, Integer> firstColMap = new HashMap<>();
         for (int i = 0; i < columns.size(); i++) {
             for (Element elem : columns.get(i)) {
-                if (!lastColMap.containsKey(elem.getName())) {
-                    lastColMap.put(elem.getName(), 0);
-                }
                 if (!elem.getOperation().equals("<-")) {
                     for (String operand : elem.getOperands()) {
                         lastColMap.put(operand, i);
+                        if (!firstColMap.containsKey(operand)) {
+                            firstColMap.put(operand, i);
+                        }
                     }
                 }
             }
@@ -162,6 +165,9 @@ public class Visualizer extends JFrame {
             }
         }
         for (Element elem : tempList) {
+            if (!lastColMap.containsKey(elem.getName())) {
+                continue;
+            }
             for (int i = elem.getColNum() + 1; i < lastColMap.get(elem.getName()); i++) {
                 columns.get(i).add(new Element(elem, i));
             }
@@ -252,5 +258,4 @@ public class Visualizer extends JFrame {
             return name;
         return name.substring(0, length / 2 - 2) + ".." + name.substring(name.length() - length / 2);
     }
-
 }
