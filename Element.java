@@ -10,6 +10,7 @@ public class Element {
     private int colNum;
     private int yCoord;
 
+    // constructor from file line
     public Element(String line) {
         StringTokenizer tokenizer = new StringTokenizer(line);
         type = tokenizer.nextToken();
@@ -28,11 +29,16 @@ public class Element {
         }
     }
 
-    public Element(Element elem, int cn){
+    // propagation constructor
+    public Element(Element elem, int cn, boolean isForward){
         this.name = elem.name;
         this.type = elem.type;
         width = elem.width;
-        operation = "->";
+        if (isForward) {
+            operation = "->";
+        } else {
+            operation = "<-";
+        }
         operands = new ArrayList<>();
         operands.add(name);
         colNum = cn;
@@ -163,7 +169,7 @@ public class Element {
             g2d.drawLine(getXCoord() + Visualizer.BOX_WIDTH * 3 / 8, yIn, getXCoord() + Visualizer.BOX_WIDTH * 3 / 8, yCorner + height / 6);
             g2d.drawLine(getXCoord() + Visualizer.BOX_WIDTH * 3 / 4 , yCorner + height  * 3 / 4, getXCoord() + Visualizer.BOX_WIDTH, getYCoord() + getHeight() / 2);
         }
-        else if (!getOperation().equals("<-")) {
+        else if (!getOperation().equals("--")) {
             g2d.drawRect(getXCoord(), getYCoord(), Visualizer.BOX_WIDTH, getHeight()); //draws box
             if (type.equals("reg")) {
                 int base = getYBase();
@@ -181,7 +187,7 @@ public class Element {
         drawGate(g2d);
         
 
-        if (getOperation().equals("<-")) {
+        if (getOperation().equals("--")) {
             g2d.setFont(new Font(g2d.getFont().getName(), Font.PLAIN, 9)); 
             drawStringCentered(g2d, getOperands().get(0), getXCoord() + Visualizer.FULL_WIDTH / 2, getYCoord() + getHeight() / 2 - 3);
             g2d.drawLine(getXCoord(), getYCoord() + getHeight() / 2, getXCoord() + Visualizer.FULL_WIDTH,
@@ -205,7 +211,7 @@ public class Element {
         }
 
         // input wires
-        if (!getOperation().equals("<-")) {
+        if (!getOperation().equals("--")) {
             ArrayList<String> operands = getOperands();
             for (int i = 0; i < operands.size(); i++) {
                 int operandX = getXCoord();

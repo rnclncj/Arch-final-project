@@ -10,7 +10,6 @@ import java.util.*;
 // TODO: fix operator strings (chunk of wire)
 // TODO: fix literal string length (when it juts out)
 // TODO: fix MUX jank
-// TODO: represent wire lengths of unnamed wires?
 
 class Panel extends JPanel {
     private ArrayList<ArrayList<Element>> columns;
@@ -101,7 +100,7 @@ public class Visualizer extends JFrame {
         ArrayList<ArrayList<Element>> columns = new ArrayList<>();
         for (Element elem : elementList) {
             int col;
-            if (elem.getOperation().equals("<-")) {
+            if (elem.getOperation().equals("--")) {
                 col = Math.max(columns.size()-2, 0);
             } else {
                 col = elem.getMaxColOfInputs(elementMap) + 1;
@@ -116,7 +115,7 @@ public class Visualizer extends JFrame {
         ArrayList<Element> literals = new ArrayList<>();
         for (ArrayList<Element> column : columns) {
             for (Element elem : column) {
-                if (elem.getOperation().equals("<-")) {
+                if (elem.getOperation().equals("--")) {
                     literals.add(elem);
                 }
             }
@@ -147,7 +146,7 @@ public class Visualizer extends JFrame {
         HashMap<String, Integer> firstColMap = new HashMap<>();
         for (int i = 0; i < columns.size(); i++) {
             for (Element elem : columns.get(i)) {
-                if (!elem.getOperation().equals("<-")) {
+                if (!elem.getOperation().equals("--")) {
                     for (String operand : elem.getOperands()) {
                         lastColMap.put(operand, i);
                         if (!firstColMap.containsKey(operand)) {
@@ -169,7 +168,15 @@ public class Visualizer extends JFrame {
                 continue;
             }
             for (int i = elem.getColNum() + 1; i < lastColMap.get(elem.getName()); i++) {
-                columns.get(i).add(new Element(elem, i));
+                columns.get(i).add(new Element(elem, i, true));
+            }
+        }
+        for (Element elem : tempList) {
+            if (!firstColMap.containsKey(elem.getName())) {
+                continue;
+            }
+            for (int i = firstColMap.get(elem.getName()); i <= elem.getColNum(); i++) {
+                columns.get(i).add(new Element(elem, i, false));
             }
         }
     }
@@ -195,7 +202,7 @@ public class Visualizer extends JFrame {
                 Element elem = column.get(j);
                 int scoreSum = i;
                 int scoreNum = 1;
-                if (!elem.getOperation().equals("<-")) {
+                if (!elem.getOperation().equals("--")) {
                     for (String operand : elem.getOperands()) {
                         if (elementMap.get(operand).getColNum() >= elem.getColNum()) {
                             continue;
