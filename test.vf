@@ -1,10 +1,6 @@
-wire .temp0 <- 4
-wire .temp1 <- 5
-wire .temp2 + .temp0 .temp1
-wire [1]a = .temp2
-wire .temp3 <- 63
-wire .temp4 - .temp3
-wire .temp5 == a .temp4
-wire .temp6 ?: .temp5 WB2_is_flush D_valid
-reg D_valid = .temp6
-reg D_pc = F2_pc
+wire .temp1 <- 31'b0
+wire .temp2 [23:5] D_ins
+wire .temp3 [30:29] D_ins
+wire .temp4 <- 12'b0
+wire .temp0 {} .temp1 .temp2 .temp3 .temp4
+wire [63]D_adrp_imm = .temp0

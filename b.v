@@ -5,14 +5,11 @@ wire a = 4 +5;
 // wire c = a * (^~a) /6;
 
 always @(posedge clk) begin
-    if (a == -63) begin
+    if (a == -63) 
         D_valid <= WB2_is_flush;
-    end
-    else if (a == 4) begin
+    else if (a == 4) 
         D_valid <= !WB2_is_flush;
-    end
-    else begin
+    else 
         D_valid <= 4 + WB2_is_flush;
-    end
     D_pc <= F2_pc;
 end
