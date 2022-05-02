@@ -1,6 +1,4 @@
 import java.awt.*;
-import javax.swing.*;
-import java.io.*;
 import java.util.*;
 
 public class Element {
