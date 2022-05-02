@@ -1,6 +1,35 @@
-wire .temp1 <- 31'b0
-wire .temp2 [23:5] D_ins
-wire .temp3 [30:29] D_ins
-wire .temp4 <- 12'b0
-wire .temp0 {} .temp1 .temp2 .temp3 .temp4
-wire [63]D_adrp_imm = .temp0
+wire .temp0 -- 4
+wire .temp1 -- 5
+wire .temp2 + .temp0 .temp1
+wire [1]a = .temp2
+wire .temp3 ! WB1_is_flush
+wire .temp4 & M2_valid .temp3
+wire .temp5 ! WB2_is_flush
+wire .temp6 & .temp4 .temp5
+wire .temp7 && WB1_valid WB1_print
+wire .temp8 -- 4
+wire .temp9 ?: .temp7 .temp8 WB1_is_flush
+reg WB1_scale = M2_scale
+reg WB1_postindex = M2_postindex
+reg WB1_memory_reg_wen = M2_memory_reg_wen
+reg WB1_wback = M2_wback
+reg WB1_offset_reg_wen = M2_offset_reg_wen
+reg WB1_datasize = M2_datasize
+reg WB1_offset = M2_offset
+reg WB1_result = M2_result
+reg WB1_strb_data = M2_strb_data
+reg WB1_terminate = M2_terminate
+reg WB1_n = M2_n
+reg WB1_ins = M2_ins
+reg WB1_print = M2_print
+reg WB1_ldr_lower = M2_ldr_lower
+reg WB1_ins_num = M2_ins_num
+reg WB1_d = M2_d
+reg WB1_branch_en = M2_branch_en
+reg WB1_branch_addr = M2_branch_addr
+reg WB1_address = M2_address
+reg WB1_is_flush = .temp9
+reg WB1_mem_strb_wen = M2_mem_strb_wen
+reg WB1_valid = .temp6
+reg WB1_regsize = M2_regsize
+reg WB1_pc = M2_pc

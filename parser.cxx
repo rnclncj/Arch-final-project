@@ -648,7 +648,13 @@ class Interpreter {
             return true;
         } else if (consume("always @(") && consume("posedge clk") && consume(")")) {
             // TODO: expand parameters
-            unordered_map<string, string> res = always_statements();
+            unordered_map<string, string> res;
+            if (peek("begin")) {
+                res = always_statements();
+            } else {
+                res = always_statement();
+                consume(";");
+            }
             for (auto i = res.begin(); i != res.end(); i++) {
                 reg_table[i->first] = i->second;
             }
@@ -669,7 +675,7 @@ class Interpreter {
         unordered_map<string, string> res;
         string prev_condition;
         string condition;
-        if (consume("$") || consume("#")) {
+        if (consume("$") || consume("#") || consume("//")) {
             skip_line();
             return res;
         } else if (consume("if")) {
@@ -679,6 +685,7 @@ class Interpreter {
                 res = always_statements();
             } else {
                 res = always_statement();
+                consume(";");
             }
             for (auto i = res.begin(); i != res.end(); i++) {
                 string out = ".temp" + to_string(tempCounter++);
@@ -706,11 +713,12 @@ class Interpreter {
                         inside = always_statements();
                     } else {
                         inside = always_statement();
+                        consume(";");
                     }
 
                     for (auto i = inside.begin(); i != inside.end(); i++) {
                         string out = ".temp" + to_string(tempCounter++); 
-                        cout << "wire " << out << " ?: " << condition << " " << i->second << " " << i->first << endl;
+                        cout << "wire " << out << " ?: " << condition << " " << i->second << " " << res[i->first] << endl;
                         res[i->first] = out;
                     }
                 } else {
@@ -723,10 +731,11 @@ class Interpreter {
                         inside = always_statements();
                     } else {
                         inside = always_statement();
+                        consume(";");
                     }
                     for (auto i = inside.begin(); i != inside.end(); i++) {
                         string out = ".temp" + to_string(tempCounter++); 
-                        cout << "wire " << out << " ?: " << condition << " " << i->second << " " << i->first << endl;
+                        cout << "wire " << out << " ?: " << condition << " " << i->second << " " << res[i->first] << endl;
                         res[i->first] = out;
                     }
                 }
