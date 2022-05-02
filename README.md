@@ -15,6 +15,8 @@ bit select: wire a = s0[1:0]
 wire .temp2 [1:0] s0
 wire a = .temp2
 
+https://zetcode.com/gfx/java2d/
+
 ⸘⸘⸘⸘⸘⸘⸘⸘⸘⸘⸘⸘hello!!!!!!👌🤪🍿‽😎n‽‽o‽‽‽‽‽‽‽‽🤷‍♀️🤷‍♂️😶‍🌫️🤐😯😭😡🤬
 ¬ƒˆ¥©ˆ˙˚…ˆ∆˙…øˆ©¨†¥∂¨¥†ƒˆ…¶∞§∞£†¥ø¥˙ˆ¨¥∂ç˚∆˜¬øˆ¥««‘ˆ¥∂¨†´¨¥†®`∑√ƒ≈®ƒ©∆√¥®∂®©˜©√≤µ¥¨†µ˙˜ƒ ©˜∆¥ƒ
 

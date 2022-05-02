@@ -1,41 +1,16 @@
-// https://zetcode.com/gfx/java2d/
-
 import java.awt.*;
 import javax.swing.*;
 import java.io.*;
 import java.util.*;
 
-// TODO: add backwards wires
+// DONE: add backwards wires
 // TODO: add specialized gates
 // TODO: fix operator strings (chunk of wire)
-// TODO: fix literal string length (when it juts out)
-// TODO: fix MUX jank
-
-class Panel extends JPanel {
-    private ArrayList<ArrayList<Element>> columns;
-    private HashMap<String, Element> elementMap;
-    private ArrayList<HashMap<String, Element>> columnMaps;
-
-    public Panel(ArrayList<ArrayList<Element>> c, HashMap<String, Element> em, ArrayList<HashMap<String, Element>> cm) {
-        columns = c;
-        elementMap = em;
-        columnMaps = cm;
-    }
-
-    private void doDrawing(Graphics g) {
-        for (ArrayList<Element> column : columns) {
-            for (Element elem : column) {
-                elem.draw(g, elementMap, columnMaps);
-            }
-        }
-    }
-
-    @Override
-    public void paintComponent(Graphics g) {
-        super.paintComponent(g);
-        doDrawing(g);
-    }
-}
+// DONE: fix literal string length (when it juts out)
+// DONE: fix MUX jank 
+// TODO: fix wire being set to temp late
+// TODO: adjust column distances to reflect amount of wire squishing
+// TODO: resolve redundant
 
 public class Visualizer extends JFrame {
     private static final int MAX_WIDTH = 1500;
@@ -50,11 +25,13 @@ public class Visualizer extends JFrame {
     public static final int VERT_DIST = 4;
     public static final int HORIZ_DIST = 60;
 
-    public Visualizer(ArrayList<ArrayList<Element>> c, HashMap<String, Element> em, ArrayList<HashMap<String, Element>> cm, int xDim, int yDim) {
+    public static final Color BACKWARDS_COLOR = Color.BLUE;
+
+    public Visualizer(ArrayList<ArrayList<Element>> c, HashMap<String, Element> em, ArrayList<HashMap<String, Element>>[] cm, int xDim, int yDim) {
         initUI(c, em, cm, xDim, yDim);
     }
 
-    private void initUI(ArrayList<ArrayList<Element>> c, HashMap<String, Element> em, ArrayList<HashMap<String, Element>> cm, int xDim, int yDim) {
+    private void initUI(ArrayList<ArrayList<Element>> c, HashMap<String, Element> em, ArrayList<HashMap<String, Element>>[] cm, int xDim, int yDim) {
         Panel panel = new Panel(c, em, cm);
         panel.setPreferredSize(new Dimension(xDim, yDim));
         JScrollPane scrollPane = new JScrollPane(panel);
@@ -81,7 +58,7 @@ public class Visualizer extends JFrame {
 
         ArrayList<ArrayList<Element>> columns = placeElements(elementList, elementMap);
         addPaths(columns);
-        ArrayList<HashMap<String, Element>> columnMaps = getColumnMaps(columns);
+        ArrayList<HashMap<String, Element>>[] columnMaps = getColumnMaps(columns);
         reorder(columns, elementMap, columnMaps);
         int yDim = setCoords(columns);
         int xDim = columns.size() * (Visualizer.HORIZ_DIST + Visualizer.FULL_WIDTH) + Visualizer.HORIZ_DIST;
@@ -181,19 +158,26 @@ public class Visualizer extends JFrame {
         }
     }
 
-    public static ArrayList<HashMap<String, Element>> getColumnMaps(ArrayList<ArrayList<Element>> columns) {
+    public static ArrayList<HashMap<String, Element>>[] getColumnMaps(ArrayList<ArrayList<Element>> columns) {
         ArrayList<HashMap<String, Element>> columnMaps = new ArrayList<>();
+        ArrayList<HashMap<String, Element>> backColumnMaps = new ArrayList<>();
         for (ArrayList<Element> column : columns) {
             HashMap<String, Element> columnMap = new HashMap<>();
+            HashMap<String, Element> backColumnMap = new HashMap<>();
             for (Element elem : column) {
-                columnMap.put(elem.getName(), elem);
+                if (elem.getOperation().equals("<-")) {
+                    backColumnMap.put(elem.getName(), elem);
+                } else {
+                    columnMap.put(elem.getName(), elem);
+                }
             }
             columnMaps.add(columnMap);
+            backColumnMaps.add(backColumnMap);
         }
-        return columnMaps;
+        return new ArrayList[] {columnMaps, backColumnMaps};
     }
 
-    public static void reorder(ArrayList<ArrayList<Element>> columns, HashMap<String, Element> elementMap, ArrayList<HashMap<String, Element>> columnMaps) {
+    public static void reorder(ArrayList<ArrayList<Element>> columns, HashMap<String, Element> elementMap, ArrayList<HashMap<String, Element>>[] columnMaps) {
         HashMap<String, Double> scoreMap = new HashMap<>();
         HashMap<String, Integer> indexMap = getIndexMap(columns.get(0));
         for (int i = 1; i < columns.size(); i++) {
@@ -202,12 +186,12 @@ public class Visualizer extends JFrame {
                 Element elem = column.get(j);
                 int scoreSum = i;
                 int scoreNum = 1;
-                if (!elem.getOperation().equals("--")) {
+                if (!(elem.getOperation().equals("--") || elem.getOperation().equals("<-"))) {
                     for (String operand : elem.getOperands()) {
                         if (elementMap.get(operand).getColNum() >= elem.getColNum()) {
                             continue;
                         }
-                        Element fromElem = columnMaps.get(elem.getColNum() - 1).get(operand);
+                        Element fromElem = columnMaps[0].get(elem.getColNum() - 1).get(operand);
                         scoreSum += indexMap.get(fromElem.getName());
                         scoreNum++;
                     }
@@ -235,6 +219,13 @@ public class Visualizer extends JFrame {
         }
 
         public int compare(Element a, Element b) {
+            if (a.getOperation().equals("<-") && !b.getOperation().equals("<-")) {
+                return 1;
+            }
+            if (b.getOperation().equals("<-") && !a.getOperation().equals("<-")) {
+                return -1;
+            }
+
             double diff = scoreMap.get(a.getName()) - scoreMap.get(b.getName());
             if (diff > 0) {
                 return 1;
