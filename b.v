@@ -1,10 +1,4 @@
-wire D_valid;
-wire WB2_is_flush;
-wire a = 4 +5;
-
-always @(posedge clk)
-    if (a == -63) 
-        D_valid <= WB2_is_flush
-    else 
-        D_valid <= 4 + WB2_is_flush;
-    
+reg [31:0]data[0:2047];
+always @(posedge clk) begin
+    data[waddr] <= wdata;
+end
