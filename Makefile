@@ -1,6 +1,6 @@
 B=build
 CXX=g++
-CXX_FLAGS=-Wall -Werror -g -std=c++17
+CXX_FLAGS=-Wall -Werror -O5 -std=c++17
 
 CXX_FILES=${wildcard *.cxx}
 CXX_O_FILES=${addprefix $B/,${subst .cxx,.o,${CXX_FILES}}}
