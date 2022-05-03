@@ -164,7 +164,8 @@ public class Element {
         if ((getOperation().equals("=") && !getType().equals("reg")) || getOperation().equals("->") || getOperation().equals("<-")) {
             g2d.drawLine(getXCoord(), getYCoord() + getHeight() / 2, getXCoord() + Visualizer.BOX_WIDTH,
                     getYCoord() + getHeight() / 2);
-        } else if(getOperation().equals("?:")){
+        } 
+        else if(getOperation().equals("?:")){ //MUX
             int[] xPoints = {getXCoord(),getXCoord()+Visualizer.BOX_WIDTH*3/4,getXCoord()+Visualizer.BOX_WIDTH*3/4, getXCoord()};
             int height = getHeight() - Visualizer.BASE_HEIGHT;
             int yCorner = getYCoord() + Visualizer.BASE_HEIGHT;
@@ -175,7 +176,29 @@ public class Element {
             g2d.drawLine(getXCoord() + Visualizer.BOX_WIDTH * 3 / 8, yIn, getXCoord() + Visualizer.BOX_WIDTH * 3 / 8, yCorner + height / 6);
             g2d.drawLine(getXCoord() + Visualizer.BOX_WIDTH * 3 / 4 , yCorner + height  / 2, getXCoord() + Visualizer.BOX_WIDTH, getYCoord() + getHeight() / 2);
         }
-        else if (!getOperation().equals("--")) {
+        else if(getOperation().equals("&&") || getOperation().equals("&")){ //AND
+            g2d.drawLine(getXCoord(), getYCoord(), getXCoord(), getYCoord() + getHeight());
+            g2d.drawArc(getXCoord() - Visualizer.BOX_WIDTH, getYCoord(), Visualizer.BOX_WIDTH * 2, getHeight(), 270, 90);
+            g2d.drawArc(getXCoord() - Visualizer.BOX_WIDTH, getYCoord(), Visualizer.BOX_WIDTH * 2, getHeight(), 0, 90);
+
+        }
+        else if(getOperation().equals("||") || getOperation().equals("|")){ //XOR
+            g2d.drawArc(getXCoord() - Visualizer.BOX_WIDTH * 1/4, getYCoord(), Visualizer.BOX_WIDTH * 1/4, getHeight(), 270, 90);
+            g2d.drawArc(getXCoord() - Visualizer.BOX_WIDTH * 1/4, getYCoord(), Visualizer.BOX_WIDTH * 1/4, getHeight(), 0, 90);
+            g2d.drawArc(getXCoord() - Visualizer.BOX_WIDTH * 5/4, getYCoord(), Visualizer.BOX_WIDTH * 9/4, getHeight(), 270, 90);
+            g2d.drawArc(getXCoord() - Visualizer.BOX_WIDTH * 5/4, getYCoord(), Visualizer.BOX_WIDTH * 9/4, getHeight(), 0, 90);
+
+        }
+        else if(getOperation().equals("^")){ //XOR
+            g2d.drawArc(getXCoord() - Visualizer.BOX_WIDTH * 1/4, getYCoord(), Visualizer.BOX_WIDTH * 1/4, getHeight(), 270, 90);
+            g2d.drawArc(getXCoord() - Visualizer.BOX_WIDTH * 1/4, getYCoord(), Visualizer.BOX_WIDTH * 1/4, getHeight(), 0, 90);
+            g2d.drawArc(getXCoord() - Visualizer.BOX_WIDTH * 0, getYCoord(), Visualizer.BOX_WIDTH * 1/8, getHeight(), 270, 90);
+            g2d.drawArc(getXCoord() - Visualizer.BOX_WIDTH * 0, getYCoord(), Visualizer.BOX_WIDTH * 1/8, getHeight(), 0, 90);
+            g2d.drawArc(getXCoord() - Visualizer.BOX_WIDTH, getYCoord(), Visualizer.BOX_WIDTH * 2, getHeight(), 270, 90);
+            g2d.drawArc(getXCoord() - Visualizer.BOX_WIDTH, getYCoord(), Visualizer.BOX_WIDTH * 2, getHeight(), 0, 90);
+
+        }
+        else if (!getOperation().equals("--")) { //base case
             g2d.drawRect(getXCoord(), getYCoord(), Visualizer.BOX_WIDTH, getHeight()); //draws box
             if (type.equals("reg")) {
                 int base = getYBase();
@@ -185,6 +208,7 @@ public class Element {
                 g2d.drawLine(peakX, peakY, getXCoord() + 2 * Visualizer.BOX_WIDTH / 3, base);
             }
         }
+        
     }
 
     public void draw(Graphics2D g2d, HashMap<String, Element> elementMap, ArrayList<HashMap<String, Element>>[] columnMaps) {
@@ -196,7 +220,7 @@ public class Element {
         
         if (getOperation().equals("--")) {
             g2d.setFont(new Font(g2d.getFont().getName(), Font.PLAIN, 9)); 
-            String lit = Visualizer.condenseName(""+getOperands().get(0), 17);
+            String lit = Visualizer.condenseName(""+getOperands().get(0), 17 * Visualizer.FULL_WIDTH / 80);
             drawStringCentered(g2d, lit, getXCoord() + Visualizer.FULL_WIDTH / 2, getYCoord() + getHeight() / 2 - 3);
             g2d.drawLine(getXCoord(), getYCoord() + getHeight() / 2, getXCoord() + Visualizer.FULL_WIDTH,
                     getYCoord() + getHeight() / 2); //draws full line
@@ -211,10 +235,14 @@ public class Element {
         //draws name
         if (!(getName().charAt(0) == '.' || getOperation().equals("->") || getOperation().equals("<-"))) {
             g2d.setFont(new Font(g2d.getFont().getName(), Font.PLAIN, 9));
-            String name = Visualizer.condenseName(getName(), 10);
+            String name = Visualizer.condenseName(getName(), 10*Visualizer.STUD_WIDTH / 40);
+            while(g2d.getFontMetrics().stringWidth(name) > Visualizer.STUD_WIDTH){
+                g2d.setFont(new Font(g2d.getFont().getName(), Font.PLAIN, g2d.getFont().getSize() - 1));
+            }
             drawStringCentered(g2d, name, getXCoord() + Visualizer.BOX_WIDTH + Visualizer.STUD_WIDTH / 2, getYCoord() + getHeight() / 2 + 10); //draw name
             g2d.drawLine(getXCoord()+Visualizer.BOX_WIDTH + Visualizer.STUD_WIDTH / 2 + 1, getYCoord() + getHeight() / 2 - 3, 
                     getXCoord()+Visualizer.BOX_WIDTH + Visualizer.STUD_WIDTH / 2 - 1, getYCoord() + getHeight() / 2 + 2);
+            g2d.setFont(new Font(g2d.getFont().getName(), Font.PLAIN, 9));
             drawStringCentered(g2d, ""+getWidth(), getXCoord() + Visualizer.BOX_WIDTH + Visualizer.STUD_WIDTH / 2, getYCoord() + getHeight() / 2 - 5); //draw name
         }
 
