@@ -3,14 +3,13 @@ import javax.swing.*;
 import java.io.*;
 import java.util.*;
 
-// DONE: add backwards wires
 // TODO: add specialized gates
 // TODO: fix operator strings (chunk of wire)
 // DONE: fix literal string length (when it juts out)
-// DONE: fix MUX jank 
 // TODO: fix wire being set to temp late
 // TODO: adjust column distances to reflect amount of wire squishing
 // TODO: resolve redundant
+// TODO: fix wire density jank (scale horizontal distance)
 
 public class Visualizer extends JFrame {
     private static final int MAX_WIDTH = 1500;
