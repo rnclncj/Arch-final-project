@@ -3,19 +3,4 @@ wire .temp1 ?: .temp0 WB2_branch_addr F1_pc
 wire .temp2 ! .temp0
 wire .temp3 -- 1
 wire .temp4 + WB2_pc .temp3
-wire .temp5 ?: WB2_is_flush .temp1.temp4 F1_pc
-wire .temp6 ! WB2_is_flush
-wire .temp7 && .temp6 WB1_is_flush
-wire .temp8 && WB2_is_flush WB1_is_flush
-wire .temp9 && F1_valid WB1_branch_en
-wire .temp10 ?: .temp9 WB1_branch_addr F1_pc
-wire .temp11 ! .temp9
-wire .temp12 -- 1
-wire .temp13 + WB1_pc .temp12
-wire .temp14 ?: .temp7 .temp10.temp13 .temp5
-wire .temp15 ! .temp8
-wire .temp16 -- 1
-wire .temp17 + F1_pc .temp16
-wire .temp18 ?: .temp15 .temp17 .temp14
-wire .temp19 ?: F1_valid .temp18 F1_pc
-reg F1_pc = .temp19
+reg F1_pc = .temp1.temp4

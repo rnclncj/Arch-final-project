@@ -20,7 +20,7 @@ module main();
     wire [63:2] mem_waddr;
     wire [31:0] mem_wdata;
 
-    // memory mem(clk,mem_raddr0,mem_rdata0,mem_raddr1,mem_rdata1,mem_wen,mem_waddr,mem_wdata);
+    memory mem(clk,mem_raddr0,mem_rdata0,mem_raddr1,mem_rdata1,mem_wen,mem_waddr,mem_wdata);
 
     // ... and registers
     wire [4:0] reg_raddr0;
@@ -30,7 +30,7 @@ module main();
     wire reg_wen;
     wire [4:0] reg_waddr;
     wire [63:0] reg_wdata;
-    // registers regs(clk,reg_raddr0,reg_rdata0,reg_raddr1,reg_rdata1,reg_wen,reg_waddr,reg_wdata);
+    registers regs(clk,reg_raddr0,reg_rdata0,reg_raddr1,reg_rdata1,reg_wen,reg_waddr,reg_wdata);
 
     /////////////////
     // Fetch 1     //

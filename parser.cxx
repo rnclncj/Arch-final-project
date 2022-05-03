@@ -22,6 +22,7 @@ using namespace std;
 class Interpreter {
     char const* const program;
     char const* current;
+
     unordered_map<string, pair<int64_t, string>> wire_table{};
     unordered_map<string, string> reg_table{};
     int tempCounter;
@@ -668,6 +669,16 @@ class Interpreter {
             return true;
         } else if (consume("//") || consume("$") || consume("`") || consume("module") || consume("endmodule")) {
             skip_line();
+            return true;
+        } else if (auto id = consume_identifier()){
+            string module_name = consume_identifier().value();
+            vector<pair<bool, string>> params;
+            consume("(");
+            do {
+                string param = consume_identifier().value();
+                params.push_back(param);
+            } while (consume(","));
+            consume(")");
             return true;
         } else {
             return false;

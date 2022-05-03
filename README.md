@@ -14,6 +14,8 @@ wire y = .temp1
 bit select: wire a = s0[1:0]
 wire .temp2 [1:0] s0
 wire a = .temp2
+# modules
+module .input1 .input2 ... □ .output1 .output2 ...
 
 https://zetcode.com/gfx/java2d/
 
