@@ -8,6 +8,7 @@ public class Element {
     private String operation;
     private ArrayList<String> operands;
     private int colNum;
+    private int xCoord;
     private int yCoord;
 
     // constructor from file line
@@ -61,7 +62,12 @@ public class Element {
     }
 
     public int getXCoord() {
-        return Visualizer.HORIZ_DIST + getColNum() * (Visualizer.FULL_WIDTH + Visualizer.HORIZ_DIST);
+        return xCoord;
+        // return Visualizer.HORIZ_DIST + getColNum() * (Visualizer.FULL_WIDTH + Visualizer.HORIZ_DIST);
+    }
+
+    public void setXCoord(int xc) {
+        xCoord = xc;
     }
 
     // returns the height of the element

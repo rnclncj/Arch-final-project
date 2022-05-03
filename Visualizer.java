@@ -26,18 +26,18 @@ public class Visualizer extends JFrame {
 
     public static final Color BACKWARDS_COLOR = Color.BLUE;
 
-    public Visualizer(ArrayList<ArrayList<Element>> c, HashMap<String, Element> em, ArrayList<HashMap<String, Element>>[] cm, int xDim, int yDim) {
-        initUI(c, em, cm, xDim, yDim);
+    public Visualizer(ArrayList<ArrayList<Element>> c, HashMap<String, Element> em, ArrayList<HashMap<String, Element>>[] cm, int[] dims) {
+        initUI(c, em, cm, dims);
     }
 
-    private void initUI(ArrayList<ArrayList<Element>> c, HashMap<String, Element> em, ArrayList<HashMap<String, Element>>[] cm, int xDim, int yDim) {
+    private void initUI(ArrayList<ArrayList<Element>> c, HashMap<String, Element> em, ArrayList<HashMap<String, Element>>[] cm, int[] dims) {
         Panel panel = new Panel(c, em, cm);
-        panel.setPreferredSize(new Dimension(xDim, yDim));
+        panel.setPreferredSize(new Dimension(dims[0], dims[1]));
         JScrollPane scrollPane = new JScrollPane(panel);
         add(scrollPane);
 
         setTitle("Verilog Visualizer");
-        setSize(Math.min(xDim + ADDITIONAL_WIDTH, MAX_WIDTH), Math.min(yDim + ADDITIONAL_HEIGHT,MAX_HEIGHT));
+        setSize(Math.min(dims[0] + ADDITIONAL_WIDTH, MAX_WIDTH), Math.min(dims[1] + ADDITIONAL_HEIGHT, MAX_HEIGHT));
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
@@ -59,13 +59,13 @@ public class Visualizer extends JFrame {
         addPaths(columns);
         ArrayList<HashMap<String, Element>>[] columnMaps = getColumnMaps(columns);
         reorder(columns, elementMap, columnMaps);
-        int yDim = setCoords(columns);
-        int xDim = columns.size() * (Visualizer.HORIZ_DIST + Visualizer.FULL_WIDTH) + Visualizer.HORIZ_DIST;
+        int[] dims = setCoords(columns);
+        // int xDim = columns.size() * (Visualizer.HORIZ_DIST + Visualizer.FULL_WIDTH) + Visualizer.HORIZ_DIST;
 
         EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
-                Visualizer vis = new Visualizer(columns, elementMap, columnMaps, xDim, yDim);
+                Visualizer vis = new Visualizer(columns, elementMap, columnMaps, dims);
                 vis.setVisible(true);
             }
         });
@@ -157,6 +157,7 @@ public class Visualizer extends JFrame {
         }
     }
 
+    @SuppressWarnings("unchecked")
     public static ArrayList<HashMap<String, Element>>[] getColumnMaps(ArrayList<ArrayList<Element>> columns) {
         ArrayList<HashMap<String, Element>> columnMaps = new ArrayList<>();
         ArrayList<HashMap<String, Element>> backColumnMaps = new ArrayList<>();
@@ -236,8 +237,10 @@ public class Visualizer extends JFrame {
         }
     }
 
-    //sets yCoords to correct values within each column, returns the max Height of any column
-    public static int setCoords(ArrayList<ArrayList<Element>> columns){
+    // sets xCoords and yCoords to correct values within/across each column
+    // returns the required dimensions of the final image
+    public static int[] setCoords(ArrayList<ArrayList<Element>> columns){
+        // set yCoords
         int maxHeight = 0;
         for (ArrayList<Element> column : columns) {
             int currHeight = Visualizer.VERT_DIST;
@@ -247,7 +250,42 @@ public class Visualizer extends JFrame {
             }
             maxHeight = Math.max(maxHeight, currHeight);
         }
-        return maxHeight + Visualizer.VERT_DIST;
+        int yDim = maxHeight + Visualizer.VERT_DIST;
+
+        // set xCoords
+        int prevX = 0;
+        int horizDist = Visualizer.HORIZ_DIST;
+        setColX(columns.get(0), prevX + horizDist);
+        prevX += horizDist + Visualizer.FULL_WIDTH;
+        for (int i = 1; i < columns.size(); i++) {
+            // scale horizontal distance according to the ratio between column heights
+            int prevHeight = getColHeight(columns.get(i - 1));
+            int currHeight = getColHeight(columns.get(i));
+            double colRatio = ((double) currHeight) / prevHeight;
+            if (colRatio < 1) {
+                colRatio = 1 / colRatio;
+            }
+
+            // scale according to the height of the highest column
+            double heightRatio = ((double) Math.max(prevHeight, currHeight)) / yDim;
+            colRatio = 1 + (colRatio - 1) * heightRatio;
+            horizDist = (int) (Visualizer.HORIZ_DIST * colRatio);
+
+            setColX(columns.get(i), prevX + horizDist);
+            prevX += horizDist + Visualizer.FULL_WIDTH;
+        }
+        int xDim = prevX + Visualizer.HORIZ_DIST;
+        return new int[] {xDim, yDim};
+    }
+
+    private static int getColHeight(ArrayList<Element> column) {
+        return column.get(column.size()-1).getYBase();
+    }
+
+    private static void setColX(ArrayList<Element> column, int xCoord) {
+        for (Element elem : column) {
+            elem.setXCoord(xCoord);
+        }
     }
 
     public static String condenseName(String name, int length){
