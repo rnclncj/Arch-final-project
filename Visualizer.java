@@ -50,6 +50,24 @@ public class Visualizer extends JFrame {
         String line = "";
         while ((line = reader.readLine()) != null) {
             Element element = new Element(line);
+            // element is not temp
+            // operation is =
+            // operand is temp
+            // operand is previous wire
+            // if all of the above, set previous name to new name; set previous type to new type
+            if (element.getName().charAt(0) != '.' && element.getOperation().equals("=")
+                    && element.getOperands().get(0).charAt(0) == '.'
+                    && element.getOperands().get(0).equals(elementList.get(elementList.size()-1).getName())) {
+                // System.out.println();
+                // System.out.println(elementList.get(elementList.size()-1));
+                // System.out.println(element);
+                Element prevElem = elementMap.remove(element.getOperands().get(0));
+                prevElem.setName(element.getName());
+                prevElem.setType(element.getType());
+                elementMap.put(prevElem.getName(), prevElem);
+                // System.out.println(elementList.get(elementList.size()-1));
+                continue;
+            }
             elementList.add(element);
             elementMap.put(element.getName(), element);
         }
@@ -188,6 +206,7 @@ public class Visualizer extends JFrame {
                 int scoreNum = 1;
                 if (!(elem.getOperation().equals("--") || elem.getOperation().equals("<-"))) {
                     for (String operand : elem.getOperands()) {
+                        // System.out.println(elem + " " + operand);
                         if (elementMap.get(operand).getColNum() >= elem.getColNum()) {
                             continue;
                         }
