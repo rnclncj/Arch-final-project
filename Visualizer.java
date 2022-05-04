@@ -43,7 +43,7 @@ public class Visualizer extends JFrame {
     }
 
     public static void main(String[] args) throws IOException {
-        if (args.length >= 1) {
+        if (args.length != 1) {
             System.out.println("usage: java Visualizer filename.vf");
             System.exit(1);
         }
@@ -356,8 +356,12 @@ public class Visualizer extends JFrame {
 
             // scale according to the height of the highest column
             double heightRatio = ((double) Math.max(prevHeight, currHeight)) / yDim;
-            colRatio = 1 + (colRatio - 1) * heightRatio;
-            horizDist = (int) (Visualizer.HORIZ_DIST * colRatio);
+            heightRatio = Math.pow(2, 6 * (heightRatio - 0.5));
+            
+            // average the two ratios
+            double ratio = (colRatio + heightRatio) / 2;
+            ratio = Math.max(ratio, 1);
+            horizDist = (int) (Visualizer.HORIZ_DIST * ratio);
             horizDist = Math.min(horizDist, Visualizer.MAX_WIDTH / 2);
 
             setColX(columns.get(i), prevX + horizDist);
