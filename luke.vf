@@ -1,0 +1,1104 @@
+wire .temp0 & F1_valid WB_M_add_valid
+wire [1]reg_rdata0 = .temp1
+wire [1]reg_rdata1 = .temp1
+wire [1]mem_rdata0 = .temp1
+wire [1]mem_rdata1 = .temp1
+wire .temp1 == F1_pc WB_M_add
+wire .temp2 & .temp0 .temp1
+wire [1]F1_modified = .temp2
+wire .temp3 [63:2] WB_imm
+wire .temp4 + .temp3 WB_pc
+wire .temp5 ?: jmp .temp4 WB_flush
+wire .temp6 -- 1
+wire .temp7 + WB_pc .temp6
+wire .temp8 | D_stall X_stall
+wire .temp9 | .temp8 WB_stall
+wire .temp10 ?: .temp5 .temp7 .temp9
+wire .temp11 ?: .temp10 F1_pc WB_was_stalling
+wire .temp12 -- 1
+wire .temp13 + WB_pc .temp12
+wire .temp14 ~ X_stall
+wire .temp15 & .temp14 X_was_stalling
+wire .temp16 ?: .temp11 .temp13 .temp15
+wire .temp17 -- 1
+wire .temp18 + X_pc .temp17
+wire .temp19 ~ D_stall
+wire .temp20 & .temp19 D_was_stalling
+wire .temp21 & .temp20 D_valid
+wire .temp22 ?: .temp16 .temp18 .temp21
+wire .temp23 -- 1
+wire .temp24 + D_pc .temp23
+wire .temp25 ?: .temp22 .temp24 F1_stall
+wire .temp26 -- 1
+wire .temp27 + F1_pc .temp26
+wire .temp28 ?: .temp25 F1_pc .temp27
+wire .temp29 & F2_valid WB_M_add_valid
+wire .temp30 == F2_pc WB_M_add
+wire .temp31 & .temp29 .temp30
+wire [1]F2_modified = .temp31
+wire .temp32 ~ F1_stall
+wire .temp33 ~ D_stall
+wire .temp34 & .temp32 .temp33
+wire .temp35 & .temp34 F1_valid
+wire .temp36 ~ WB_flush
+wire .temp37 & .temp35 .temp36
+wire .temp38 ~ jmp
+wire .temp39 & .temp37 .temp38
+wire .temp40 ~ WB_was_stalling
+wire .temp41 & .temp39 .temp40
+wire .temp42 ~ X_was_stalling
+wire .temp43 & .temp41 .temp42
+wire .temp44 & D_was_stalling D_valid
+wire .temp45 ~ .temp44
+wire .temp46 & .temp43 .temp45
+wire .temp47 ~ D_stall
+wire .temp48 ?: .temp47 F1_pc F2_pc
+wire .temp49 & W1_valid WB_M_add_valid
+wire .temp50 == W1_pc WB_M_add
+wire .temp51 & .temp49 .temp50
+wire [1]W1_modified = .temp51
+wire .temp52 ~ D_stall
+wire .temp53 & .temp52 F2_valid
+wire .temp54 ~ WB_flush
+wire .temp55 & .temp53 .temp54
+wire .temp56 ~ D_stall
+wire .temp57 ?: .temp56 F2_pc W1_pc
+wire .temp58 == R1_R1_num D_rn
+wire .temp59 & R1_R1_num_valid .temp58
+wire .temp60 == R1_R1_num D_rd_rt
+wire .temp61 & R1_R1_num_valid .temp60
+wire .temp62 | .temp59 .temp61
+wire .temp63 == R1_R2_num D_rn
+wire .temp64 & R1_R2_num_valid .temp63
+wire .temp65 | .temp62 .temp64
+wire .temp66 == R1_R2_num D_rd_rt
+wire .temp67 & R1_R2_num_valid .temp66
+wire .temp68 | .temp65 .temp67
+wire .temp69 == R2_R1_num D_rn
+wire .temp70 & R2_R1_num_valid .temp69
+wire .temp71 | .temp68 .temp70
+wire .temp72 == R2_R1_num D_rd_rt
+wire .temp73 & R2_R1_num_valid .temp72
+wire .temp74 | .temp71 .temp73
+wire .temp75 == R2_R2_num D_rn
+wire .temp76 & R2_R2_num_valid .temp75
+wire .temp77 | .temp74 .temp76
+wire .temp78 == R2_R2_num D_rd_rt
+wire .temp79 & R2_R2_num_valid .temp78
+wire .temp80 | .temp77 .temp79
+wire .temp81 == W2_R2_num D_rn
+wire .temp82 == W2_R2_num D_rd_rt
+wire .temp83 | .temp81 .temp82
+wire .temp84 & W2_R2_num_valid .temp83
+wire .temp85 | .temp80 .temp84
+wire .temp86 == W2_R1_num D_rn
+wire .temp87 == W2_R1_num D_rd_rt
+wire .temp88 | .temp86 .temp87
+wire .temp89 & W2_R1_num_valid .temp88
+wire .temp90 | .temp85 .temp89
+wire .temp91 == X_R1_num D_rn
+wire .temp92 & X_R1_num_valid .temp91
+wire .temp93 | .temp90 .temp92
+wire .temp94 == X_R1_num D_rd_rt
+wire .temp95 & X_R1_num_valid .temp94
+wire .temp96 | .temp93 .temp95
+wire .temp97 == X_R2_num D_rn
+wire .temp98 & X_R2_num_valid .temp97
+wire .temp99 | .temp96 .temp98
+wire .temp100 == X_R2_num D_rd_rt
+wire .temp101 & X_R2_num_valid .temp100
+wire .temp102 | .temp99 .temp101
+wire .temp103 == M1_R1_num D_rn
+wire .temp104 & M1_R1_num_valid .temp103
+wire .temp105 | .temp102 .temp104
+wire .temp106 == M1_R1_num D_rd_rt
+wire .temp107 & M1_R1_num_valid .temp106
+wire .temp108 | .temp105 .temp107
+wire .temp109 == M1_R2_num D_rn
+wire .temp110 & M1_R2_num_valid .temp109
+wire .temp111 | .temp108 .temp110
+wire .temp112 == M1_R2_num D_rd_rt
+wire .temp113 & M1_R2_num_valid .temp112
+wire .temp114 | .temp111 .temp113
+wire .temp115 == M2_R1_num D_rn
+wire .temp116 & M2_R1_num_valid .temp115
+wire .temp117 | .temp114 .temp116
+wire .temp118 == M2_R1_num D_rd_rt
+wire .temp119 & M2_R1_num_valid .temp118
+wire .temp120 | .temp117 .temp119
+wire .temp121 == M2_R2_num D_rn
+wire .temp122 & M2_R2_num_valid .temp121
+wire .temp123 | .temp120 .temp122
+wire .temp124 == M2_R2_num D_rd_rt
+wire .temp125 & M2_R2_num_valid .temp124
+wire .temp126 | .temp123 .temp125
+wire .temp127 == WB_R1_num D_rn
+wire .temp128 & WB_R1_num_valid .temp127
+wire .temp129 | .temp126 .temp128
+wire .temp130 == WB_R1_num D_rd_rt
+wire .temp131 & WB_R1_num_valid .temp130
+wire .temp132 | .temp129 .temp131
+wire .temp133 == WB_R2_num D_rn
+wire .temp134 & WB_R2_num_valid .temp133
+wire .temp135 | .temp132 .temp134
+wire .temp136 == WB_R2_num D_rd_rt
+wire .temp137 & WB_R2_num_valid .temp136
+wire .temp138 | .temp135 .temp137
+wire [1]D_need_to_stall = .temp138
+wire .temp139 & D_need_to_stall D_valid
+wire .temp140 | .temp139 X_stall
+wire [1]D_stall = .temp140
+wire .temp141 & D_valid WB_M_add_valid
+wire .temp142 == D_pc WB_M_add
+wire .temp143 & .temp141 .temp142
+wire [1]D_modified = .temp143
+wire .temp144 [31] D_ins
+wire .temp145 -- 1
+wire .temp146 == .temp144 .temp145
+wire .temp147 [28:24] D_ins
+wire .temp148 -- 5'b10000
+wire .temp149 == .temp147 .temp148
+wire .temp150 & .temp146 .temp149
+wire [1]D_isAdrp = .temp150
+wire .temp151 [30:23] D_ins
+wire .temp152 -- 8'b00100010
+wire .temp153 == .temp151 .temp152
+wire [1]D_isAddi = .temp153
+wire .temp154 [30:23] D_ins
+wire .temp155 -- 8'b10100101
+wire .temp156 == .temp154 .temp155
+wire [1]D_isMovz = .temp156
+wire .temp157 [31] D_ins
+wire .temp158 -- 1
+wire .temp159 == .temp157 .temp158
+wire .temp160 [29:21] D_ins
+wire .temp161 -- 9'b111000010
+wire .temp162 == .temp160 .temp161
+wire .temp163 & .temp159 .temp162
+wire .temp164 [11:10] D_ins
+wire .temp165 -- 2'b11
+wire .temp166 == .temp164 .temp165
+wire .temp167 & .temp163 .temp166
+wire [1]D_isLdrPre = .temp167
+wire .temp168 [31] D_ins
+wire .temp169 -- 1
+wire .temp170 == .temp168 .temp169
+wire .temp171 [29:21] D_ins
+wire .temp172 -- 9'b111000010
+wire .temp173 == .temp171 .temp172
+wire .temp174 & .temp170 .temp173
+wire .temp175 [11:10] D_ins
+wire .temp176 -- 2'b01
+wire .temp177 == .temp175 .temp176
+wire .temp178 & .temp174 .temp177
+wire [1]D_isLdrPost = .temp178
+wire .temp179 [31] D_ins
+wire .temp180 -- 1
+wire .temp181 == .temp179 .temp180
+wire .temp182 [29:22] D_ins
+wire .temp183 -- 8'b11100101
+wire .temp184 == .temp182 .temp183
+wire .temp185 & .temp181 .temp184
+wire [1]D_isLdrOff = .temp185
+wire .temp186 [31:21] D_ins
+wire .temp187 -- 11'b00111000000
+wire .temp188 == .temp186 .temp187
+wire .temp189 [11:10] D_ins
+wire .temp190 -- 2'b11
+wire .temp191 == .temp189 .temp190
+wire .temp192 & .temp188 .temp191
+wire [1]D_isStrbPre = .temp192
+wire .temp193 [31:21] D_ins
+wire .temp194 -- 11'b00111000000
+wire .temp195 == .temp193 .temp194
+wire .temp196 [11:10] D_ins
+wire .temp197 -- 2'b01
+wire .temp198 == .temp196 .temp197
+wire .temp199 & .temp195 .temp198
+wire [1]D_isStrbPost = .temp199
+wire .temp200 [31:22] D_ins
+wire .temp201 -- 10'b0011100100
+wire .temp202 == .temp200 .temp201
+wire [1]D_isStrbOff = .temp202
+wire .temp203 [31:21] D_ins
+wire .temp204 -- 11'b00111000010
+wire .temp205 == .temp203 .temp204
+wire .temp206 [11:10] D_ins
+wire .temp207 -- 2'b11
+wire .temp208 == .temp206 .temp207
+wire .temp209 & .temp205 .temp208
+wire [1]D_isLdrbPre = .temp209
+wire .temp210 [31:21] D_ins
+wire .temp211 -- 11'b00111000010
+wire .temp212 == .temp210 .temp211
+wire .temp213 [11:10] D_ins
+wire .temp214 -- 2'b01
+wire .temp215 == .temp213 .temp214
+wire .temp216 & .temp212 .temp215
+wire [1]D_isLdrbPost = .temp216
+wire .temp217 [31:22] D_ins
+wire .temp218 -- 10'b0011100101
+wire .temp219 == .temp217 .temp218
+wire [1]D_isLdrbOff = .temp219
+wire .temp220 [30:24] D_ins
+wire .temp221 -- 7'b0110101
+wire .temp222 == .temp220 .temp221
+wire [1]D_isCbnz = .temp222
+wire .temp224 [21:10] D_imm12
+wire .temp225 -- 12'b0
+wire .temp223 {} .temp224 .temp225
+wire .temp226 [21:10] D_imm12
+wire .temp227 ?: D_sh .temp223 .temp226
+wire .temp228 ?: D_isAddi .temp227 D_isAdrp
+wire .temp231 -- 31
+wire .temp233 [23] D_immhi
+wire .temp232 {} .temp233
+wire .temp234 {{}} .temp231 .temp232
+wire .temp230 {} .temp234
+wire .temp235 -- 12'b0
+wire .temp229 {} .temp230 D_immhi D_immlo .temp235
+wire .temp236 ?: .temp228 .temp229 D_isCbnz
+wire .temp239 -- 43
+wire .temp241 [23] D_imm19
+wire .temp240 {} .temp241
+wire .temp242 {{}} .temp239 .temp240
+wire .temp238 {} .temp242
+wire .temp243 [23:5] D_imm19
+wire .temp244 -- 2'b0
+wire .temp237 {} .temp238 .temp243 .temp244
+wire .temp245 ?: .temp236 .temp237 D_isMovz
+wire .temp246 -- 2'b00
+wire .temp247 == D_hw .temp246
+wire .temp248 -- 2'b01
+wire .temp249 == D_hw .temp248
+wire .temp251 -- 16'b0
+wire .temp250 {} D_imm16 .temp251
+wire .temp252 -- 2'b10
+wire .temp253 == D_hw .temp252
+wire .temp255 -- 32'b0
+wire .temp254 {} D_imm16 .temp255
+wire .temp257 -- 48'b0
+wire .temp256 {} D_imm16 .temp257
+wire .temp258 ?: .temp253 .temp254 .temp256
+wire .temp259 ?: .temp249 .temp250 .temp258
+wire .temp260 ?: .temp247 D_imm16 .temp259
+wire .temp261 | D_isLdrbPre D_isLdrbPost
+wire .temp262 | .temp261 D_isLdrPre
+wire .temp263 | .temp262 D_isLdrPost
+wire .temp264 | .temp263 D_isStrbPre
+wire .temp265 | .temp264 D_isStrbPost
+wire .temp266 ?: .temp245 .temp260 .temp265
+wire .temp269 -- 55
+wire .temp271 [20] D_imm9
+wire .temp270 {} .temp271
+wire .temp272 {{}} .temp269 .temp270
+wire .temp268 {} .temp272
+wire .temp273 [20:12] D_imm9
+wire .temp267 {} .temp268 .temp273
+wire .temp274 | D_isLdrbOff D_isLdrOff
+wire .temp275 | .temp274 D_isStrbOff
+wire .temp276 ?: .temp266 .temp267 .temp275
+wire .temp277 [31:30] D_size
+wire .temp278 -- 2'b11
+wire .temp279 == .temp277 .temp278
+wire .temp281 [21:10] D_imm12
+wire .temp282 -- 3'b0
+wire .temp280 {} .temp281 .temp282
+wire .temp283 [31:30] D_size
+wire .temp284 -- 2'b10
+wire .temp285 == .temp283 .temp284
+wire .temp286 ?: .temp279 .temp280 .temp285
+wire .temp288 [21:10] D_imm12
+wire .temp289 -- 2'b0
+wire .temp287 {} .temp288 .temp289
+wire .temp290 [21:10] D_imm12
+wire .temp291 ?: .temp286 .temp287 .temp290
+wire .temp292 -- 0
+wire .temp293 ?: .temp276 .temp291 .temp292
+wire [63]D_imm = .temp293
+wire .temp294 [9:5] D_ins
+wire [4]D_rn = .temp294
+wire .temp295 [4:0] D_ins
+wire [4]D_rd_rt = .temp295
+wire .temp296 [31] D_ins
+wire [1]D_sf = .temp296
+wire .temp297 [22] D_ins
+wire [1]D_sh = .temp297
+wire .temp298 [21:10] D_ins
+wire [11]D_imm12 = .temp298
+wire .temp299 [30:29] D_ins
+wire [1]D_immlo = .temp299
+wire .temp300 [23:5] D_ins
+wire [18]D_immhi = .temp300
+wire .temp301 [23:5] D_ins
+wire [18]D_imm19 = .temp301
+wire .temp302 [20:12] D_ins
+wire [8]D_imm9 = .temp302
+wire .temp303 [20:5] D_ins
+wire [15]D_imm16 = .temp303
+wire .temp304 [22:21] D_ins
+wire [1]D_hw = .temp304
+wire .temp305 [31:30] D_ins
+wire [1]D_size = .temp305
+wire .temp306 ~ X_stall
+wire .temp307 | W1_valid D_stall
+wire .temp308 & .temp306 .temp307
+wire .temp309 ~ WB_flush
+wire .temp310 & .temp308 .temp309
+wire .temp311 ~ X_stall
+wire .temp312 & D_valid D_stall
+wire .temp313 ~ X_stall
+wire .temp314 | W1_valid D_stall
+wire .temp315 & .temp313 .temp314
+wire .temp316 ~ WB_flush
+wire .temp317 & .temp315 .temp316
+wire .temp318 & .temp312 .temp317
+wire .temp319 ?: D_stall D_pc W1_pc
+wire .temp320 ?: D_stall D_ins mem_rdata1
+wire .temp321 ?: .temp311 .temp320 D_ins
+wire .temp322 ?: .temp311 .temp318 D_was_stalling
+wire .temp323 ?: .temp311 .temp319 D_pc
+wire .temp324 & R1_valid WB_M_add_valid
+wire .temp325 == R1_pc WB_M_add
+wire .temp326 & .temp324 .temp325
+wire [1]R1_modified = .temp326
+wire .temp327 | R1_isLdrPre R1_isLdrPost
+wire .temp328 | .temp327 R1_isLdrbPre
+wire .temp329 | .temp328 R1_isLdrbPost
+wire .temp330 | .temp329 R1_isStrbPre
+wire .temp331 | .temp330 R1_isStrbPost
+wire .temp332 & R1_valid .temp331
+wire [1]R1_R1_num_valid = .temp332
+wire .temp333 | R1_isAddi R1_isAdrp
+wire .temp334 | .temp333 R1_isMovz
+wire .temp335 | .temp334 R1_isLdrbOff
+wire .temp336 | .temp335 R1_isLdrbPost
+wire .temp337 | .temp336 R1_isLdrbPre
+wire .temp338 | .temp337 R1_isLdrOff
+wire .temp339 | .temp338 R1_isLdrPre
+wire .temp340 | .temp339 R1_isLdrPost
+wire .temp341 & R1_valid .temp340
+wire [1]R1_R2_num_valid = .temp341
+wire [4]R1_R1_num = R1_rn
+wire [4]R1_R2_num = R1_rd_rt
+wire [1]reg_raddr0 = R1_rn
+wire [1]reg_raddr1 = R1_rd_rt
+wire .temp342 ~ X_stall
+wire .temp343 ~ D_stall
+wire .temp344 & .temp342 .temp343
+wire .temp345 & .temp344 D_valid
+wire .temp346 ~ WB_flush
+wire .temp347 & .temp345 .temp346
+wire .temp348 ~ X_stall
+wire .temp349 ?: .temp348 D_imm R1_imm
+wire .temp350 ?: .temp348 D_sh R1_sh
+wire .temp351 ?: .temp348 D_size R1_size
+wire .temp352 ?: .temp348 D_isLdrPost R1_isLdrPost
+wire .temp353 ?: .temp348 D_isLdrPre R1_isLdrPre
+wire .temp354 ?: .temp348 D_isLdrbPost R1_isLdrbPost
+wire .temp355 ?: .temp348 D_isMovz R1_isMovz
+wire .temp356 ?: .temp348 D_pc R1_pc
+wire .temp357 ?: .temp348 D_isAdrp R1_isAdrp
+wire .temp358 ?: .temp348 D_isLdrbOff R1_isLdrbOff
+wire .temp359 ?: .temp348 D_isLdrOff R1_isLdrOff
+wire .temp360 ?: .temp348 D_sf R1_sf
+wire .temp361 ?: .temp348 D_rd_rt R1_rd_rt
+wire .temp362 ?: .temp348 D_isStrbOff R1_isStrbOff
+wire .temp363 ?: .temp348 D_isLdrbPre R1_isLdrbPre
+wire .temp364 ?: .temp348 D_isStrbPre R1_isStrbPre
+wire .temp365 ?: .temp348 D_isCbnz R1_isCbnz
+wire .temp366 ?: .temp348 D_hw R1_hw
+wire .temp367 ?: .temp348 D_isAddi R1_isAddi
+wire .temp368 ?: .temp348 D_isStrbPost R1_isStrbPost
+wire .temp369 ?: .temp348 D_rn R1_rn
+wire .temp370 & R2_valid WB_M_add_valid
+wire .temp371 == R2_pc WB_M_add
+wire .temp372 & .temp370 .temp371
+wire [1]R2_modified = .temp372
+wire .temp373 ~ X_stall
+wire .temp374 & .temp373 R1_valid
+wire .temp375 ~ WB_flush
+wire .temp376 & .temp374 .temp375
+wire .temp377 ~ X_stall
+wire .temp378 & R1_R1_num_valid R1_valid
+wire .temp379 & R1_R2_num_valid R1_valid
+wire .temp380 ?: .temp377 .temp379 R2_R2_num_valid
+wire .temp381 ?: .temp377 .temp378 R2_R1_num_valid
+wire .temp382 ?: .temp377 R1_size R2_size
+wire .temp383 ?: .temp377 R1_R1_num R2_R1_num
+wire .temp384 ?: .temp377 R1_sf R2_sf
+wire .temp385 ?: .temp377 R1_imm R2_imm
+wire .temp386 ?: .temp377 R1_isLdrPre R2_isLdrPre
+wire .temp387 ?: .temp377 R1_isLdrPost R2_isLdrPost
+wire .temp388 ?: .temp377 R1_isMovz R2_isMovz
+wire .temp389 ?: .temp377 R1_pc R2_pc
+wire .temp390 ?: .temp377 R1_rd_rt R2_rd_rt
+wire .temp391 ?: .temp377 R1_hw R2_hw
+wire .temp392 ?: .temp377 R1_isLdrOff R2_isLdrOff
+wire .temp393 ?: .temp377 R1_R2_num R2_R2_num
+wire .temp394 ?: .temp377 R1_isStrbPre R2_isStrbPre
+wire .temp395 ?: .temp377 R1_isLdrbOff R2_isLdrbOff
+wire .temp396 ?: .temp377 R1_sh R2_sh
+wire .temp397 ?: .temp377 R1_isStrbPost R2_isStrbPost
+wire .temp398 ?: .temp377 R1_isLdrbPre R2_isLdrbPre
+wire .temp399 ?: .temp377 R1_isLdrbPost R2_isLdrbPost
+wire .temp400 ?: .temp377 R1_isCbnz R2_isCbnz
+wire .temp401 ?: .temp377 R1_isAddi R2_isAddi
+wire .temp402 ?: .temp377 R1_isAdrp R2_isAdrp
+wire .temp403 ?: .temp377 R1_isStrbOff R2_isStrbOff
+wire .temp404 ?: .temp377 R1_rn R2_rn
+wire .temp405 & W2_valid WB_M_add_valid
+wire .temp406 == W2_pc WB_M_add
+wire .temp407 & .temp405 .temp406
+wire [1]W2_modified = .temp407
+wire .temp408 ~ X_stall
+wire .temp409 & .temp408 R2_valid
+wire .temp410 ~ WB_flush
+wire .temp411 & .temp409 .temp410
+wire .temp412 ~ X_stall
+wire .temp413 & R2_R1_num_valid R2_valid
+wire .temp414 & R2_R2_num_valid R2_valid
+wire .temp415 ?: .temp412 R2_R1_num W2_R1_num
+wire .temp416 ?: .temp412 .temp414 W2_R2_num_valid
+wire .temp417 ?: .temp412 R2_R2_num W2_R2_num
+wire .temp418 ?: .temp412 .temp413 W2_R1_num_valid
+wire .temp419 ?: .temp412 R2_size W2_size
+wire .temp420 ?: .temp412 R2_hw W2_hw
+wire .temp421 ?: .temp412 R2_imm W2_imm
+wire .temp422 ?: .temp412 R2_sf W2_sf
+wire .temp423 ?: .temp412 R2_isLdrPost W2_isLdrPost
+wire .temp424 ?: .temp412 R2_isLdrPre W2_isLdrPre
+wire .temp425 ?: .temp412 R2_sh W2_sh
+wire .temp426 ?: .temp412 R2_isAddi W2_isAddi
+wire .temp427 ?: .temp412 R2_isMovz W2_isMovz
+wire .temp428 ?: .temp412 R2_rd_rt W2_rd_rt
+wire .temp429 ?: .temp412 R2_isLdrOff W2_isLdrOff
+wire .temp430 ?: .temp412 R2_isStrbPre W2_isStrbPre
+wire .temp431 ?: .temp412 R2_isAdrp W2_isAdrp
+wire .temp432 ?: .temp412 R2_isStrbOff W2_isStrbOff
+wire .temp433 ?: .temp412 R2_pc W2_pc
+wire .temp434 ?: .temp412 R2_isLdrbPre W2_isLdrbPre
+wire .temp435 ?: .temp412 R2_isLdrbPost W2_isLdrbPost
+wire .temp436 ?: .temp412 R2_isCbnz W2_isCbnz
+wire .temp437 ?: .temp412 R2_isLdrbOff W2_isLdrbOff
+wire .temp438 ?: .temp412 R2_isStrbPost W2_isStrbPost
+wire .temp439 ?: .temp412 R2_rn W2_rn
+wire .temp440 & X_valid WB_M_add_valid
+wire .temp441 == X_pc WB_M_add
+wire .temp442 & .temp440 .temp441
+wire [1]X_modified = .temp442
+wire .temp443 | X_isCbnz X_isAdrp
+wire .temp444 | .temp443 X_isMovz
+wire .temp445 | .temp444 ldr_str_offset
+wire .temp446 | .temp445 ldr_str_shift
+wire .temp447 -- 31
+wire .temp448 == X_rd_rt .temp447
+wire .temp449 & .temp446 .temp448
+wire [1]is_xzr = .temp449
+wire .temp450 | X_isLdrbPre X_isLdrbPost
+wire .temp451 | .temp450 X_isLdrPre
+wire .temp452 | .temp451 X_isLdrPost
+wire .temp453 | .temp452 X_isStrbPre
+wire .temp454 | .temp453 X_isStrbPost
+wire [1]ldr_str_shift = .temp454
+wire .temp455 | X_isLdrbOff X_isLdrOff
+wire .temp456 | .temp455 X_isStrbOff
+wire [1]ldr_str_offset = .temp456
+wire .temp457 | X_isAddi ldr_str_shift
+wire .temp458 | .temp457 ldr_str_offset
+wire .temp459 ?: .temp458 X_vn X_isCbnz
+wire .temp460 ?: .temp459 X_vd_vt X_isAdrp
+wire .temp462 -- 2'b0
+wire .temp461 {} X_pc .temp462
+wire .temp463 -- 0
+wire .temp464 ?: .temp460 .temp461 .temp463
+wire [63]X_op1 = .temp464
+wire .temp465 | ldr_str_offset ldr_str_shift
+wire .temp466 & .temp465 M1_M_add_valid
+wire .temp467 == M1_M_add X_M_add
+wire .temp468 & .temp466 .temp467
+wire .temp469 == M2_M_add X_M_add
+wire .temp470 & M2_M_add_valid .temp469
+wire .temp471 | .temp468 .temp470
+wire .temp472 == WB_M_add X_M_add
+wire .temp473 & WB_M_add_valid .temp472
+wire .temp474 | .temp471 .temp473
+wire [1]X_need_to_stall = .temp474
+wire .temp475 & X_need_to_stall X_valid
+wire .temp476 | .temp475 WB_stall
+wire [1]X_stall = .temp476
+wire .temp477 + X_op1 X_imm
+wire [63]X_add = .temp477
+wire .temp478 | X_isStrbPost X_isLdrbPost
+wire .temp479 | .temp478 X_isLdrPost
+wire .temp480 [63:2] X_op1
+wire .temp481 [63:2] X_add
+wire .temp482 ?: .temp479 .temp480 .temp481
+wire [61]X_M_add = .temp482
+wire .temp483 ~ WB_stall
+wire .temp484 | W2_valid X_stall
+wire .temp485 & .temp483 .temp484
+wire .temp486 ~ WB_flush
+wire .temp487 & .temp485 .temp486
+wire .temp488 ?: X_stall X_pc W2_pc
+wire .temp489 & X_stall X_valid
+wire .temp490 ~ WB_stall
+wire .temp491 | W2_valid X_stall
+wire .temp492 & .temp490 .temp491
+wire .temp493 ~ WB_flush
+wire .temp494 & .temp492 .temp493
+wire .temp495 & .temp489 .temp494
+wire .temp496 ?: X_stall X_vn reg_rdata0
+wire .temp497 ?: X_stall X_vd_vt reg_rdata1
+wire .temp498 ~ X_stall
+wire .temp499 & W2_R1_num_valid W2_valid
+wire .temp500 & W2_R2_num_valid W2_valid
+wire .temp501 ?: .temp498 W2_R1_num X_R1_num
+wire .temp502 ?: .temp498 .temp500 X_R2_num_valid
+wire .temp503 ?: .temp498 .temp499 X_R1_num_valid
+wire .temp504 ?: .temp498 W2_size X_size
+wire .temp505 ?: .temp498 W2_hw X_hw
+wire .temp506 ?: .temp498 W2_imm X_imm
+wire .temp507 ?: .temp498 W2_sh X_sh
+wire .temp508 ?: .temp498 W2_isStrbOff X_isStrbOff
+wire .temp509 ?: .temp498 W2_isLdrbPre X_isLdrbPre
+wire .temp510 ?: .temp498 W2_isLdrPre X_isLdrPre
+wire .temp511 ?: .temp498 W2_isLdrPost X_isLdrPost
+wire .temp512 ?: .temp498 W2_R2_num X_R2_num
+wire .temp513 ?: .temp498 W2_isAdrp X_isAdrp
+wire .temp514 ?: .temp498 W2_isLdrbOff X_isLdrbOff
+wire .temp515 ?: .temp498 W2_rn X_rn
+wire .temp516 ?: .temp498 W2_isCbnz X_isCbnz
+wire .temp517 ?: .temp498 W2_isStrbPre X_isStrbPre
+wire .temp518 ?: .temp498 W2_isAddi X_isAddi
+wire .temp519 ?: .temp498 W2_isStrbPost X_isStrbPost
+wire .temp520 ?: .temp498 W2_sf X_sf
+wire .temp521 ?: .temp498 W2_isMovz X_isMovz
+wire .temp522 ?: .temp498 W2_isLdrbPost X_isLdrbPost
+wire .temp523 ?: .temp498 W2_isLdrOff X_isLdrOff
+wire .temp524 ?: .temp498 W2_rd_rt X_rd_rt
+wire .temp525 | M1_isLdrbPre M1_isLdrbOff
+wire .temp526 | .temp525 M1_isLdrPre
+wire .temp527 | .temp526 M1_isLdrOff
+wire .temp528 | .temp527 M1_isStrbOff
+wire .temp529 | .temp528 M1_isStrbPre
+wire .temp530 + M1_op1 M1_imm
+wire .temp531 -- 4
+wire .temp532 / .temp530 .temp531
+wire .temp533 [63:2] M1_op1
+wire .temp534 ?: .temp529 .temp532 .temp533
+wire [1]mem_raddr0 = .temp534
+wire .temp535 -- 1
+wire .temp536 + mem_raddr0 .temp535
+wire .temp537 ?: F1_stall .temp536 F1_pc
+wire [1]mem_raddr1 = .temp537
+wire .temp538 & M1_valid WB_M_add_valid
+wire .temp539 == M1_pc WB_M_add
+wire .temp540 & .temp538 .temp539
+wire [1]M1_modified = .temp540
+wire .temp541 & F1_valid M1_valid
+wire .temp542 | M1_isLdrOff M1_isLdrPre
+wire .temp543 | .temp542 M1_isLdrPost
+wire .temp544 & .temp541 .temp543
+wire .temp545 -- 2'b11
+wire .temp546 == M1_size .temp545
+wire .temp547 & .temp544 .temp546
+wire [1]F1_stall = .temp547
+wire .temp548 | M1_isStrbOff M1_isStrbPre
+wire .temp549 | .temp548 M1_isStrbPost
+wire .temp550 & M1_valid .temp549
+wire .temp551 -- 62'bxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+wire .temp552 === M1_M_add .temp551
+wire .temp553 ~ .temp552
+wire .temp554 & .temp550 .temp553
+wire [1]M1_M_add_valid = .temp554
+wire .temp555 + M1_op1 M1_imm
+wire [63]M1_add = .temp555
+wire .temp556 [63:2] M1_op1
+wire .temp557 [63:2] M1_add
+wire .temp558 ?: M1_isStrbPost .temp556 .temp557
+wire [61]M1_M_add = .temp558
+wire .temp559 ~ X_stall
+wire .temp560 & .temp559 X_valid
+wire .temp561 ~ WB_flush
+wire .temp562 & .temp560 .temp561
+wire .temp563 -- 64'b0
+wire .temp564 ?: is_xzr .temp563 X_vd_vt
+wire .temp565 & X_R1_num_valid X_valid
+wire .temp566 & X_R2_num_valid X_valid
+wire .temp567 & M2_valid WB_M_add_valid
+wire .temp568 == M2_pc WB_M_add
+wire .temp569 & .temp567 .temp568
+wire [1]M2_modified = .temp569
+wire .temp570 ~ WB_flush
+wire .temp571 & M1_valid .temp570
+wire .temp572 ~ WB_stall
+wire .temp573 & .temp571 .temp572
+wire .temp574 & M1_R1_num_valid M1_valid
+wire .temp575 & M1_R2_num_valid M1_valid
+wire .temp576 & M1_M_add_valid M1_valid
+wire .temp577 {} mem_rdata1 mem_rdata0
+wire [63]mdata = .temp577
+wire .temp578 ~ WB_was_stalling
+wire .temp579 & WB_valid .temp578
+wire [1]wb_has_instruction = .temp579
+wire .temp580 + WB_op1 WB_imm
+wire [63]res = .temp580
+wire .temp581 | WB_isStrbPre WB_isStrbPost
+wire .temp582 | .temp581 WB_isStrbOff
+wire .temp583 & WB_valid .temp582
+wire [1]mem_wen = .temp583
+wire .temp584 ~ WB_was_stalling
+wire .temp585 -- 31
+wire .temp586 != WB_rd_rt .temp585
+wire .temp587 & WB_isAdrp .temp586
+wire .temp588 | WB_isAddi .temp587
+wire .temp589 -- 31
+wire .temp590 != WB_rd_rt .temp589
+wire .temp591 & WB_isMovz .temp590
+wire .temp592 | .temp588 .temp591
+wire .temp593 | .temp592 WB_isLdrPre
+wire .temp594 | .temp593 WB_isLdrPost
+wire .temp595 | .temp594 WB_isLdrbPre
+wire .temp596 | .temp595 WB_isLdrbPost
+wire .temp597 | .temp596 WB_isStrbPre
+wire .temp598 | .temp597 WB_isStrbPost
+wire .temp599 & .temp584 .temp598
+wire .temp600 -- 31
+wire .temp601 != WB_rd_rt .temp600
+wire .temp602 & WB_was_stalling .temp601
+wire .temp603 | WB_isLdrPre WB_isLdrPost
+wire .temp604 | .temp603 WB_isLdrOff
+wire .temp605 | .temp604 WB_isLdrbPre
+wire .temp606 | .temp605 WB_isLdrbPost
+wire .temp607 | .temp606 WB_isLdrbOff
+wire .temp608 & .temp602 .temp607
+wire .temp609 | .temp599 .temp608
+wire .temp610 & WB_valid .temp609
+wire [1]reg_wen = .temp610
+wire .temp611 | WB_isStrbOff WB_isStrbPre
+wire .temp612 [63:2] res
+wire .temp613 [63:2] WB_op1
+wire .temp614 ?: .temp611 .temp612 .temp613
+wire [1]mem_waddr = .temp614
+wire .temp615 [1:0] add
+wire .temp616 -- 2'b11
+wire .temp617 == .temp615 .temp616
+wire .temp619 [7:0] WB_vd_vt
+wire .temp620 [23:0] mem_rdata0
+wire .temp618 {} .temp619 .temp620
+wire .temp621 [1:0] add
+wire .temp622 -- 2'b10
+wire .temp623 == .temp621 .temp622
+wire .temp624 ?: .temp617 .temp618 .temp623
+wire .temp626 [31:24] mem_rdata0
+wire .temp627 [7:0] WB_vd_vt
+wire .temp628 [15:0] mem_rdata0
+wire .temp625 {} .temp626 .temp627 .temp628
+wire .temp629 [1:0] add
+wire .temp630 -- 2'b01
+wire .temp631 == .temp629 .temp630
+wire .temp632 ?: .temp624 .temp625 .temp631
+wire .temp634 [31:16] mem_rdata0
+wire .temp635 [7:0] WB_vd_vt
+wire .temp636 [7:0] mem_rdata0
+wire .temp633 {} .temp634 .temp635 .temp636
+wire .temp638 [31:8] mem_rdata0
+wire .temp639 [7:0] WB_vd_vt
+wire .temp637 {} .temp638 .temp639
+wire .temp640 ?: .temp632 .temp633 .temp637
+wire [1]mem_wdata = .temp640
+wire .temp641 | WB_isAddi WB_isAdrp
+wire .temp642 | .temp641 WB_isMovz
+wire .temp643 | .temp642 WB_was_stalling
+wire .temp644 ?: .temp643 WB_rd_rt WB_rn
+wire [1]reg_waddr = .temp644
+wire .temp645 [31:0] res
+wire .temp646 ?: WB_sf res .temp645
+wire .temp647 ?: WB_isAddi .temp646 WB_isAdrp
+wire .temp648 ?: .temp647 WB_imm WB_isMovz
+wire .temp649 ~ WB_was_stalling
+wire .temp650 | WB_isLdrPre WB_isLdrPost
+wire .temp651 | .temp650 WB_isLdrbPre
+wire .temp652 | .temp651 WB_isLdrbPost
+wire .temp653 | .temp652 WB_isStrbPre
+wire .temp654 | .temp653 WB_isStrbPost
+wire .temp655 & .temp649 .temp654
+wire .temp656 ?: .temp648 WB_imm .temp655
+wire .temp657 ?: .temp656 res WB_was_stalling
+wire .temp658 | WB_isLdrPre WB_isLdrOff
+wire .temp659 | .temp658 WB_isLdrPost
+wire .temp660 [30] WB_size
+wire .temp661 [31:0] prev_mdata
+wire .temp662 ?: .temp660 prev_mdata .temp661
+wire .temp663 [1:0] add
+wire .temp664 -- 2'b00
+wire .temp665 == .temp663 .temp664
+wire .temp666 [7:0] prev_mdata
+wire .temp667 [1:0] add
+wire .temp668 -- 2'b01
+wire .temp669 == .temp667 .temp668
+wire .temp670 ?: .temp665 .temp666 .temp669
+wire .temp671 [15:8] prev_mdata
+wire .temp672 [1:0] add
+wire .temp673 -- 2'b10
+wire .temp674 == .temp672 .temp673
+wire .temp675 ?: .temp670 .temp671 .temp674
+wire .temp676 [23:16] prev_mdata
+wire .temp677 [31:24] prev_mdata
+wire .temp678 ?: .temp675 .temp676 .temp677
+wire .temp679 ?: .temp659 .temp662 .temp678
+wire .temp680 -- 0
+wire .temp681 ?: .temp657 .temp679 .temp680
+wire [1]reg_wdata = .temp681
+wire .temp682 | WB_isLdrbPre WB_isLdrbOff
+wire .temp683 | .temp682 WB_isStrbPre
+wire .temp684 | .temp683 WB_isStrbOff
+wire .temp685 | .temp684 WB_isLdrPre
+wire .temp686 | .temp685 WB_isLdrPost
+wire .temp687 -- 0
+wire .temp688 ?: .temp686 WB_imm .temp687
+wire .temp689 + WB_op1 .temp688
+wire [63]add = .temp689
+wire .temp690 & WB_valid WB_isCbnz
+wire .temp691 -- 0
+wire .temp692 != WB_vd_vt .temp691
+wire .temp693 [31:0] WB_vd_vt
+wire .temp694 -- 0
+wire .temp695 != .temp693 .temp694
+wire .temp696 ?: WB_sf .temp692 .temp695
+wire .temp697 & .temp690 .temp696
+wire [1]jmp = .temp697
+wire .temp698 -- 1'bx
+wire .temp699 === jmp .temp698
+wire .temp700 ~ .temp699
+wire .temp701 & .temp700 jmp
+wire .temp702 | .temp701 M2_modified
+wire .temp703 | .temp702 M1_modified
+wire .temp704 | .temp703 X_modified
+wire .temp705 | .temp704 R2_modified
+wire .temp706 | .temp705 R1_modified
+wire .temp707 | .temp706 D_modified
+wire .temp708 | .temp707 F2_modified
+wire .temp709 -- 62'hxxxxxxxxxxxxxxxx
+wire .temp710 === F1_pc .temp709
+wire .temp711 ~ .temp710
+wire .temp712 & F1_modified .temp711
+wire .temp713 | .temp708 .temp712
+wire .temp714 | .temp713 W2_modified
+wire .temp715 | .temp714 W1_modified
+wire .temp716 & WB_valid .temp715
+wire [1]WB_flush = .temp716
+wire .temp717 | WB_isLdrbOff WB_isLdrbPre
+wire .temp718 | .temp717 WB_isLdrbPost
+wire .temp719 | .temp718 WB_isLdrOff
+wire .temp720 | .temp719 WB_isLdrPre
+wire .temp721 | .temp720 WB_isLdrPost
+wire .temp722 & WB_valid .temp721
+wire .temp723 ~ WB_was_stalling
+wire .temp724 & .temp722 .temp723
+wire .temp725 ~ WB_flush
+wire .temp726 & .temp724 .temp725
+wire [1]WB_stall = .temp726
+wire .temp727 | WB_isStrbOff WB_isStrbPre
+wire .temp728 -- 64'hFFFFFFFFFFFFFFFF
+wire .temp729 == res .temp728
+wire .temp730 & .temp727 .temp729
+wire .temp731 -- 64'hFFFFFFFFFFFFFFFF
+wire .temp732 == WB_op1 .temp731
+wire .temp733 & WB_isStrbPost .temp732
+wire .temp734 | .temp730 .temp733
+wire .temp735 & mem_wen .temp734
+wire [1]print = .temp735
+wire .temp736 | WB_isAdrp WB_isAddi
+wire .temp737 | .temp736 WB_isMovz
+wire .temp738 | .temp737 WB_isLdrbPre
+wire .temp739 | .temp738 WB_isLdrbPost
+wire .temp740 | .temp739 WB_isLdrbOff
+wire .temp741 | .temp740 WB_isStrbOff
+wire .temp742 | .temp741 WB_isStrbPre
+wire .temp743 | .temp742 WB_isStrbPost
+wire .temp744 | .temp743 WB_isLdrOff
+wire .temp745 | .temp744 WB_isLdrPre
+wire .temp746 | .temp745 WB_isLdrPost
+wire .temp747 | .temp746 WB_isCbnz
+wire .temp748 ~ .temp747
+wire .temp749 & WB_valid .temp748
+wire [1]halt = .temp749
+wire .temp750 ~ halt
+wire .temp751 ~ WB_flush
+wire .temp752 | M2_valid WB_stall
+wire .temp753 & .temp751 .temp752
+wire .temp754 ?: WB_stall WB_pc M2_pc
+wire .temp755 & WB_stall WB_valid
+wire .temp756 -- 0
+wire .temp757 ?: X_stall mdata .temp756
+wire .temp758 ~ WB_stall
+wire .temp759 & M2_R1_num_valid M2_valid
+wire .temp760 & M2_R2_num_valid M2_valid
+wire .temp761 & M2_M_add_valid M2_valid
+wire .temp762 ?: .temp758 M2_M_add WB_M_add
+wire .temp763 ?: .temp758 .temp761 WB_M_add_valid
+wire .temp764 ?: .temp758 M2_R2_num WB_R2_num
+wire .temp765 ?: .temp758 M2_size WB_size
+wire .temp766 ?: .temp758 M2_sf WB_sf
+wire .temp767 ?: .temp758 M2_isLdrOff WB_isLdrOff
+wire .temp768 ?: .temp758 M2_imm WB_imm
+wire .temp769 ?: .temp758 M2_rn WB_rn
+wire .temp770 ?: .temp758 M2_hw WB_hw
+wire .temp771 ?: .temp758 M2_isLdrPost WB_isLdrPost
+wire .temp772 ?: .temp758 M2_sh WB_sh
+wire .temp773 ?: .temp758 M2_isStrbPre WB_isStrbPre
+wire .temp774 ?: .temp758 M2_R1_num WB_R1_num
+wire .temp775 ?: .temp758 M2_op1 WB_op1
+wire .temp776 ?: .temp758 M2_isCbnz WB_isCbnz
+wire .temp777 ?: .temp758 .temp759 WB_R1_num_valid
+wire .temp778 ?: .temp758 M2_vd_vt WB_vd_vt
+wire .temp779 ?: .temp758 M2_isLdrPre WB_isLdrPre
+wire .temp780 ?: .temp758 M2_isMovz WB_isMovz
+wire .temp781 ?: .temp758 M2_isAdrp WB_isAdrp
+wire .temp782 ?: .temp758 .temp760 WB_R2_num_valid
+wire .temp783 ?: .temp758 M2_isAddi WB_isAddi
+wire .temp784 ?: .temp758 M2_isLdrbOff WB_isLdrbOff
+wire .temp785 ?: .temp758 M2_isStrbPost WB_isStrbPost
+wire .temp786 ?: .temp758 M2_isStrbOff WB_isStrbOff
+wire .temp787 ?: .temp758 M2_isLdrbPre WB_isLdrbPre
+wire .temp788 ?: .temp758 M2_isLdrbPost WB_isLdrbPost
+wire .temp789 ?: .temp758 M2_rd_rt WB_rd_rt
+wire .temp790 ?: .temp750 .temp789 WB_rd_rt
+wire .temp791 ?: .temp750 .temp787 WB_isLdrbPre
+wire .temp792 ?: .temp750 .temp786 WB_isStrbOff
+wire .temp793 ?: .temp750 .temp785 WB_isStrbPost
+wire .temp794 ?: .temp750 .temp784 WB_isLdrbOff
+wire .temp795 ?: .temp750 .temp783 WB_isAddi
+wire .temp796 ?: .temp750 .temp782 WB_R2_num_valid
+wire .temp797 ?: .temp750 .temp781 WB_isAdrp
+wire .temp798 ?: .temp750 .temp780 WB_isMovz
+wire .temp799 ?: .temp750 .temp779 WB_isLdrPre
+wire .temp800 ?: .temp750 .temp778 WB_vd_vt
+wire .temp801 ?: .temp750 .temp777 WB_R1_num_valid
+wire .temp802 ?: .temp750 .temp755 WB_was_stalling
+wire .temp803 ?: .temp750 .temp762 WB_M_add
+wire .temp804 ?: .temp750 .temp757 prev_mdata
+wire .temp805 ?: .temp750 .temp788 WB_isLdrbPost
+wire .temp806 ?: .temp750 .temp753 WB_valid
+wire .temp807 ?: .temp750 .temp764 WB_R2_num
+wire .temp808 ?: .temp750 .temp763 WB_M_add_valid
+wire .temp809 ?: .temp750 .temp776 WB_isCbnz
+wire .temp810 ?: .temp750 .temp775 WB_op1
+wire .temp811 ?: .temp750 .temp774 WB_R1_num
+wire .temp812 ?: .temp750 .temp754 WB_pc
+wire .temp813 ?: .temp750 .temp765 WB_size
+wire .temp814 ?: .temp750 .temp766 WB_sf
+wire .temp815 ?: .temp750 .temp767 WB_isLdrOff
+wire .temp816 ?: .temp750 .temp769 WB_rn
+wire .temp817 ?: .temp750 .temp768 WB_imm
+wire .temp818 ?: .temp750 .temp771 WB_isLdrPost
+wire .temp819 ?: .temp750 .temp770 WB_hw
+wire .temp820 ?: .temp750 .temp772 WB_sh
+wire .temp821 ?: .temp750 .temp773 WB_isStrbPre
+wire [1]clk = theClock
+reg theClock = theClock
+reg WB_M_add = .temp803
+reg WB_R2_num = .temp807
+reg WB_R1_num = .temp811
+reg WB_R2_num_valid = .temp796
+reg WB_op1 = .temp810
+reg WB_imm = .temp817
+reg WB_size = .temp813
+reg WB_hw = .temp819
+reg WB_sh = .temp820
+reg WB_sf = .temp814
+reg WB_rn = .temp816
+reg WB_vd_vt = .temp800
+reg WB_isCbnz = .temp809
+reg WB_M_add_valid = .temp808
+reg WB_isLdrbOff = .temp794
+reg WB_isLdrbPre = .temp791
+reg WB_isStrbOff = .temp792
+reg WB_isLdrOff = .temp815
+reg WB_isLdrPost = .temp818
+reg WB_isLdrPre = .temp799
+reg WB_isAddi = .temp795
+reg WB_pc = .temp812
+reg WB_valid = .temp806
+reg prev_mdata = .temp804
+reg M2_M_add = M1_M_add
+reg M2_M_add_valid = .temp576
+reg WB_R1_num_valid = .temp801
+reg M2_R1_num = M1_R1_num
+reg M2_R2_num_valid = .temp575
+reg W2_isCbnz = .temp436
+reg R2_valid = .temp376
+reg M2_sh = M1_sh
+reg W2_isStrbPre = .temp430
+reg W2_isAdrp = .temp431
+reg X_size = .temp504
+reg W2_sh = .temp425
+reg R2_R2_num = .temp393
+reg W2_rn = .temp439
+reg R2_R1_num = .temp383
+reg M1_R2_num = X_R2_num
+reg R2_R1_num_valid = .temp381
+reg R1_isCbnz = .temp365
+reg M1_isLdrPre = X_isLdrPre
+reg R2_hw = .temp391
+reg W2_isMovz = .temp427
+reg W2_isLdrbPre = .temp434
+reg M2_R2_num = M1_R2_num
+reg W2_valid = .temp411
+reg X_rd_rt = .temp524
+reg X_isStrbPost = .temp519
+reg M2_isMovz = M1_isMovz
+reg R2_sh = .temp396
+reg R2_sf = .temp384
+reg R2_isCbnz = .temp400
+reg W2_isLdrOff = .temp429
+reg M1_imm = X_imm
+reg F2_valid = .temp46
+reg W2_pc = .temp433
+reg WB_isStrbPost = .temp793
+reg R2_isLdrbOff = .temp395
+reg R2_isStrbPre = .temp394
+reg R2_isLdrPre = .temp386
+reg WB_isLdrbPost = .temp805
+reg R2_isMovz = .temp388
+reg R1_isLdrPre = .temp353
+reg M1_isLdrPost = X_isLdrPost
+reg M2_pc = M1_pc
+reg M2_isLdrbPost = M1_isLdrbPost
+reg M2_rd_rt = M1_rd_rt
+reg M1_isLdrbPre = X_isLdrbPre
+reg R1_isAdrp = .temp357
+reg W2_isLdrbPost = .temp435
+reg D_was_stalling = .temp322
+reg R2_isLdrOff = .temp392
+reg W2_isLdrPost = .temp423
+reg R2_isLdrbPost = .temp399
+reg R2_rn = .temp404
+reg R2_isLdrPost = .temp387
+reg R1_isStrbPost = .temp368
+reg W2_isStrbPost = .temp438
+reg M1_sh = X_sh
+reg X_isStrbPre = .temp517
+reg R1_rn = .temp369
+reg R1_hw = .temp366
+reg W2_isStrbOff = .temp432
+reg M2_isAddi = M1_isAddi
+reg D_pc = .temp323
+reg R2_isAddi = .temp401
+reg W1_pc = .temp57
+reg F1_pc = .temp28
+reg W2_imm = .temp421
+reg R1_pc = .temp356
+reg W2_size = .temp419
+reg R2_imm = .temp385
+reg M1_hw = X_hw
+reg D_ins = .temp321
+reg M1_isStrbOff = X_isStrbOff
+reg W2_rd_rt = .temp428
+reg M1_isLdrbPost = X_isLdrbPost
+reg R1_isLdrPost = .temp352
+reg WB_rd_rt = .temp790
+reg D_valid = .temp310
+reg R1_isStrbPre = .temp364
+reg X_isStrbOff = .temp508
+reg M2_isLdrOff = M1_isLdrOff
+reg R1_size = .temp351
+reg W2_isLdrPre = .temp424
+reg M2_valid = .temp573
+reg W1_valid = .temp55
+reg F2_pc = .temp48
+reg R1_isLdrbOff = .temp358
+reg X_pc = .temp488
+reg R1_isLdrOff = .temp359
+reg X_sh = .temp507
+reg R1_isAddi = .temp367
+reg R2_rd_rt = .temp390
+reg M2_isLdrPre = M1_isLdrPre
+reg M1_isAdrp = X_isAdrp
+reg R1_isStrbOff = .temp362
+reg M1_rn = X_rn
+reg R2_size = .temp382
+reg R2_R2_num_valid = .temp380
+reg R2_isStrbPost = .temp397
+reg R1_isMovz = .temp355
+reg W2_isLdrbOff = .temp437
+reg WB_isAdrp = .temp797
+reg R1_isLdrbPost = .temp354
+reg R1_rd_rt = .temp361
+reg R1_sh = .temp350
+reg R1_sf = .temp360
+reg R1_imm = .temp349
+reg M1_R1_num = X_R1_num
+reg R2_pc = .temp389
+reg R2_isAdrp = .temp402
+reg W2_R1_num = .temp415
+reg W2_R2_num = .temp417
+reg X_vd_vt = .temp497
+reg X_was_stalling = .temp495
+reg X_vn = .temp496
+reg M2_rn = M1_rn
+reg X_isAddi = .temp518
+reg W2_hw = .temp420
+reg M1_isStrbPost = X_isStrbPost
+reg X_isMovz = .temp521
+reg M1_isLdrOff = X_isLdrOff
+reg W2_sf = .temp422
+reg X_isLdrPre = .temp510
+reg X_isLdrPost = .temp511
+reg X_isLdrOff = .temp523
+reg M1_valid = .temp562
+reg X_isLdrbPre = .temp509
+reg X_isLdrbOff = .temp514
+reg X_isCbnz = .temp516
+reg M2_isStrbPre = M1_isStrbPre
+reg X_rn = .temp515
+reg W2_R1_num_valid = .temp418
+reg X_sf = .temp520
+reg F1_valid = F1_valid
+reg X_imm = .temp506
+reg X_hw = .temp505
+reg X_R1_num_valid = .temp503
+reg M1_isAddi = X_isAddi
+reg X_R2_num_valid = .temp502
+reg X_R1_num = .temp501
+reg X_R2_num = .temp512
+reg W2_isAddi = .temp426
+reg M1_pc = X_pc
+reg M1_isMovz = X_isMovz
+reg M2_isStrbPost = M1_isStrbPost
+reg R1_valid = .temp347
+reg M1_isStrbPre = X_isStrbPre
+reg M1_isLdrbOff = X_isLdrbOff
+reg X_valid = .temp487
+reg M1_isCbnz = X_isCbnz
+reg M1_vd_vt = .temp564
+reg R2_isStrbOff = .temp403
+reg W2_R2_num_valid = .temp416
+reg M1_rd_rt = X_rd_rt
+reg WB_isStrbPre = .temp821
+reg M1_sf = X_sf
+reg M1_size = X_size
+reg M2_isCbnz = M1_isCbnz
+reg M1_op1 = X_op1
+reg M1_R1_num_valid = .temp565
+reg X_isLdrbPost = .temp522
+reg M1_R2_num_valid = .temp566
+reg M2_vd_vt = M1_vd_vt
+reg M2_isAdrp = M1_isAdrp
+reg R2_isLdrbPre = .temp398
+reg M2_isLdrPost = M1_isLdrPost
+reg R1_isLdrbPre = .temp363
+reg M2_isStrbOff = M1_isStrbOff
+reg X_isAdrp = .temp513
+reg M2_isLdrbPre = M1_isLdrbPre
+reg M2_isLdrbOff = M1_isLdrbOff
+reg WB_was_stalling = .temp802
+reg M2_sf = M1_sf
+reg M2_hw = M1_hw
+reg M2_size = M1_size
+reg M2_imm = M1_imm
+reg M2_op1 = M1_op1
+reg WB_isMovz = .temp798
+reg M2_R1_num_valid = .temp574
