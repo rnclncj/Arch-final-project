@@ -141,10 +141,10 @@ class Interpreter {
         }
     }
 
-    optional<uint64_t> consume_number() {
+    optional<uint32_t> consume_number() {
         skip();
         if (isdigit(*current)) {
-            uint64_t v = 0;
+            uint32_t v = 0;
             do {
                 v = 10 * v + ((*current) - '0');
                 current += 1;
@@ -621,13 +621,14 @@ class Interpreter {
         return 1;
     }
 
-    void update_moduels(string name) {
-        for (int i = 0; i < module_names.size; i++) {
-            string module = module_list[i];
-            for (int j = 0; j < module.size; j++) {
-                pair<bool, string> param = module[i];
-                if (param.second == name) {
-                    param.first = true;
+    // assign -> input
+    void update_modules(string name) {
+        // for each module
+        for (uint32_t i = 0; i < module_names.size(); i++) {
+            for (uint32_t j = 0; j < module_list[i].size(); j++) {
+                // read each i/o type and param
+                if (module_list[i][j].second == name) {
+                    module_list[i][j].first = true;
                 }
             }
         }
@@ -697,7 +698,8 @@ class Interpreter {
             consume("(");
             do {
                 string param = consume_identifier().value();
-                params.push_back(param);
+                // by default output
+                params.push_back(make_pair(false, param));
             } while (consume(","));
             consume(")");
             module_names.push_back(module_name);
@@ -841,18 +843,18 @@ class Interpreter {
         for (auto i = reg_table.begin(); i != reg_table.end(); i++) {
             cout << "reg " << i->first << " = " << i->second << endl;
         }
-        for (int i = 0; i < module_names.size; i++) {
-            string output = " M ";
-            string module = module_list[i];
-            for (int j = 0; j < module.size; j++) {
-                pair<bool, string> param = module[i];
+        for (uint32_t i = 0; i < module_names.size(); i++) {
+            string output = " # ";
+            vector<pair<bool,string>> module = module_list[i];
+            for (uint32_t j = 0; j < module.size(); j++) {
+                pair<bool, string> param = module[j];
                 if (param.first) {
-                    output = " " + param.second + output;
-                } else {
                     output = output + param.second + " ";
+                } else {
+                    output = " " + param.second + output;
                 }
             }
-            cout << "module " << modules_names[i] << output << endl;
+            cout << "module " << module_names[i] << output << endl;
         }
         end_or_fail();
     }

@@ -1,6 +1,48 @@
-wire .temp0 && F1_valid WB2_branch_en
-wire .temp1 ?: .temp0 WB2_branch_addr F1_pc
-wire .temp2 ! .temp0
-wire .temp3 -- 1
-wire .temp4 + WB2_pc .temp3
-reg F1_pc = .temp1.temp4
+wire [1]clk = theClock
+wire .temp0 -- 1
+wire .temp1 + mem_raddr0 .temp0
+wire .temp2 ?: F1_stall .temp1 F1_pc
+wire [1]mem_raddr1 = .temp2
+wire .temp3 | M1_is_Ldrb_Pre M1_isLdrbOff
+wire .temp4 | .temp3 M1_isLdrPre
+wire .temp5 | .temp4 M1_isLdrOff
+wire .temp6 | .temp5 M1_isStrbOff
+wire .temp7 | .temp6 M1_isStrbPre
+wire [1]mem_raddr0 = .temp7
+wire .temp8 | WB_isStrbOff WB_isStrbPre
+wire .temp9 [63:2] res
+wire .temp10 [63:2] WB_op1
+wire .temp11 ?: .temp8 .temp9 .temp10
+wire [1]mem_waddr = .temp11
+wire .temp12 | WB_isStrbPre WB_isStrbPost
+wire .temp13 | .temp12 WB_isStrbOff
+wire .temp14 & WB_valid .temp13
+wire [1]mem_wen = .temp14
+wire .temp15 [1:0] add
+wire .temp16 -- 2'b11
+wire .temp17 == .temp15 .temp16
+wire .temp19 [7:0] WB_vd_vt
+wire .temp20 [23:0] mem_rdata0
+wire .temp18 {} .temp19 .temp20
+wire .temp21 [1:0] add
+wire .temp22 -- 2'b10
+wire .temp23 == .temp21 .temp22
+wire .temp24 ?: .temp17 .temp18 .temp23
+wire .temp26 [31:24] mem_rdata0
+wire .temp27 [7:0] WB_vd_vt
+wire .temp28 [15:0] mem_rdata0
+wire .temp25 {} .temp26 .temp27 .temp28
+wire .temp29 [1:0] add
+wire .temp30 -- 2'b01
+wire .temp31 == .temp29 .temp30
+wire .temp32 ?: .temp24 .temp25 .temp31
+wire .temp34 [31:16] mem_rdata0
+wire .temp35 [7:0] WB_vd_vt
+wire .temp36 [7:0] mem_rdata0
+wire .temp33 {} .temp34 .temp35 .temp36
+wire .temp38 [31:8] mem_rdata0
+wire .temp39 [7:0] WB_vd_vt
+wire .temp37 {} .temp38 .temp39
+wire .temp40 ?: .temp32 .temp33 .temp37
+wire [1]mem_wdata = .temp40
+module mem mem_rdata1 mem_rdata0 # clk mem_raddr0 mem_raddr1 mem_wen mem_waddr mem_wdata 
