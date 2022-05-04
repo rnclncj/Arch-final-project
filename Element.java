@@ -260,7 +260,7 @@ public class Element {
                 // if (elementMap.get(operands.get(i)) == null)
                 //     System.out.println(operands.get(i));
                 // if backward propagation wire can't connect back anymore, skip this step
-                if (getOperation().equals("<-") && !columnMaps[1].get(getColNum() - 1).containsKey(operands.get(i))) {
+                if (getOperation().equals("<-") && (getColNum() == 0 || !columnMaps[1].get(getColNum() - 1).containsKey(operands.get(i)))) {
                     continue;
                 }
                 // if this input requires a backward wire, skip this step

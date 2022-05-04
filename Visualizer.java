@@ -8,6 +8,7 @@ import java.util.*;
 // TODO: fix literal string length (when it juts out)
 // TODO: resolve redundant gates
 // TODO: reorder backwards
+// TODO: fix column spreading
 
 public class Visualizer extends JFrame {
     private static final int MAX_WIDTH = 1500;
@@ -66,9 +67,9 @@ public class Visualizer extends JFrame {
         ArrayList<ArrayList<Element>> columns = placeElements(elementList, elementMap);
         addPaths(columns);
         ArrayList<HashMap<String, Element>>[] columnMaps = getColumnMaps(columns);
-        reorder(columns, elementMap, columnMaps);
+        reorderBackwards(columns, elementMap);
+        reorderForwards(columns, elementMap, columnMaps);
         int[] dims = setCoords(columns);
-        // int xDim = columns.size() * (Visualizer.HORIZ_DIST + Visualizer.FULL_WIDTH) + Visualizer.HORIZ_DIST;
 
         EventQueue.invokeLater(new Runnable() {
             @Override
@@ -185,11 +186,35 @@ public class Visualizer extends JFrame {
         return new ArrayList[] {columnMaps, backColumnMaps};
     }
 
-    public static void reorder(ArrayList<ArrayList<Element>> columns, HashMap<String, Element> elementMap, ArrayList<HashMap<String, Element>>[] columnMaps) {
+    public static void reorderBackwards(ArrayList<ArrayList<Element>> columns, HashMap<String, Element> elementMap) {
+        for (int i = 0; i < columns.size() - 1; i++) {
+            ScoreComp scoreComp = new ScoreComp();
+            ArrayList<Element> column = columns.get(i);
+            for (int j = 0; j < column.size(); j++) {
+                scoreComp.addScore(column.get(j).getName(), j, 0.01);
+            }
+
+            ArrayList<Element> nextColumn = columns.get(i + 1);
+            for (int j = 0; j < nextColumn.size(); j++) {
+                Element elem = nextColumn.get(j);
+                if (!(elem.getOperation().equals("--") || elem.getOperation().equals("<-"))) {
+                    for (String operand : elem.getOperands()) {
+                        if (elementMap.get(operand).getColNum() >= elem.getColNum()) {
+                            continue;
+                        }
+                        scoreComp.addScore(operand, j, 1);
+                    }
+                }
+            }
+            column.sort(scoreComp);
+        }
+    }
+
+    public static void reorderForwards(ArrayList<ArrayList<Element>> columns, HashMap<String, Element> elementMap, ArrayList<HashMap<String, Element>>[] columnMaps) {
         HashMap<String, Integer> indexMap = getIndexMap(columns.get(0));
         for (int i = 1; i < columns.size(); i++) {
-            ArrayList<Element> column = columns.get(i);
             ScoreComp scoreComp = new ScoreComp();
+            ArrayList<Element> column = columns.get(i);
             for (int j = 0; j < column.size(); j++) {
                 Element elem = column.get(j);
                 scoreComp.addScore(elem.getName(), j, 0.01);
