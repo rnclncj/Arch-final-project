@@ -44,36 +44,58 @@ public class Visualizer extends JFrame {
     }
 
     public static void main(String[] args) throws IOException {
-        if (args.length != 1) {
+        if (args.length >= 1) {
             System.out.println("usage: java Visualizer filename.vf");
             System.exit(1);
         }
-        BufferedReader reader = new BufferedReader(new FileReader(args[0]));
+        BufferedReader reader = new BufferedReader(new FileReader("test.vf"));
         ArrayList<Element> elementList = new ArrayList<>();
         HashMap<String, Element> elementMap = new HashMap<>();
 
         String line = "";
+        Element element;
         while ((line = reader.readLine()) != null) {
-            Element element = new Element(line);
-            if (element.getName().charAt(0) != '.' && element.getOperation().equals("=")
-                    && element.getOperands().get(0).charAt(0) == '.'
-                    && element.getOperands().get(0).equals(elementList.get(elementList.size()-1).getName())
-                    && !elementList.get(elementList.size()-1).getOperation().equals("--")) {
-                Element prevElem = elementMap.remove(element.getOperands().get(0));
-                prevElem.setName(element.getName());
-                prevElem.setType(element.getType());
-                elementMap.put(prevElem.getName(), prevElem);
-                continue;
+            //Module Check
+            StringTokenizer tokenizer = new StringTokenizer(line);
+            String type = tokenizer.nextToken();
+            if(type.equals("module")){
+                Color color = new Color((int)(Math.random()*255),(int)(Math.random()*255),(int)(Math.random()*255));
+                String moduleName = tokenizer.nextToken();
+                
+                //module outputs
+                while(tokenizer.hasMoreTokens()){
+                    String output = tokenizer.nextToken();
+                    if(output.equals("#"))
+                        break;
+                    int outWidth = Element.getWidthFromName(output);
+                    String outName = Element.getNameFromName(output);
+                    element = new Element(moduleName, outName, outWidth, color);
+                    placeElementInMap(element, elementList, elementMap);
+                }
+
+                //module inputs
+                while(tokenizer.hasMoreTokens()){
+                    String output = tokenizer.nextToken();
+                    String outName = Element.getNameFromName(output);
+                    element = new Element(moduleName, outName, color);
+                    placeElementInMap(element, elementList, elementMap);
+                }
+
             }
-            elementList.add(element);
-            elementMap.put(element.getName(), element);
+            else{ //If not a module
+                element = new Element(line);
+                placeElementInMap(element, elementList, elementMap);
+            }
+            
+            
+            
         }
         reader.close();
 
         ArrayList<ArrayList<Element>> columns = placeElements(elementList, elementMap);
         addPaths(columns);
         ArrayList<HashMap<String, Element>>[] columnMaps = getColumnMaps(columns);
-        for (int i = 0; i < NUM_REORDERS; i++) {
+        for (int i = 0; i < columns.size(); i++) {
             reorderBackwards(columns, elementMap);
             reorderForwards(columns, elementMap, columnMaps);
         }
@@ -86,6 +108,21 @@ public class Visualizer extends JFrame {
                 vis.setVisible(true);
             }
         });
+    }
+
+    public static void placeElementInMap(Element element, ArrayList<Element> elementList, HashMap<String, Element> elementMap){
+        if (element.getName().charAt(0) != '.' && element.getOperation().equals("=")
+                    && element.getOperands().get(0).charAt(0) == '.'
+                    && element.getOperands().get(0).equals(elementList.get(elementList.size()-1).getName())
+                    && !elementList.get(elementList.size()-1).getOperation().equals("--")) {
+                Element prevElem = elementMap.remove(element.getOperands().get(0));
+                prevElem.setName(element.getName());
+                prevElem.setType(element.getType());
+                elementMap.put(prevElem.getName(), prevElem);
+                return;
+            }
+        elementList.add(element);
+        elementMap.put(element.getName(), element);
     }
     
     //places each element into its proper column
