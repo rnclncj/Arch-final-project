@@ -7,7 +7,6 @@ import java.util.*;
 // TODO: fix operator strings (chunk of wire)
 // TODO: fix literal string length (when it juts out)
 // TODO: resolve redundant gates
-// TODO: reorder backwards
 // TODO: fix column spreading
 
 public class Visualizer extends JFrame {
@@ -24,6 +23,8 @@ public class Visualizer extends JFrame {
     public static final int HORIZ_DIST = 60;
 
     public static final Color BACKWARDS_COLOR = Color.BLUE;
+
+    public static final int NUM_REORDERS = 100;
 
     public Visualizer(ArrayList<ArrayList<Element>> c, HashMap<String, Element> em, ArrayList<HashMap<String, Element>>[] cm, int[] dims) {
         initUI(c, em, cm, dims);
@@ -42,7 +43,11 @@ public class Visualizer extends JFrame {
     }
 
     public static void main(String[] args) throws IOException {
-        BufferedReader reader = new BufferedReader(new FileReader("p9example.vf"));
+        if (args.length != 1) {
+            System.out.println("usage: java Visualizer filename.vf");
+            System.exit(1);
+        }
+        BufferedReader reader = new BufferedReader(new FileReader(args[0]));
         ArrayList<Element> elementList = new ArrayList<>();
         HashMap<String, Element> elementMap = new HashMap<>();
 
@@ -67,8 +72,10 @@ public class Visualizer extends JFrame {
         ArrayList<ArrayList<Element>> columns = placeElements(elementList, elementMap);
         addPaths(columns);
         ArrayList<HashMap<String, Element>>[] columnMaps = getColumnMaps(columns);
-        reorderBackwards(columns, elementMap);
-        reorderForwards(columns, elementMap, columnMaps);
+        for (int i = 0; i < NUM_REORDERS; i++) {
+            reorderBackwards(columns, elementMap);
+            reorderForwards(columns, elementMap, columnMaps);
+        }
         int[] dims = setCoords(columns);
 
         EventQueue.invokeLater(new Runnable() {
