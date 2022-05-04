@@ -5,11 +5,10 @@ import java.util.*;
 
 // TODO: add specialized gates
 // TODO: fix operator strings (chunk of wire)
-// DONE: fix literal string length (when it juts out)
-// TODO: fix wire being set to temp late
-// TODO: adjust column distances to reflect amount of wire squishing
-// TODO: resolve redundant
-// TODO: fix wire density jank (scale horizontal distance)
+// TODO: fix literal string length (when it juts out)
+// TODO: resolve redundant gates
+// TODO: reorder backwards
+// TODO: fix literal combined with new wire name
 
 public class Visualizer extends JFrame {
     private static final int MAX_WIDTH = 1500;
@@ -50,22 +49,13 @@ public class Visualizer extends JFrame {
         String line = "";
         while ((line = reader.readLine()) != null) {
             Element element = new Element(line);
-            // element is not temp
-            // operation is =
-            // operand is temp
-            // operand is previous wire
-            // if all of the above, set previous name to new name; set previous type to new type
             if (element.getName().charAt(0) != '.' && element.getOperation().equals("=")
                     && element.getOperands().get(0).charAt(0) == '.'
                     && element.getOperands().get(0).equals(elementList.get(elementList.size()-1).getName())) {
-                // System.out.println();
-                // System.out.println(elementList.get(elementList.size()-1));
-                // System.out.println(element);
                 Element prevElem = elementMap.remove(element.getOperands().get(0));
                 prevElem.setName(element.getName());
                 prevElem.setType(element.getType());
                 elementMap.put(prevElem.getName(), prevElem);
-                // System.out.println(elementList.get(elementList.size()-1));
                 continue;
             }
             elementList.add(element);
@@ -206,7 +196,6 @@ public class Visualizer extends JFrame {
                 int scoreNum = 1;
                 if (!(elem.getOperation().equals("--") || elem.getOperation().equals("<-"))) {
                     for (String operand : elem.getOperands()) {
-                        // System.out.println(elem + " " + operand);
                         if (elementMap.get(operand).getColNum() >= elem.getColNum()) {
                             continue;
                         }
@@ -289,6 +278,7 @@ public class Visualizer extends JFrame {
             double heightRatio = ((double) Math.max(prevHeight, currHeight)) / yDim;
             colRatio = 1 + (colRatio - 1) * heightRatio;
             horizDist = (int) (Visualizer.HORIZ_DIST * colRatio);
+            horizDist = Math.min(horizDist, Visualizer.MAX_WIDTH / 2);
 
             setColX(columns.get(i), prevX + horizDist);
             prevX += horizDist + Visualizer.FULL_WIDTH;

@@ -218,6 +218,9 @@ public class Element {
 
         drawGate(g2d);
         
+        String[] specialGates = new String[] {"--", "=", "->", "<-", "?:", "&&", "&", "||", "|", "^"};
+        boolean isSpecialGate = Arrays.asList(specialGates).contains(getOperation());
+        // draw literal
         if (getOperation().equals("--")) {
             g2d.setFont(new Font(g2d.getFont().getName(), Font.PLAIN, 9)); 
             String lit = Visualizer.condenseName(""+getOperands().get(0), 17 * Visualizer.FULL_WIDTH / 80);
@@ -225,7 +228,8 @@ public class Element {
             g2d.drawLine(getXCoord(), getYCoord() + getHeight() / 2, getXCoord() + Visualizer.FULL_WIDTH,
                     getYCoord() + getHeight() / 2); //draws full line
             g2d.drawLine(getXCoord(), getYCoord() + getHeight() / 2, getXCoord(), getYCoord() + getHeight() / 2 - 7);
-        } else if (!(getOperation().equals("=") || getOperation().equals("->") || getOperation().equals("<-") || getOperation().equals("?:"))) {
+        // draw operation
+        } else if (!isSpecialGate) {
             g2d.setFont(new Font(g2d.getFont().getName(), Font.PLAIN, 12)); 
             drawStringCentered(g2d, getOperation(), getXCoord() + Visualizer.BOX_WIDTH / 2, getYCoord() + getHeight() / 2 + 4);
         }
