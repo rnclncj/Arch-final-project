@@ -1098,3 +1098,6 @@ reg M2_imm = M1_imm
 reg M2_op1 = M1_op1
 reg WB_isMovz = .temp798
 reg M2_R1_num_valid = .temp574
+module cnt # clk wb_has_instruction halt 
+module mem mem_rdata1 mem_rdata0 # clk mem_raddr0 mem_raddr1 mem_wen mem_waddr mem_wdata 
+module regs reg_rdata1 reg_rdata0 # clk reg_raddr0 reg_raddr1 reg_wen reg_waddr reg_wdata 

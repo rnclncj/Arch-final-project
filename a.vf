@@ -1,6 +1,14 @@
-wire .temp0 && F1_valid WB2_branch_en
-wire .temp1 ?: .temp0 WB2_branch_addr F1_pc
-wire .temp2 ! .temp0
-wire .temp3 -- 1
-wire .temp4 + WB2_pc .temp3
-reg F1_pc = .temp1.temp4
+wire .temp0 ~ halt
+wire .temp1 ~ WB_flush
+wire .temp2 | M2_valid WB_stall
+wire .temp3 & .temp1 .temp2
+wire .temp4 ~ WB_stall
+wire .temp5 ?: .temp4 M2_isAdrp WB_isAdrp
+wire .temp6 ?: .temp0 .temp5 WB_isAdrp
+wire .temp7 ?: .temp0 .temp3 WB_valid
+reg M2_isAdrp = M2_isAdrp
+reg WB_isAdrp = .temp6
+reg WB_stall = WB_stall
+reg M2_valid = M2_valid
+reg WB_valid = .temp7
+reg WB_flush = WB_flush
