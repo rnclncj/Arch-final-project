@@ -9,7 +9,7 @@ module main();
     // ... and a counter that tracks cycles
     wire halt;               // set this wire to 1 to halt the processor
     wire wb_has_instruction; // set this wire to 1 if WB has an instruction
-    // counter cnt(clk,wb_has_instruction,halt);
+    counter cnt(clk,wb_has_instruction,halt);
 
     // ... and memory
     wire [63:2] mem_raddr0;

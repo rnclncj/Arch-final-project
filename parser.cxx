@@ -22,7 +22,7 @@ using namespace std;
 class Interpreter {
     char const* const program;
     char const* current;
-
+    
     vector<string> module_names{};
     vector<vector<pair<bool, string>>> module_list{};
     unordered_map<string, pair<int64_t, string>> wire_table{};
@@ -664,7 +664,8 @@ class Interpreter {
             cout << "wire [" << num_bits << "]" << wire_name << " = "
                  << wire_inputs << endl;
             return true;
-        } else if (consume("reg")) {
+            // peek skip whitespaces (doesn't read!)
+        } else if (consume("reg") && (*current == ' ' || peek("["))) {
             num_bits = get_size();
             reg_name = consume_identifier().value();
             reg_table[reg_name] = reg_name;
@@ -723,6 +724,7 @@ class Interpreter {
             skip_line();
             return res;
         } else if (consume("if")) {
+            
             condition = expression();
             prev_condition = condition;
             if (peek("begin")) {
