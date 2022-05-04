@@ -8,7 +8,6 @@ import java.util.*;
 // TODO: fix literal string length (when it juts out)
 // TODO: resolve redundant gates
 // TODO: reorder backwards
-// TODO: fix literal combined with new wire name
 
 public class Visualizer extends JFrame {
     private static final int MAX_WIDTH = 1500;
@@ -51,7 +50,8 @@ public class Visualizer extends JFrame {
             Element element = new Element(line);
             if (element.getName().charAt(0) != '.' && element.getOperation().equals("=")
                     && element.getOperands().get(0).charAt(0) == '.'
-                    && element.getOperands().get(0).equals(elementList.get(elementList.size()-1).getName())) {
+                    && element.getOperands().get(0).equals(elementList.get(elementList.size()-1).getName())
+                    && !elementList.get(elementList.size()-1).getOperation().equals("--")) {
                 Element prevElem = elementMap.remove(element.getOperands().get(0));
                 prevElem.setName(element.getName());
                 prevElem.setType(element.getType());
@@ -186,27 +186,24 @@ public class Visualizer extends JFrame {
     }
 
     public static void reorder(ArrayList<ArrayList<Element>> columns, HashMap<String, Element> elementMap, ArrayList<HashMap<String, Element>>[] columnMaps) {
-        HashMap<String, Double> scoreMap = new HashMap<>();
         HashMap<String, Integer> indexMap = getIndexMap(columns.get(0));
         for (int i = 1; i < columns.size(); i++) {
             ArrayList<Element> column = columns.get(i);
+            ScoreComp scoreComp = new ScoreComp();
             for (int j = 0; j < column.size(); j++) {
                 Element elem = column.get(j);
-                int scoreSum = i;
-                int scoreNum = 1;
+                scoreComp.addScore(elem.getName(), j, 0.01);
                 if (!(elem.getOperation().equals("--") || elem.getOperation().equals("<-"))) {
                     for (String operand : elem.getOperands()) {
                         if (elementMap.get(operand).getColNum() >= elem.getColNum()) {
                             continue;
                         }
                         Element fromElem = columnMaps[0].get(elem.getColNum() - 1).get(operand);
-                        scoreSum += indexMap.get(fromElem.getName());
-                        scoreNum++;
+                        scoreComp.addScore(elem.getName(), indexMap.get(fromElem.getName()), 1);
                     }
                 }
-                scoreMap.put(elem.getName(), ((double) scoreSum) / scoreNum);
             }
-            column.sort(new ScoreComp(scoreMap));
+            column.sort(scoreComp);
             indexMap = getIndexMap(column);
         }
     }
@@ -220,10 +217,22 @@ public class Visualizer extends JFrame {
     }
 
     private static class ScoreComp implements Comparator<Element> {
-        private HashMap<String, Double> scoreMap;
+        private HashMap<String, Double> sumMap;
+        private HashMap<String, Double> numMap;
 
-        public ScoreComp(HashMap<String, Double> sm) {
-            scoreMap = sm;
+        public ScoreComp() {
+            sumMap = new HashMap<>();
+            numMap = new HashMap<>();
+        }
+
+        public void addScore(String name, int score, double weight) {
+            if (sumMap.containsKey(name)) {
+                sumMap.put(name, sumMap.get(name) + score * weight);
+                numMap.put(name, numMap.get(name) + weight);
+            } else {
+                sumMap.put(name, score * weight);
+                numMap.put(name, weight);
+            }
         }
 
         public int compare(Element a, Element b) {
@@ -234,7 +243,9 @@ public class Visualizer extends JFrame {
                 return -1;
             }
 
-            double diff = scoreMap.get(a.getName()) - scoreMap.get(b.getName());
+            double aScore = sumMap.get(a.getName()) / numMap.get(a.getName());
+            double bScore = sumMap.get(b.getName()) / numMap.get(b.getName());
+            double diff = aScore - bScore;
             if (diff > 0) {
                 return 1;
             }
