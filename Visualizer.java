@@ -8,7 +8,6 @@ import java.util.*;
 // TODO: fix literal string length (when it juts out)
 // TODO: resolve redundant gates
 // TODO: fix column spreading
-// TODO: NOT gate
 
 public class Visualizer extends JFrame {
     private static final int MAX_WIDTH = 1500;
@@ -320,12 +319,8 @@ public class Visualizer extends JFrame {
 
             // scale according to the height of the highest column
             double heightRatio = ((double) Math.max(prevHeight, currHeight)) / yDim;
-            heightRatio = Math.pow(2, 6 * (heightRatio - 0.5));
-            
-            // average the two ratios
-            double ratio = (colRatio + heightRatio) / 2;
-            ratio = Math.max(ratio, 1);
-            horizDist = (int) (Visualizer.HORIZ_DIST * ratio);
+            colRatio = 1 + (colRatio - 1) * heightRatio;
+            horizDist = (int) (Visualizer.HORIZ_DIST * colRatio);
             horizDist = Math.min(horizDist, Visualizer.MAX_WIDTH / 2);
 
             setColX(columns.get(i), prevX + horizDist);
