@@ -9,10 +9,11 @@ reg M2_isAdrp;
 
 always @(posedge clk) begin
     if (~halt) begin
-            WB_valid <= ~WB_flush & (M2_valid | WB_stall);
+        WB_valid <= ~WB_flush & (M2_valid | WB_stall);
 
         if (~WB_stall) begin
             WB_isAdrp <= M2_isAdrp;
         end
+        else if ()
     end
 end

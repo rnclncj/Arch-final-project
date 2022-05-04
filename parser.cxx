@@ -22,8 +22,9 @@ using namespace std;
 class Interpreter {
     char const* const program;
     char const* current;
-    
+
     vector<string> module_names{};
+    // list of modules input/outputs and param names
     vector<vector<pair<bool, string>>> module_list{};
     unordered_map<string, pair<int64_t, string>> wire_table{};
     unordered_map<string, string> reg_table{};
@@ -626,7 +627,7 @@ class Interpreter {
         // for each module
         for (uint32_t i = 0; i < module_names.size(); i++) {
             for (uint32_t j = 0; j < module_list[i].size(); j++) {
-                // read each i/o type and param
+                // inputs are associated with "assign" keyword in Verilog
                 if (module_list[i][j].second == name) {
                     module_list[i][j].first = true;
                 }
@@ -724,7 +725,6 @@ class Interpreter {
             skip_line();
             return res;
         } else if (consume("if")) {
-            
             condition = expression();
             prev_condition = condition;
             if (peek("begin")) {
