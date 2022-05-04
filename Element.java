@@ -2,6 +2,8 @@ import java.awt.*;
 import java.util.*;
 
 public class Element {
+    private String moduleName;
+    private Color moduleColor;
     private String name;
     private String type;
     private int width;
@@ -16,11 +18,8 @@ public class Element {
         StringTokenizer tokenizer = new StringTokenizer(line);
         type = tokenizer.nextToken();
         name = tokenizer.nextToken();
-        width = 1;
-        if(name.contains("]")){
-            width = Integer.parseInt(name.substring(name.indexOf("[")+1, name.indexOf("]")));
-            name = name.substring(name.indexOf("]")+1);
-        }
+        width = getWidthFromName(name);
+        name = getNameFromName(name);
         operation = tokenizer.nextToken();
         operands = new ArrayList<>();
         colNum = -1;
@@ -28,6 +27,33 @@ public class Element {
         while (tokenizer.hasMoreTokens()) {
             operands.add(tokenizer.nextToken());
         }
+        moduleName = "";
+    }
+
+    //module constructor output
+    public Element(String moduleName, String name, int width, Color color){
+        this.moduleName = moduleName;
+        this.name = name;
+        this.width = width;
+        moduleColor = color;
+        type = "module";
+        operation = "#->";
+        colNum = -1;
+        yCoord = 0;
+        operands = new ArrayList<>();
+    }
+    //mpdule constructor input
+    public Element(String moduleName, String name, Color color){
+        this.moduleName = moduleName;
+        this.name = "."+name;
+        this.width = 0;
+        moduleColor = color;
+        type = "module";
+        operation = "#<-";
+        colNum = -1;
+        yCoord = 0;
+        operands = new ArrayList<>();
+        operands.add(name);
     }
 
     // propagation constructor
@@ -43,6 +69,7 @@ public class Element {
         operands = new ArrayList<>();
         operands.add(name);
         colNum = cn;
+        moduleName = "";
     }
 
     public String toString() {
@@ -74,7 +101,7 @@ public class Element {
     public int getHeight() {
         if (operation.equals("->") || operation.equals("<-"))
             return Visualizer.BASE_HEIGHT / 4;
-        return Visualizer.BASE_HEIGHT * getOperands().size();
+        return Visualizer.BASE_HEIGHT * Math.max(getOperands().size(),1);
     }
 
     // returns the height of the element
@@ -102,12 +129,28 @@ public class Element {
         this.name = name;
     }
 
+    public String getModuleName() {
+        return moduleName;
+    }
+
+    public void setModuleName(String moduleName) {
+        this.moduleName = moduleName;
+    }
+
     public String getType() {
         return type;
     }
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public Color getModuleColor() {
+        return moduleColor;
+    }
+
+    public void setModuleColor(Color moduleColor) {
+        this.moduleColor = moduleColor;
     }
 
     public String getOperation() {
@@ -198,6 +241,20 @@ public class Element {
             g2d.drawArc(getXCoord() - Visualizer.BOX_WIDTH, getYCoord(), Visualizer.BOX_WIDTH * 2, getHeight(), 0, 90);
 
         }
+        else if(getOperation().equals("#->")){
+            g2d.setColor(getModuleColor());
+            g2d.fillArc(getXCoord() + Visualizer.BOX_WIDTH, getYCoord(), Visualizer.BOX_WIDTH / 8, getHeight(), 0, 360);
+            g2d.setColor(Color.BLACK);
+            g2d.drawArc(getXCoord() + Visualizer.BOX_WIDTH, getYCoord(), Visualizer.BOX_WIDTH / 8, getHeight(), 0, 360);
+
+        }
+        else if(getOperation().equals("#<-")){
+            g2d.setColor(getModuleColor());
+            g2d.fillArc(getXCoord() - Visualizer.BOX_WIDTH/8, getYCoord(), Visualizer.BOX_WIDTH / 8, getHeight(), 0, 360);
+            g2d.setColor(Color.BLACK);
+            g2d.drawArc(getXCoord() - Visualizer.BOX_WIDTH/8, getYCoord(), Visualizer.BOX_WIDTH / 8, getHeight(), 0, 360);
+
+        }
         else if (!getOperation().equals("--")) { //base case
             g2d.drawRect(getXCoord(), getYCoord(), Visualizer.BOX_WIDTH, getHeight()); //draws box
             if (type.equals("reg")) {
@@ -218,7 +275,7 @@ public class Element {
 
         drawGate(g2d);
         
-        String[] specialGates = new String[] {"--", "=", "->", "<-", "?:", "&&", "&", "||", "|", "^"};
+        String[] specialGates = new String[] {"--", "=", "->", "<-", "?:", "&&", "&", "||", "|", "^", "#<-", "#->"};
         boolean isSpecialGate = Arrays.asList(specialGates).contains(getOperation());
         // draw literal
         if (getOperation().equals("--")) {
@@ -233,9 +290,18 @@ public class Element {
             g2d.setFont(new Font(g2d.getFont().getName(), Font.PLAIN, 12)); 
             drawStringCentered(g2d, getOperation(), getXCoord() + Visualizer.BOX_WIDTH / 2, getYCoord() + getHeight() / 2 + 4);
         }
+        if(type.equals("module")){
+            g2d.setFont(new Font(g2d.getFont().getName(), Font.PLAIN, 10)); 
+            String name = Visualizer.condenseName(getModuleName(), 10*Visualizer.BOX_WIDTH / 40);
+            g2d.setColor(getModuleColor());
+            drawStringCentered(g2d, name, getXCoord() + Visualizer.BOX_WIDTH / 2, getYCoord() + getHeight() / 2 + 4);
+            g2d.setColor(Color.BLACK);
+        }
         //draw stud line
+        if(!operation.equals("#<-")){
         g2d.drawLine(getXCoord()+Visualizer.BOX_WIDTH, getYCoord() + getHeight() / 2, getXCoord() + Visualizer.FULL_WIDTH,
                     getYCoord() + getHeight() / 2);
+        }
         //draws name
         if (!(getName().charAt(0) == '.' || getOperation().equals("->") || getOperation().equals("<-"))) {
             g2d.setFont(new Font(g2d.getFont().getName(), Font.PLAIN, 9));
@@ -281,4 +347,19 @@ public class Element {
 
         g2d.setColor(Color.BLACK);
     }
+
+    public static int getWidthFromName(String name){
+        if(name.contains("]")){
+            return Integer.parseInt(name.substring(name.indexOf("[")+1, name.indexOf("]")));
+        }
+        return 1;
+    }
+
+    public static String getNameFromName(String name){
+        if(name.contains("]")){
+            return name.substring(name.indexOf("]")+1);
+        }
+        return name;
+    }
+
 }
