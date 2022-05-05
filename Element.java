@@ -220,7 +220,7 @@ public class Element {
             g2d.drawLine(getXCoord() + Visualizer.BOX_WIDTH * 3 / 4 , yCorner + height  / 2, getXCoord() + Visualizer.BOX_WIDTH, getYCoord() + getHeight() / 2);
         }
         else if(getOperation().equals("&&") || getOperation().equals("&")){ //AND
-            g2d.drawLine(getXCoord(), getYCoord(), getXCoord(), getYCoord() + getHeight());
+            g2d.drawLine(getXCoord(), getYCoord(), getXCoord(), getYBase());
             g2d.drawArc(getXCoord() - Visualizer.BOX_WIDTH, getYCoord(), Visualizer.BOX_WIDTH * 2, getHeight(), 270, 90);
             g2d.drawArc(getXCoord() - Visualizer.BOX_WIDTH, getYCoord(), Visualizer.BOX_WIDTH * 2, getHeight(), 0, 90);
 
@@ -239,21 +239,28 @@ public class Element {
             g2d.drawArc(getXCoord() - Visualizer.BOX_WIDTH * 0, getYCoord(), Visualizer.BOX_WIDTH * 1/8, getHeight(), 0, 90);
             g2d.drawArc(getXCoord() - Visualizer.BOX_WIDTH, getYCoord(), Visualizer.BOX_WIDTH * 2, getHeight(), 270, 90);
             g2d.drawArc(getXCoord() - Visualizer.BOX_WIDTH, getYCoord(), Visualizer.BOX_WIDTH * 2, getHeight(), 0, 90);
-
+        }
+        else if (getOperation().equals("!") || getOperation().equals("~")) { // NOT
+            g2d.drawLine(getXCoord(), getYCoord(), getXCoord(), getYBase());
+            int midX = getXCoord() + (int) (getHeight() * 0.866);
+            int midY = getYCoord() + getHeight() / 2;
+            g2d.drawLine(getXCoord(), getYCoord(), midX, midY);
+            g2d.drawLine(getXCoord(), getYBase(), midX, midY);
+            int radius = getHeight() / 6;
+            g2d.drawOval(midX, midY - radius, radius * 2, radius * 2);
+            g2d.drawLine(midX + radius * 2, midY, getOutX(), midY);
         }
         else if(getOperation().equals("#->")){
             g2d.setColor(getModuleColor());
             g2d.fillArc(getXCoord() + Visualizer.BOX_WIDTH, getYCoord(), Visualizer.BOX_WIDTH / 8, getHeight(), 0, 360);
             g2d.setColor(Color.BLACK);
             g2d.drawArc(getXCoord() + Visualizer.BOX_WIDTH, getYCoord(), Visualizer.BOX_WIDTH / 8, getHeight(), 0, 360);
-
         }
         else if(getOperation().equals("#<-")){
             g2d.setColor(getModuleColor());
             g2d.fillArc(getXCoord() - Visualizer.BOX_WIDTH/8, getYCoord(), Visualizer.BOX_WIDTH / 8, getHeight(), 0, 360);
             g2d.setColor(Color.BLACK);
             g2d.drawArc(getXCoord() - Visualizer.BOX_WIDTH/8, getYCoord(), Visualizer.BOX_WIDTH / 8, getHeight(), 0, 360);
-
         }
         else if (!getOperation().equals("--")) { //base case
             g2d.drawRect(getXCoord(), getYCoord(), Visualizer.BOX_WIDTH, getHeight()); //draws box
@@ -275,7 +282,7 @@ public class Element {
 
         drawGate(g2d);
         
-        String[] specialGates = new String[] {"--", "=", "->", "<-", "?:", "&&", "&", "||", "|", "^", "#<-", "#->"};
+        String[] specialGates = new String[] {"--", "=", "->", "<-", "?:", "&&", "&", "||", "|", "^", "!", "~", "#<-", "#->"};
         boolean isSpecialGate = Arrays.asList(specialGates).contains(getOperation());
         // draw literal
         if (getOperation().equals("--")) {
