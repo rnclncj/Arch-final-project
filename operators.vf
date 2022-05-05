@@ -1,0 +1,89 @@
+wire .temp0 -- 5'b10110
+wire [1]a = .temp0
+wire .temp1 [3:2] a
+wire [1]b = .temp1
+wire .temp2 -- 4
+wire .temp3 + a .temp2
+wire .temp4 / .temp3 b
+wire [1]c = .temp4
+wire .temp5 ! a
+wire .temp6 ~ b
+wire .temp7 + .temp5 .temp6
+wire .temp8 | b
+wire .temp9 + c .temp8
+wire .temp10 & .temp9
+wire .temp11 - .temp7 .temp10
+wire .temp12 ~& a
+wire .temp13 + .temp11 .temp12
+wire .temp14 ~| c
+wire .temp15 ^ b
+wire .temp16 / .temp14 .temp15
+wire .temp17 + .temp13 .temp16
+wire .temp18 ~^ a
+wire .temp19 + .temp17 .temp18
+wire .temp20 ~^ b
+wire .temp21 + .temp19 .temp20
+wire [1]d = .temp21
+wire .temp22 + a
+wire .temp23 - b
+wire .temp24 / .temp22 .temp23
+wire [1]e = .temp24
+wire .temp26 -- 43
+wire .temp28 [3:0] b
+wire .temp27 {} .temp28
+wire .temp29 {{}} .temp26 .temp27
+wire .temp30 -- 4'b100
+wire .temp25 {} .temp29 .temp30
+wire [1]f = .temp25
+wire .temp31 * a b
+wire .temp32 % c d
+wire .temp33 / .temp31 .temp32
+wire [1]g = .temp33
+wire .temp34 + a b
+wire .temp35 - .temp34 c
+wire [1]h = .temp35
+wire .temp36 -- 4
+wire .temp37 >> b .temp36
+wire .temp38 << .temp37 c
+wire [1]i = .temp38
+wire .temp39 >= a b
+wire .temp40 > a b
+wire .temp41 -- 3'h803
+wire .temp42 ?: .temp40 c .temp41
+wire .temp43 <= a b
+wire .temp44 < a b
+wire .temp45 -- 3'h327
+wire .temp46 ?: .temp44 c .temp45
+wire .temp47 -- 0
+wire .temp48 ?: .temp43 .temp46 .temp47
+wire .temp49 ?: .temp39 .temp42 .temp48
+wire [1]j = .temp49
+wire .temp50 == a b
+wire .temp51 != a c
+wire .temp52 | .temp50 .temp51
+wire [1]k = .temp52
+wire .temp53 === a b
+wire .temp54 !== a c
+wire .temp55 == .temp53 .temp54
+wire [1]l = .temp55
+wire .temp56 & a b
+wire [1]m = .temp56
+wire .temp57 ^ a
+wire .temp58 + b .temp57
+wire .temp59 ^ a .temp58
+wire .temp60 - c c
+wire .temp61 ~^ .temp59 .temp60
+wire .temp62 ~^ .temp61 a
+wire [1]n = .temp62
+wire .temp63 | a b
+wire [1]o = .temp63
+wire .temp64 & c
+wire .temp65 & b .temp64
+wire .temp66 && a .temp65
+wire [1]p = .temp66
+wire .temp67 ~| c
+wire .temp68 || b .temp67
+wire .temp69 | a .temp68
+wire [1]q = .temp69
+wire .temp70 ?: a b c
+wire [1]r = .temp70

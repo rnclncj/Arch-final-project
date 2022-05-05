@@ -1,0 +1,6 @@
+wire .temp0 -- 1
+wire [1]a = .temp0
+wire [1]b = a
+wire .temp1 ~ a
+wire [1]d = .temp1
+reg c = c

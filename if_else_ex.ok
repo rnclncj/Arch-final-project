@@ -1,0 +1,6 @@
+wire .temp0 a
+wire .temp1 ?: a 0 .temp3
+wire .temp2 b
+wire .temp3 ?: b 1 .temp4 
+wire .temp4 -- 2
+reg test = .temp1

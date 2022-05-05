@@ -1,0 +1,4 @@
+reg D_was_stalling = D_was_stalling
+module cnt halt wb_has_instruction clk # 
+module mem mem_wdata mem_waddr mem_wen mem_rdata1 mem_raddr1 mem_rdata0 mem_raddr0 clk # 
+module regs reg_wdata reg_waddr reg_wen reg_rdata1 reg_raddr1 reg_rdata0 reg_raddr0 clk # 
