@@ -1,11 +1,15 @@
-wire .temp0 -- 0
-wire .temp1 ?: a .temp0 test
-wire .temp2 ! a
-wire .temp3 && .temp2 b
-wire .temp4 && a b
-wire .temp5 -- 1
-wire .temp6 ?: .temp3 .temp5 .temp1
-wire .temp7 ! .temp4
-wire .temp8 -- 2
-wire .temp9 ?: .temp7 .temp8 .temp6
-reg test = .temp9a
+wire .temp0 -- 4
+wire [1]a = .temp0
+wire .temp1 -- 5
+wire [1]b = .temp1
+wire .temp2 -- 0
+wire .temp3 ?: a .temp2 test
+wire .temp4 ! a
+wire .temp5 && .temp4 b
+wire .temp6 && a b
+wire .temp7 -- 1
+wire .temp8 ?: .temp5 .temp7 .temp3
+wire .temp9 ! .temp6
+wire .temp10 -- 2
+wire .temp11 ?: .temp9 .temp10 .temp8
+reg test = .temp11
