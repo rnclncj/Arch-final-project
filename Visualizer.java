@@ -3,11 +3,7 @@ import javax.swing.*;
 import java.io.*;
 import java.util.*;
 
-// TODO: add specialized gates
-// TODO: fix operator strings (chunk of wire)
-// TODO: fix literal string length (when it juts out)
-// TODO: resolve redundant gates
-// TODO: fix column spreading
+// TODO: add NOT gate
 
 public class Visualizer extends JFrame {
     private static final int MAX_WIDTH = 1500;
@@ -47,7 +43,7 @@ public class Visualizer extends JFrame {
             System.out.println("usage: java Visualizer filename.vf");
             System.exit(1);
         }
-        BufferedReader reader = new BufferedReader(new FileReader("test.vf"));
+        BufferedReader reader = new BufferedReader(new FileReader(args[0]));
         ArrayList<Element> elementList = new ArrayList<>();
         HashMap<String, Element> elementMap = new HashMap<>();
 

@@ -16,7 +16,8 @@ public class Panel extends JPanel {
     private void doDrawing(Graphics g) {
         Graphics2D g2d = (Graphics2D) g;
 
-        for (ArrayList<Element> column : columns) {
+        for (int i = 0; i < columns.size(); i++) {
+            ArrayList<Element> column = columns.get(i);
             int numBackOps = 0;
             int numBackOuts = 0;
             for (Element elem : column) {
@@ -44,13 +45,14 @@ public class Panel extends JPanel {
                     continue;
                 }
                 // operands
-                for (int i = 0; i < elem.getOperands().size(); i++) {
-                    String operand = elem.getOperands().get(i);
+                for (int j = 0; j < elem.getOperands().size(); j++) {
+                    String operand = elem.getOperands().get(j);
                     if (elementMap.get(operand).getColNum() >= elem.getColNum()) {
                         backOpCount++;
                         int rightX = elem.getXCoord();
-                        int leftX = rightX - (int) ((Visualizer.HORIZ_DIST / 2.0) * (1 - ((double) backOpCount) / (numBackOps + 1)));
-                        int toY = elem.getOperandYCoord(i);
+                        int horiz_dist = (i == 0) ? Visualizer.HORIZ_DIST : (elem.getXCoord() - columns.get(i - 1).get(0).getOutX());
+                        int leftX = rightX - (int) ((horiz_dist / 2.0) * (1 - ((double) backOpCount) / (numBackOps + 1)));
+                        int toY = elem.getOperandYCoord(j);
                         int fromY = columnMaps[1].get(elem.getColNum()).get(operand).getOutY();
                         
                         g2d.drawLine(rightX, fromY, leftX, fromY);
@@ -63,7 +65,8 @@ public class Panel extends JPanel {
                 if (columnMaps[1].get(elem.getColNum()).containsKey(elem.getName())) {
                     backOutCount++;
                     int leftX = elem.getOutX();
-                    int rightX = leftX + (int) ((Visualizer.HORIZ_DIST / 2.0) * (1 - ((double) backOutCount) / (numBackOuts + 1)));
+                    int horiz_dist = (i == columns.size()-1) ? Visualizer.HORIZ_DIST : (columns.get(i + 1).get(0).getXCoord() - elem.getOutX());
+                    int rightX = leftX + (int) ((horiz_dist / 2.0) * (1 - ((double) backOutCount) / (numBackOuts + 1)));
                     int fromY = elem.getOutY();
                     int toY = columnMaps[1].get(elem.getColNum()).get(elem.getName()).getOutY();
                     
