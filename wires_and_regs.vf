@@ -1,0 +1,16 @@
+wire .temp0 -- 1
+wire [1]halt = .temp0
+wire .temp1 ~ halt
+wire .temp2 ~ WB_flush
+wire .temp3 | M2_valid WB_stall
+wire .temp4 & .temp2 .temp3
+wire .temp5 ~ WB_stall
+wire .temp6 ?: .temp5 M2_isAdrp WB_isAdrp
+wire .temp7 ?: .temp1 .temp6 WB_isAdrp
+wire .temp8 ?: .temp1 .temp4 WB_valid
+reg M2_isAdrp = M2_isAdrp
+reg WB_isAdrp = .temp7
+reg WB_stall = WB_stall
+reg M2_valid = M2_valid
+reg WB_valid = .temp8
+reg WB_flush = WB_flush
