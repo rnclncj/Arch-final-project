@@ -3,11 +3,7 @@ import javax.swing.*;
 import java.io.*;
 import java.util.*;
 
-// TODO: add specialized gates
-// TODO: fix operator strings (chunk of wire)
-// TODO: fix literal string length (when it juts out)
-// TODO: resolve redundant gates
-// TODO: fix column spreading
+// TODO: add NOT gate
 
 public class Visualizer extends JFrame {
     private static final int MAX_WIDTH = 1500;
