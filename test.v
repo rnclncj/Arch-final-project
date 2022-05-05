@@ -413,7 +413,7 @@ module main();
             X_R1_num <= W2_R1_num;
             X_R2_num <= W2_R2_num;
         end
-    end       
+    end
 
     // M1 //
     assign mem_raddr0 = M1_isLdrbPre | M1_isLdrbOff | M1_isLdrPre | M1_isLdrOff | M1_isStrbOff | M1_isStrbPre ?

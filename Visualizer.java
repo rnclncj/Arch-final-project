@@ -351,8 +351,8 @@ public class Visualizer extends JFrame {
             }
 
             // scale according to the height of the highest column
-            double heightRatio = ((double) Math.max(prevHeight, currHeight)) / yDim;
-            heightRatio = Math.pow(2, 6 * (heightRatio - 0.5));
+            double heightRatio = ((double) Math.max(prevHeight, currHeight)) / Visualizer.MAX_HEIGHT;
+            heightRatio = Math.min(heightRatio, 10);
             
             // average the two ratios
             double ratio = (colRatio + heightRatio) / 2;
