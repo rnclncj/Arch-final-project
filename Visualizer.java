@@ -43,7 +43,7 @@ public class Visualizer extends JFrame {
             System.out.println("usage: java Visualizer filename.vf");
             System.exit(1);
         }
-        BufferedReader reader = new BufferedReader(new FileReader("test.vf"));
+        BufferedReader reader = new BufferedReader(new FileReader(args[0]));
         ArrayList<Element> elementList = new ArrayList<>();
         HashMap<String, Element> elementMap = new HashMap<>();
 
